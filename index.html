@@ -1,1 +1,1601 @@
 
+<!DOCTYPE html>
+<html lang="pt-PT" xml:lang="pt-PT" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>CCP - Código da Contratação Pública</title>
+	<meta charset="UTF-8">
+	<meta name="CCP" content="Código da Contratação Pública">
+	<meta name="keywords" content="CCP">
+	<meta name="author" content="ABS">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="language" content="pt">
+	<noscript><p>O seu Web browser não suporta JavaScript. A experiência de utilização deste site melhora consideravelmente com a utilização de JavaScript.</p>
+	</noscript>
+	<style>
+		html {
+			font-family: sans-serif;
+		}
+		body {
+			counter-reset: part 0 article;
+		}
+		h2.annex {
+			counter-reset: annex;
+		}
+		li {
+			margin-top: 1em;
+			font-family: Lato, sans-serif;
+			font-size: 15px;
+		}
+		h2.part {
+			counter-reset: title;
+		}
+		h2.part:before {
+			font-weight: bold;
+			content: "PARTE " counter(part, upper-roman) ": ";
+			counter-increment: part;
+		}
+		h3.title {
+			counter-reset: titleA 0 chapter 0 articleA;
+		}
+		h3.title:before {
+			content: "TÍTULO " counter(title, upper-roman) ": ";
+			counter-increment: title
+		}
+		h3.titleA:before {
+			content: "TÍTULO " counter(title, upper-roman) "-" counter(titleA, upper-alpha) ": ";
+			counter-increment: titleA
+		}
+		h3.annex {
+			margin-left: 1em;
+		}
+		h4.chapter {
+			counter-reset: articleA 0 section;
+		}
+		h4.chapter:before {
+			content: "CAPÍTULO " counter(chapter, upper-roman) ": ";
+			counter-increment: chapter
+		}
+		h5.section {
+			font-size: 1em;
+			counter-reset: subsection;
+		}
+		h5.section:before {
+			content: "SECÇÃO " counter(section, upper-roman) ": ";
+			counter-increment: section
+		}
+		h55, h6 {
+			display: block;
+			font-size: 1em;
+			-webkit-margin-before: 1.67em;
+			-webkit-margin-after: 1.67em;
+			-webkit-margin-start: 0px;
+			-webkit-margin-end: 0px;
+		}
+		h55.subsection:before {
+			content: "SUBSECÇÃO " counter(subsection, upper-roman) ": ";
+			counter-increment: subsection
+		}
+		h6 {
+			margin-left: 1em;
+		}
+		h6.article {
+			counter-reset: articleA;
+		}
+		h6.article:before {
+			content: "Artigo " counter(article) ".º: ";
+			counter-increment: article;
+		}
+		h6.articleA:before {
+			content: "Artigo " counter(article) ".º-" counter(articleA, upper-alpha) ": ";
+			counter-increment: articleA
+		}
+		h3.annex:before {
+			content: "ANEXO " counter(annex, upper-roman) ": ";
+			counter-increment: annex
+		}
+		li.nostyle {
+			list-style-type: none;
+		}
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+		table, th, td {
+			border: 1px solid black;
+			vertical-align:top;
+		}
+	</style>
+	<script type="application/javascript">
+		function docSetup() {
+			for (arg of arguments) {
+				switch (arg) {
+					case 'TOC': ccpTOC('ccp', 'tocSeed'); break;
+					case 'autoEpigraphs': autoEpigraphs(); break;
+				}
+			}
+		}
+		String.prototype.getTag = function() { return this.slice(this.indexOf('#') + 1) }
+		Document.prototype.getElementsByClassNameAsArray = function() {
+			var res = [], arg;
+			for (arg of arguments) { res = res.concat(Array.from(this.getElementsByClassName(arg))); }
+				return res;
+		}
+		function autoEpigraphs() {
+			var aTitlesMap = {}, item;
+			const epigraphs = document.getElementsByClassNameAsArray("part", "title", "chapter", "setion", "subsection", "article", "articleA", "annex");
+			const anchors = document.getElementsByTagName("a");
+			for (item of epigraphs) { if(item.firstChild) aTitlesMap[item.id]=getDescription(item); }
+			for (item of anchors) { item.title=aTitlesMap[item.href.getTag()]; }
+		}
+		function getDescription(item) {
+			return composeReference(item.className, item.id, ': ') + item.firstChild.textContent.trim();
+		}
+		function ccpTOC(what, where) {
+			const placeHolder = document.getElementById(where);
+			if (placeHolder === null) { alert("Placeholder '" + where + "' not found in page body. TOC not inserted."); return; }
+			const mapHeadingLevel = {H1:0, H2:1, H3:2, H4:3, H5:4, H55:5 , H6:6 }
+			const docToC = document.getElementById(what).querySelectorAll("h1, h2, h3, h4, h5, h55, h6");
+			var levels = [0];
+			var res = '', item;
+			[].forEach.call(docToC, function(item) {
+				if (item.nodeType !== 1) return;
+				var currentLevel = mapHeadingLevel[item.nodeName];
+				if (currentLevel > levels[levels.length - 1]) {
+					res += '<ul><li><a href="#' + item.id + '">' + getDescription(item) + '</a>';
+					levels.push(currentLevel);
+				} else if (currentLevel < levels[levels.length - 1]) {
+					while (currentLevel < levels[levels.length - 1]) {
+						res += '</li></ul>';
+						levels.pop(currentLevel);
+					}
+					res += '<li><a href="#' + item.id + '">' + getDescription(item) + '</a>';
+				} else res += '</li><li><a href="#' + item.id + '">' + composeReference(item.className, item.id, ': ') + item.textContent.trim() + '</a>';
+			});
+			res += '</li></ol>'
+			placeHolder.innerHTML = res;
+		}
+		function composeReference(clazz, id, tag) {
+			var _class, _id;
+			switch (clazz) {
+				case 'article': case 'articleA': _class = 'Artigo'; _id = id + '.º'; break;
+				case 'chapter': _class = 'CAPÍTULO'; _id = toRoman(id.split('c')[1]); break;
+				case 'title': case 'titleA':
+					_class = 'TÍTULO';
+					const nr = id.split('t')[1];
+					if (isUndefined(nr)) _id = '';
+					else if (isNumber(nr)) _id = toRoman(nr);
+					else {
+						var l = nr.length;
+						_id = toRoman(nr.substring(0, l - 1)) + '-' + nr.substr(l-1, 1);
+					}
+					break;
+				case 'section': _class = 'SECÇÃO'; _id = toRoman(id.split('s')[1]); break;
+				case 'annex': _class = 'ANEXO'; _id = toRoman(id.split('a')[1]); break;
+				case 'part': _class = 'PARTE'; _id = toRoman(id.split('p')[1]); break;
+				case 'subsection': _class = 'SUBSECÇÃO'; _id = toRoman(id.split('s')[2]); break;
+			}
+			return _id === '' ? '' : _class + ' ' + _id + tag;
+		}
+		function toRoman(v) {
+			const r = ['I',  'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII'];
+			return isNumber(v) ? r[v-1] : '';
+		}
+		function isNumber(v) {
+			return isUndefined(v) ? false : !("" + v).match(/[a-z]/i);
+		}
+		function isUndefined(v) {
+			return (typeof v === "undefined");
+		}
+	</script>
+</head>
+<body onload="docSetup('TOC', 'autoEpigraphs')">
+	<h1>CCP - Código da Contratação Pública</h1>
+	<header>
+		<div>
+			<h2>Índice</h2>
+			<div id="tocSeed"></div>
+		</div>
+	</header>
+	<div id="ccp">
+		<h2 class="part" id="p1">Âmbito de aplicação</h2>
+			<h3 class="title" id="p1t1">Disposições gerais</h3>
+							<h6 class="article" id="1">Âmbito</h6>
+						<ol>
+							<li>O presente Código estabelece a disciplina aplicável à contratação pública e o regime substantivo dos contratos públicos que revistam a natureza de contrato administrativo.</li>
+							<li>O regime da contratação pública estabelecido na <a href="#p2">parte ii</a> é aplicável à formação dos contratos públicos que, independentemente da sua designação e natureza, sejam celebrados pelas entidades adjudicantes referidas no presente Código e não sejam excluídos do seu âmbito de aplicação.</li>
+							<li>O presente Código é igualmente aplicável, com as necessárias adaptações, aos procedimentos destinados à atribuição unilateral, pelas entidades adjudicantes referidas no artigo seguinte, de quaisquer vantagens ou benefícios, através de ato administrativo ou equiparado, em substituição da celebração de um contrato público.</li>
+							<li>(Revogado.)</li>
+							<li>A <a href="#p3">parte iii</a> do presente Código contém o regime substantivo aplicável à execução, modificação e extinção das relações contratuais administrativas</li>
+							<li>(Revogado.)</li>
+						</ol>
+							<h6 class="articleA" id="1-A">Princípios</h6>
+						<ol>
+							<li>Na formação e na execução dos contratos públicos devem ser respeitados os princípios gerais decorrentes da Constituição, dos Tratados da União Europeia e do Código do Procedimento Administrativo, em especial os princípios da legalidade, da prossecução do interesse público, da imparcialidade, da proporcionalidade, da boa-fé, da tutela da confiança, da sustentabilidade e da responsabilidade, bem como os princípios da concorrência, da publicidade e da transparência, da igualdade de tratamento e da não-discriminação.</li>
+							<li>As entidades adjudicantes devem assegurar, na formação e na execução dos contratos públicos, que os operadores económicos respeitam as normas aplicáveis em vigor em matéria social, laboral, ambiental e de igualdade de género, decorrentes do direito internacional, europeu, nacional ou regional.</li>
+							<li>Sem prejuízo da aplicação das garantias de imparcialidade previstas no Código do Procedimento Administrativo, as entidades adjudicantes devem adotar as medidas adequadas para impedir, identificar e resolver eficazmente os conflitos de interesses que surjam na condução dos procedimentos de formação de contratos públicos, de modo a evitar qualquer distorção da concorrência e garantir a igualdade de tratamento dos operadores económicos.</li>
+							<li>Para efeitos do disposto no número anterior, considera-se conflito de interesses qualquer situação em que o dirigente ou o trabalhador de uma entidade adjudicante ou de um prestador de serviços que age em nome da entidade adjudicante, que participe na preparação e na condução do procedimento de formação de contrato público ou que possa influenciar os resultados do mesmo, tem direta ou indiretamente um interesse financeiro, económico ou outro interesse pessoal suscetível de comprometer a sua imparcialidade e independência no contexto do referido procedimento.</li>
+						</ol>
+							<h6 class="article" id="2">Entidades adjudicantes</h6>
+						<ol>
+							<li>São entidades adjudicantes:
+								<ol type="a">
+									<li>O Estado;</li>
+									<li>As Regiões Autónomas;</li>
+									<li>As autarquias locais;</li>
+									<li>Os institutos públicos;</li>
+									<li>As entidades administrativas independentes;</li>
+									<li>O Banco de Portugal;</li>
+									<li>As fundações públicas;</li>
+									<li>As associações públicas;</li>
+									<li>As associações de que façam parte uma ou várias das pessoas coletivas referidas nas alíneas anteriores, desde que sejam maioritariamente financiadas por estas, estejam sujeitas ao seu controlo de gestão ou tenham um órgão de administração, de direção ou de fiscalização cuja maioria dos titulares seja, direta ou indiretamente, designada pelas mesmas.</li>
+								</ol>
+							</li>
+							<li>São também entidades adjudicantes:
+								<ol type="a">
+									<li>Os organismos de direito público, considerando-se como tais quaisquer pessoas coletivas que, independentemente da sua natureza pública ou privada:
+										<ol type="i">
+											<li>Tenham sido criadas especificamente para satisfazer necessidades de interesse geral, sem caráter industrial ou comercial, entendendo-se como tais aquelas cuja atividade económica se não submeta à lógica concorrencial de mercado, designadamente por não terem fins lucrativos ou por não assumirem os prejuízos resultantes da sua atividade; e</li>
+											<li>Sejam maioritariamente financiadas por entidades referidas no número anterior ou por outros organismos de direito público, ou a sua gestão esteja sujeita a controlo por parte dessas entidades, ou tenham órgãos de administração, direção ou fiscalização cujos membros tenham, em mais de metade do seu número, sido designados por essas entidades;</li>
+										</ol>
+									</li>
+									<li>Quaisquer pessoas coletivas que se encontrem na situação referida na alínea anterior relativamente a uma entidade que seja, ela própria, uma entidade adjudicante nos termos do disposto na mesma alínea;</li>
+									<li>(Revogada.)</li>
+									<li>As associações de que façam parte uma ou várias das pessoas coletivas referidas nas alíneas anteriores, desde que sejam maioritariamente financiadas por estas, estejam sujeitas ao seu controlo de gestão ou tenham um órgão de administração, de direção ou de fiscalização cuja maioria dos titulares seja, direta ou indiretamente, designada pelas mesmas.</li>
+								</ol>
+							</li>
+							<li>(Revogado.)</li>
+						</ol>
+							<h6 class="article" id="3">Contraentes públicos</h6>
+						<ol>
+							<li>Para efeitos do presente Código, entende-se por contraentes públicos:
+								<ol type="a">
+									<li>As entidades referidas no <a href="#2">n.º 1 do artigo anterior</a>;</li>
+									<li>As entidades adjudicantes referidas no <a href="#2">n.º 2 do artigo anterior</a> sempre que os contratos por si celebrados sejam, por vontade das partes, qualificados como contratos administrativos ou submetidos a um regime substantivo de direito público.</li>
+								</ol>
+							</li>
+							<li>São também contraentes públicos quaisquer entidades que, independentemente da sua natureza pública ou privada, celebrem contratos no exercício de funções materialmente administrativas.</li>
+						</ol>
+							<h6 class="article" id="4">Contratos excluído</h6>
+						<ol>
+							<li>O presente Código não é aplicável aos contratos celebrados ao abrigo:
+								<ol type="a">
+									<li>De convenção internacional previamente comunicada à Comissão Europeia, e concluída nos termos dos Tratados da União Europeia, entre a República Portuguesa, e um ou mais Estados terceiros, respeitantes a obras, bens ou serviços destinados à realização ou exploração conjunta de um projeto pelos seus signatários;</li>
+									<li>De procedimento específico de uma organização internacional de que a República Portuguesa seja parte;</li>
+									<li>Das regras aplicáveis aos contratos públicos determinadas por uma organização internacional ou instituição financeira internacional, quando os contratos em questão sejam financiados na íntegra por essa organização ou instituição;</li>
+									<li>De instrumentos de cooperação para o desenvolvimento, com uma entidade sediada num dos Estados dele signatários e em benefício desse mesmo Estado, desde que este não seja signatário do Acordo sobre o Espaço Económico Europeu;</li>
+									<li>Do disposto no artigo 346.º do Tratado sobre o Funcionamento da União Europeia;</li>
+									<li>De acordo ou convénio internacional relativo ao estacionamento de tropas e que envolva empresas de um Estado-Membro ou de um país terceiro.</li>
+								</ol>
+							</li>
+							<li>O presente Código não é igualmente aplicável a:
+								<ol type="a">
+									<li>Contratos de trabalho em funções públicas e contratos individuais de trabalho;</li>
+									<li>Contratos de doação de bens móveis a favor de qualquer entidade adjudicante;</li>
+									<li>Contratos de compra e venda, de doação, de permuta e de arrendamento de bens imóveis ou contratos similares;</li>
+									<li>Contratos relativos à aquisição, desenvolvimento, produção ou coprodução de programas destinados a serviços de comunicação social audiovisuais ou radiofónicos, adjudicados por prestadores de serviços de comunicação social audiovisuais ou radiofónicos, e aos contratos de tempo de antena ou de fornecimento de programas a eles adjudicados;</li>
+									<li>Contratos que se destinem à satisfação das necessidades dos serviços periféricos ou de delegações das entidades adjudicantes referidas no artigo 2.º, situadas fora do território nacional e como tal sujeitas ao regime jurídico da lei que se considere aplicável nos termos gerais do direito internacional, exceto quanto a contratos celebrados e executados no território do Espaço Económico Europeu cujo valor seja superior ao referido nas <a href="#474">alíneas a), b) e c) do n.º 3 do artigo 474.º</a>, caso em que se aplica a <a href="#p2">parte ii</a>.</li>
+								</ol>
+							</li>
+						</ol>
+							<h6 class="article" id="5">Contratação excluída</h6>
+						<ol>
+							<li>A <a href="#p2">parte ii</a> não é aplicável à formação de contratos cujo objeto abranja prestações que não estão nem sejam suscetíveis de estar submetidas à concorrência de mercado, designadamente em razão da sua natureza ou das suas características, bem como da posição relativa das partes no contrato ou do contexto da sua formação.</li>
+							<li>O disposto no número anterior abrange, designadamente, os acordos ou outros instrumentos jurídicos que organizem a transferência ou delegação de poderes e responsabilidades pela execução de missões públicas entre entidades adjudicantes ou agrupamentos de entidades adjudicantes, e que não prevejam uma remuneração.</li>
+							<li>(Revogado.)</li>
+							<li>Sem prejuízo do disposto no <a href="#11">n.º 2 do artigo 11.º</a>, a <a href="#p2">parte ii</a> não é igualmente aplicável à formação dos seguintes contratos:
+								<ol type="a">
+									<li>Contratos que devam ser celebrados com uma entidade, que seja ela própria uma entidade adjudicante, em virtude de esta beneficiar de um direito exclusivo de prestar o serviço a adquirir, desde que a atribuição desse direito exclusivo seja compatível com as normas e os princípios constitucionais e comunitários aplicáveis;</li>
+									<li>(Revogada.)</li>
+									<li>Contratos cujo objeto principal consista na atribuição, por qualquer das entidades adjudicantes referidas no <a href="#2">n.º 1 do artigo 2.º</a>, de subsídios ou de subvenções de qualquer natureza;</li>
+									<li>Contratos de sociedade cujo capital social se destine a ser exclusivamente detido pelas entidades adjudicantes referidas no <a href="#2">n.º 1 do artigo 2.º</a>;</li>
+									<li>Contratos de aquisição de serviços financeiros relativos à emissão, compra, venda ou transferência de valores mobiliários ou outros instrumentos financeiros, na aceção da Diretiva n.º 2004/39/CE, do Parlamento Europeu e do Conselho, de 21 de abril de 2004, e respetivos serviços auxiliares, bem como os contratos a celebrar em execução das políticas monetária, cambial ou de gestão de reservas e os de aquisição de serviços de caráter financeiro pelo Banco de Portugal e operações realizadas com o Fundo Europeu de Estabilidade Financeira e com o Mecanismo Europeu de Estabilidade;</li>
+									<li>Contratos de aquisição de serviços financeiros de emissão e gestão de dívida pública e de gestão da tesouraria do Estado;</li>
+									<li>Contratos celebrados entre entidades adjudicantes e centrais de compras públicas para a prestação de serviços de compras centralizadas;</li>
+									<li>Contratos celebrados ao abrigo do disposto no regime jurídico dos contratos públicos no domínio da defesa e da segurança, designadamente do Decreto-Lei n.º 104/2011, de 6 de outubro;</li>
+									<li>Contratos que, nos termos da lei, sejam declarados secretos ou cuja execução deva ser acompanhada de medidas especiais de segurança, bem como quando os interesses essenciais de defesa e segurança do Estado o exigirem;</li>
+									<li>Contratos de aquisição de serviços de investigação e desenvolvimento abrangidos pelos códigos CPV referidos no <a href="#a8">anexo viii ao presente Código</a>, que dele faz parte integrante, desde que se verifiquem cumulativamente as seguintes condições:
+										<ol type="i">
+											<li>Os resultados obtidos com os respetivos serviços não revertam exclusivamente a favor da entidade adjudicante, para utilização no exercício da sua própria atividade;</li>
+											<li>O pagamento dos serviços em causa não seja integralmente suportado pela entidade adjudicante, designadamente por se tratar de projeto cofinanciado por fundos nacionais ou europeus.</li>
+										</ol>
+									</li>
+								</ol>
+							</li>
+							<li>(Revogado.)</li>
+							<li>(Revogado.)</li>
+							<li>(Revogado.)</li>
+							<li>A <a href="#p2">parte ii</a> não é aplicável aos contratos celebrados pelas entidades referidas no <a href="#2">n.º 2 do artigo 2.º</a>, e pelo Banco de Portugal, que não abranjam prestações típicas da empreitada de obras públicas, concessão de obras públicas, concessão de serviços públicos, locação e aquisição de bens móveis ou aquisição de serviços.</li>
+						</ol>
+							<h6 class="articleA" id="5-A">Contratos no âmbito do setor público</h6>
+						<ol>
+							<li>A <a href="#p2">parte ii</a> não é aplicável à formação dos contratos, independentemente do seu objeto, a celebrar por entidades adjudicantes com uma outra entidade, quando se verifiquem, cumulativamente, as seguintes condições:
+								<ol type="a">
+									<li>A entidade adjudicante exerça, direta ou indiretamente, sobre a atividade da outra pessoa coletiva, isoladamente ou em conjunto com outras entidades adjudicantes, um controlo análogo ao que exerce sobre os seus próprios serviços;</li>
+									<li>A entidade controlada desenvolva mais de 80 % da sua atividade no desempenho de funções que lhe foram confiadas pela entidade adjudicante ou entidades adjudicantes que a controlam, ou por outra ou outras entidades controladas por aquela ou aquelas entidades adjudicantes, consoante se trate de controlo isolado ou conjunto;</li>
+									<li>Não haja participação direta de capital privado na pessoa coletiva controlada, com exceção de formas de participação de capital privado sem poderes de controlo e sem bloqueio eventualmente exigidas por disposições especiais, em conformidade com os Tratados da União Europeia, e que não exerçam influência decisiva na pessoa coletiva controlada.</li>
+								</ol>
+							</li>
+							<li>É igualmente aplicável o disposto no número anterior aos contratos adjudicados por uma entidade adjudicante a outras pessoas coletivas controladas pela mesma entidade adjudicante, bem como aos contratos adjudicados por uma entidade adjudicante à entidade adjudicante que a controla.</li>
+							<li>Para efeitos do n.º 1, entende-se que existe controlo análogo isolado quando uma única entidade adjudicante pode exercer uma influência decisiva sobre os objetivos estratégicos e as decisões relevantes da entidade controlada.</li>
+							<li>Para efeitos do n.º 1, entende-se que existe controlo análogo conjunto quando estiverem preenchidas, cumulativamente, as seguintes condições:
+								<ol type="a">
+									<li>Os órgãos de decisão da pessoa coletiva controlada são compostos por representantes de todas as entidades adjudicantes participantes;</li>
+									<li>As entidades adjudicantes podem exercer conjuntamente uma influência decisiva sobre os objetivos estratégicos e as decisões relevantes da pessoa coletiva controlada; e</li>
+									<li>A pessoa coletiva controlada não prossegue quaisquer interesses contrários aos interesses das entidades adjudicantes que a controlam.</li>
+								</ol>
+							</li>
+							<li>A <a href="#p2">parte ii</a> também não é aplicável à formação dos contratos celebrados exclusivamente entre duas ou mais entidades adjudicantes quando se verifiquem, cumulativamente, as seguintes condições:
+								<ol type="a">
+									<li>O contrato estabelece uma cooperação entre as entidades adjudicantes, no âmbito de tarefas públicas que lhes estão atribuídas e que apresentam uma conexão relevante entre si;</li>
+									<li>A cooperação é regida exclusivamente por considerações de interesse público; e</li>
+									<li>As entidades adjudicantes não exercem no mercado livre mais de 20 % das atividades abrangidas pelo contrato de cooperação.</li>
+								</ol>
+							</li>
+							<li>Para efeitos do apuramento das percentagens previstas na alínea b) do n.º 1 e na alínea c) do número anterior, deve ser tido em conta o volume médio total de negócios, ou uma medida alternativa adequada, baseada na atividade, tais como os custos suportados pela pessoa coletiva em causa no que diz respeito a serviços, fornecimentos ou obras, nos três anos anteriores ou, quando não tenha três anos de atividade concluídos, a projeção de atividades a desenvolver.</li>
+						</ol>
+							<h6 class="articleA" id="5-B">Regime da contratação excluída</h6>
+						<ol>
+							<li>A celebração dos contratos a que se referem os artigos <a href="#5">5.º</a> e <a href="#5-A">5.º-A</a> fica sujeita aos princípios gerais da atividade administrativa, bem como, com as devidas adaptações face à natureza do contrato, aos princípios gerais da contratação pública previstos no <a href="#1-A">n.º 1 do artigo 1.º-A</a>, devendo sempre ser feita menção à norma que fundamenta a não aplicação da <a href="#p2">parte ii</a> ao contrato em causa.</li>
+							<li>Os contratos com objeto passível de ato administrativo e demais contratos sobre o exercício de poderes públicos ficam sujeitos às normas constantes do Código do Procedimento Administrativo, com as necessárias adaptações.</li>
+						</ol>
+							<h6 class="article" id="6">(Revogado.)</h6>
+							<h6 class="articleA" id="6-A">Contratos de serviços sociais e de outros serviços específicos</h6>
+						<ol>
+							<li>A <a href="#p2">parte ii</a> não é aplicável à formação dos contratos públicos que tenham por objeto a aquisição de serviços sociais e de outros serviços específicos referidos no <a href="#a9">anexo ix ao presente Código</a>, que dele faz parte integrante, salvo quando o valor de cada contrato for superior ao limiar previsto na <a href="#474">alínea d) do n.º 3 do artigo 474.º</a>, caso em que se aplica o disposto nos <a href="#250">artigos 250.º-A e seguintes</a>.</li>
+							<li>À celebração dos contratos referidos no número anterior são aplicáveis, com as devidas adaptações, os princípios gerais da contratação pública previstos no <a href="#1-A">artigo 1.º-A</a>.</li>
+						</ol>
+							<h6 class="articleA" id="6-B">Acordo sobre Contratos Públicos da Organização Mundial do Comércio</h6>
+						<ol>
+							<li class="nostyle">Nos domínios abrangidos pelos anexos 1, 2, 4 e 5 pelas Notas Gerais do Apêndice 1 da União Europeia ao Acordo sobre Contratos Públicos da Organização Mundial do Comércio e pelos outros acordos internacionais a que a União Europeia se encontra vinculada, as entidades adjudicantes abrangidas pelo presente Código devem conceder aos operadores económicos dos Estados signatários desses acordos um tratamento idêntico ao concedido pelas entidades adjudicantes desses Estados aos operadores económicos da União Europeia.</li>
+						</ol>
+			<h3 class="title" id="p1t2">Setores da água, da energia, dos transportes e dos serviços postais</h3>
+							<h6 class="article" id="7">Entidades adjudicantes nos setores da água, da energia, dos transportes e dos serviços postais</h6>
+						<ol>
+							<li>São ainda entidades adjudicantes:
+								<ol type="a">
+									<li>Quaisquer pessoas coletivas não abrangidas pelo <a href="#2">artigo 2.º</a>, ainda que criadas especificamente para satisfazer necessidades de interesse geral, com carácter industrial ou comercial, que exerçam uma ou várias atividades nos setores da água, da energia, dos transportes e dos serviços postais e em relação às quais qualquer das entidades adjudicantes referidas no <a href="#2">artigo 2.º</a> possa exercer, direta ou indiretamente, uma influência dominante;</li>
+									<li>Quaisquer pessoas coletivas não abrangidas pelo <a href="#2">artigo 2.º</a> que gozem de direitos especiais ou exclusivos não atribuídos no âmbito de um procedimento de formação de contrato com publicidade internacional e que tenham por efeito:
+										<ol type="i">
+											<li>Reservar-lhes, isolada ou conjuntamente com outras entidades, o exercício de uma ou várias atividades nos setores da água, da energia, dos transportes e dos serviços postais; e</li>
+											<li>Afetar substancialmente a capacidade de quaisquer outras entidades exercerem uma ou várias dessas atividades;</li>
+										</ol>
+									</li>
+									<li>Quaisquer pessoas coletivas constituídas exclusivamente por entidades adjudicantes referidas nas alíneas anteriores ou que sejam por elas maioritariamente financiadas, estejam sujeitas ao seu controlo de gestão ou tenham um órgão de administração, de direção ou de fiscalização cuja maioria dos titulares seja, direta ou indiretamente, designada por aquelas entidades, desde que se destinem ao exercício em comum de atividade nos setores da água, da energia, dos transportes e dos serviços postais.</li>
+								</ol>
+							</li>
+							<li>Para os efeitos do disposto na alínea a) do número anterior, considera-se que uma entidade adjudicante pode exercer influência dominante quando detiver, nomeadamente, a maioria do capital social, a maioria dos direitos de voto, o controlo de gestão ou o direito de designar, direta ou indiretamente, a maioria dos titulares de um órgão de administração, de direção ou de fiscalização.</li>
+						</ol>
+							<h6 class="article" id="8">Contraentes públicos nos setores da água, da energia, dos transportes e dos serviços postais</h6>
+							<h6 class="article" id="9">Atividades nos setores da água, da energia, dos transportes e dos serviços postais</h6>
+							<h6 class="article" id="10">Atividades excecionadas nos setores da água, da energia e dos transportes</h6>
+							<h6 class="article" id="11">Âmbito da contratação nos setores da água, da energia, dos transportes e dos serviços postais</h6>
+							<h6 class="article" id="12">Extensão do âmbito da contratação nos setores da água, da energia, dos transportes e dos serviços postais</h6>
+							<h6 class="article" id="13">Restrição do âmbito da contratação nos setores da água, da energia, dos transportes e dos serviços postais</h6>
+							<h6 class="article" id="14">Empresa associada</h6>
+							<h6 class="article" id="15">Comunicações à Comissão Europeia</h6>
+		<h2 class="part" id="p2">Contratação pública</h2>
+			<h3 class="title" id="p2t1">Tipos e escolha de procedimentos</h3>
+				<h4 class="chapter" id="p2t1c1">Tipos de procedimentos</h4>
+							<h6 class="article" id="16">Procedimentos para a formação de contratos</h6>
+								<ol>
+									<li>Para a formação de contratos cujo objeto abranja prestações que estão ou sejam suscetíveis de estar submetidas à concorrência de mercado, as entidades adjudicantes devem adotar um dos seguintes tipos de procedimentos:
+										<ol type="a">
+											<li>Ajuste direto;</li>
+											<li>Consulta prévia;</li>
+											<li>Concurso público;</li>
+											<li>Concurso limitado por prévia qualificação;</li>
+											<li>Procedimento de negociação;</li>
+											<li>Diálogo concorrencial;</li>
+											<li>Parceria para a inovação.</li>
+										</ol>
+									</li>
+									<li>Para os efeitos do disposto no número anterior, consideram-se submetidas à concorrência de mercado, designadamente, as prestações típicas abrangidas pelo objeto dos seguintes contratos, independentemente da sua designação ou natureza:
+										<ol>
+											<li>Empreitada de obras públicas;</li>
+											<li>Concessão de obras públicas;</li>
+											<li>Concessão de serviços públicos;</li>
+											<li>Locação ou aquisição de bens móveis;</li>
+											<li>Aquisição de serviços;</li>
+											<li>Sociedade.</li>
+										</ol>
+									</li>
+								</ol>
+				<h4 class="chapter" id="p2t1c2">Escolha do procedimento e valor do contrato</h4>
+							<h6 class="article" id="17">Valor do contrato</h6>
+								<ol>
+									<li>Para efeitos do presente Código, o valor do contrato a celebrar é o valor máximo do benefício económico que, em função do procedimento adotado, pode ser obtido pelo adjudicatário com a execução de todas as prestações que constituem o seu objeto.</li>
+									<li>O benefício económico referido no número anterior inclui, além do preço a pagar pela entidade adjudicante ou por terceiros, o valor de quaisquer contraprestações a efetuar em favor do adjudicatário e ainda o valor das vantagens que decorram diretamente para este da execução do contrato e que possam ser configuradas como contrapartidas das prestações que lhe incumbem.</li>
+									<li>No caso de contratos de empreitada de obras públicas, o cálculo do valor do contrato inclui o custo da obra e o valor total dos bens móveis e serviços que são postos à disposição do adjudicatário pela entidade adjudicante.</li>
+									<li>Nos acordos-quadro e nos sistemas de aquisição dinâmicos, o valor a tomar em consideração é o valor máximo de todos os contratos previstos ao seu abrigo durante a vigência do acordo-quadro ou do sistema de aquisição dinâmico.</li>
+									<li>No caso das parcerias para a inovação, o valor a tomar em consideração é o valor das atividades de investigação e desenvolvimento que tenham lugar em todas as etapas da parceria prevista, bem como dos bens, dos serviços ou das obras a serem desenvolvidos e adquiridos no final da parceria.</li>
+									<li>Quando a entidade adjudicante for organizada por unidades orgânicas, na definição do valor do contrato deve ser tido em conta o valor total referente a todas elas, salvo se forem independentemente responsáveis pelas suas aquisições, nomeadamente por se tratar de serviços periféricos ou municipalizados.</li>
+									<li>A fixação do valor estimado do contrato deve ser fundamentada com base em critérios objetivos, utilizando, como referência preferencial, os custos médios unitários de prestações do mesmo tipo adjudicadas em anteriores procedimentos promovidos pela entidade adjudicante.</li>
+									<li>O valor do contrato não pode ser fracionado com o intuito de o excluir do cumprimento de quaisquer exigências legais, designadamente, das constantes do presente Código.</li>
+									<li>Caso não se verifique qualquer das situações referidas nos números anteriores considera-se o contrato sem valor.</li>
+								</ol>
+							<h6 class="article" id="18">Escolha do procedimento</h6>
+								<ol>
+									<li class="nostyle">Sem prejuízo do disposto nos capítulos <a href="#p2t1c3">iii</a> e <a href="#p2t1c4">iv</a> do presente título, a escolha dos procedimentos de ajuste direto, de consulta prévia, de concurso público ou de concurso limitado por prévia qualificação deve ser feita tendo por base o valor do contrato a celebrar, nos termos do disposto nos artigos seguintes do presente capítulo.</li>
+								</ol>
+							<h6 class="article" id="19">Escolha do procedimento de formação de contratos de empreitada de obras públicas</h6>
+							<h6 class="article" id="20">Escolha do procedimento de formação de contratos de locação ou de aquisição de bens móveis e de aquisição de serviços</h6>
+								<ol>
+									<li>Para a celebração de contratos de locação ou de aquisição de bens móveis e de aquisição de serviços, pode adotar-se um dos seguintes procedimentos:
+										<ol type="a">
+											<li>Concurso público ou concurso limitado por prévia qualificação, com publicação de anúncio no Jornal Oficial da União Europeia, qualquer que seja o valor do contrato;</li>
+											<li>Concurso público ou concurso limitado por prévia qualificação, sem publicação de anúncio no Jornal Oficial da União Europeia, quando o valor do contrato seja inferior ao limiares referidos nas <a href="#474">alíneas b), c) ou d) do n.º 3 do artigo 474.º</a>, consoante o caso;</li>
+											<li>Consulta prévia, com convite a pelo menos três entidades, quando o valor do contrato seja inferior a (euro) 75&nbsp;000;</li>
+											<li>Ajuste direto, quando o valor do contrato for inferior a (euro) 20&nbsp;000.</li>
+										</ol>
+									</li>
+									<li>(Revogado.)</li>
+									<li>(Revogado.)</li>
+									<li>(Revogado.)</li>
+								</ol>
+							<h6 class="article" id="21">Escolha do procedimento de formação de outros contratos</h6>
+								<ol>
+									<li>No caso de contratos distintos dos previstos nos artigos anteriores, que não configurem contratos de concessão de obras públicas ou de concessão de serviços públicos, ou contratos de sociedade, pode adotar-se o seguinte procedimento:
+										<ol type="a">
+											<li>Concurso público, concurso limitado por prévia qualificação, procedimento de negociação, diálogo concorrencial ou parceria para a inovação, sem publicação de anúncio no Jornal Oficial da União Europeia, qualquer que seja o valor do contrato;</li>
+											<li>Consulta prévia, com convite a, pelo menos, três entidades, quando o valor do contrato seja inferior a (euro) 100 000;</li>
+											<li>Ajuste direto, quando o valor do contrato seja inferior a (euro) 50 000.</li>
+										</ol>
+									</li>
+									<li>Para a formação de contratos sem valor, exceto se se tratar de um dos contratos mencionados no número anterior, pode ser adotado qualquer um dos procedimentos nele referidos.</li>
+								</ol>
+							<h6 class="article" id="22">Contratação de prestações do mesmo tipo em diferentes procedimentos</h6>
+								<ol>
+									<li>Quando prestações do mesmo tipo, suscetíveis de constituírem objeto de um único contrato, sejam contratadas através de mais do que um procedimento, a escolha do procedimento a adotar deve ser efetuada tendo em conta:
+										<ol type="a">
+											<li>O somatório dos valores dos vários procedimentos, caso a formação de todos os contratos a celebrar ocorra em simultâneo; ou</li>
+											<li>O somatório dos preços contratuais relativos a todos os contratos já celebrados e do valor de todos os procedimentos ainda em curso, quando a formação desses contratos ocorra ao longo do período de um ano, desde que a entidade adjudicante, aquando do lançamento do primeiro procedimento, devesse ter previsto a necessidade de lançamento dos procedimentos subsequentes.</li>
+										</ol>
+									</li>
+									<li>As entidades adjudicantes ficam dispensadas do disposto no número anterior relativamente a procedimentos de bens e serviços cujo valor seja inferior a (euro) 80 000, ou a empreitadas de obras públicas cujo valor seja inferior a (euro) 1 000 000, desde que o valor do conjunto dos procedimentos não exceda 20 % deste limite.</li>
+									<li>(Revogado.)</li>
+								</ol>
+				<h4 class="chapter" id="p2t1c3">Escolha do procedimento em função de critérios materiais</h4>
+							<h6 class="article" id="23">Regra geral</h6>
+								<ol>
+									<li class="nostyle">A escolha do procedimento nos termos do disposto no presente capítulo permite a celebração de contratos de qualquer valor, sem prejuízo das exceções expressamente previstas.</li>
+								</ol>
+							<h6 class="article" id="24">Escolha do ajuste direto para a formação de quaisquer contratos</h6>
+								<ol>
+									<li>Qualquer que seja o objeto do contrato a celebrar, pode adotar-se o ajuste direto quando:
+										<ol type="a">
+											<li>Em anterior concurso público ou concurso limitado por prévia qualificação, nenhum candidato se haja apresentado ou nenhum concorrente haja apresentado proposta, e desde que o caderno de encargos e, se for o caso, os requisitos mínimos de capacidade técnica e financeira não sejam substancialmente alterados em relação aos daquele concurso;</li>
+											<li>Em anterior concurso público, concurso limitado por prévia qualificação ou diálogo concorrencial, todas as propostas apresentadas tenham sido excluídas, e desde que o caderno de encargos não seja substancialmente alterado em relação ao daquele procedimento;</li>
+											<li>Na medida do estritamente necessário e por motivos de urgência imperiosa resultante de acontecimentos imprevisíveis pela a entidade adjudicante, não possam ser cumpridos os prazos inerentes aos demais procedimentos, e desde que as circunstâncias invocadas não sejam, em caso algum, imputáveis à entidade adjudicante;</li>
+											<li>As prestações que constituem o seu objeto se destinem, a título principal, a permitir à entidade adjudicante a prestação ao público de um ou mais serviços de telecomunicações;</li>
+											<li>As prestações que constituem o objeto do contrato só possam ser confiadas a determinada entidade por uma das seguintes razões:
+												<ol type="i">
+													<li>O objeto do procedimento seja a criação ou aquisição de uma obra de arte ou de um espetáculo artístico;</li>
+													<li>Não exista concorrência por motivos técnicos;</li>
+													<li>Seja necessário proteger direitos exclusivos, incluindo direitos de propriedade intelectual;</li>
+												</ol>
+											</li>
+											<li>(Revogada.)</li>
+										</ol>
+									</li>
+									<li>Quando todas as propostas tenham sido excluídas com fundamento no <a href="#70">n.º 2 do artigo 70.º</a>, a adoção do ajuste direto ao abrigo do disposto na alínea b) do número anterior só permite a celebração de contratos de valor inferior ao:
+										<ol type="a">
+											<li>Referido na <a href="#19">alínea b) do artigo 19.º</a>, no caso de se tratar de um contrato de empreitada de obras públicas;</li>
+											<li>Referido na <a href="#20">alínea b) do n.º 1 do artigo 20.º</a>, no caso de se tratar de um contrato de locação ou de aquisição de bens móveis ou de um contrato de aquisição de serviços;</li>
+											<li>(Revogada.)</li>
+										</ol>
+									</li>
+									<li>No caso previsto no número anterior, a adoção do ajuste direto só permite a celebração de contratos de valor igual ou superior aos referidos nas alíneas do mesmo número, desde que o anúncio do procedimento anterior tenha sido publicado no Jornal Oficial da União Europeia e sejam convidados a apresentar proposta todos, e apenas, os concorrentes cujas propostas tenham sido excluídas apenas com fundamento no <a href="#70">n.º 2 do artigo 70.º</a></li>
+									<li>O ajuste direto com fundamento no disposto nas subalíneas ii) e iii) da alínea e) do n.º 1 só pode ser adotado quando não exista alternativa ou substituto razoável e quando a inexistência de concorrência não resulte de uma restrição desnecessária face aos aspetos do contrato a celebrar.</li>
+									<li>Para a formação de contratos que digam direta e principalmente respeito a uma ou a várias das atividades exercidas nos setores da água, da energia, dos transportes e dos serviços postais pelas entidades adjudicantes referidas no n.º 1 do artigo 7.º, o ajuste direto só pode ser adotado ao abrigo do disposto na alínea b) do n.º 1 do presente artigo, desde que as propostas tenham sido excluídas com fundamento diferente dos previstos no <a href="#70">n.º 2 do artigo 70.º</a></li>
+									<li>Para a formação dos contratos a que se refere o número anterior e sem prejuízo do que nele se dispõe, também pode ser adotado o ajuste direto quando as situações previstas nas alíneas a) e b) do n.º 1 tenham ocorrido em anterior procedimento de negociação.</li>
+									<li>A decisão de escolha do ajuste direto ao abrigo do disposto nas alíneas a) e b) do n.º 1 e no número anterior só pode ser tomada no prazo de seis meses a contar:
+										<ol type="a">
+											<li>Do termo do prazo fixado para a apresentação de candidaturas ou propostas, no caso previsto na alínea a) do n.º 1;</li>
+											<li>Da decisão de exclusão de todas as propostas apresentadas, no caso previsto na alínea b) do n.º 1.</li>
+										</ol>
+									</li>
+									<li>A decisão de escolha do ajuste direto tomada nos termos do disposto no número anterior caduca se o convite à apresentação de proposta não for formulado nos prazos previstos nas alíneas a) e b) do número anterior, consoante o caso.</li>
+									<li>Para efeitos do disposto nas alíneas a) e b) do n.º 1, considera-se que o caderno de encargos e os requisitos mínimos de capacidade técnica e financeira são substancialmente alterados quando as alterações sejam suscetíveis de impedir a verificação das situações previstas nessas alíneas, nomeadamente quando sejam modificados os parâmetros base fixados no caderno de encargos.</li>
+									<li>As entidades adjudicantes devem comunicar à Comissão Europeia, a pedido desta, um relatório relativo aos contratos celebrados ao abrigo do disposto na alínea a) do n.º 1.</li>
+								</ol>
+							<h6 class="article" id="25">Escolha do ajuste direto para a formação de contratos de empreitada de obras públicas</h6>
+							<h6 class="article" id="26">Escolha do ajuste direto para a formação de contratos de locação ou de aquisição de bens móveis</h6>
+								<ol>
+									<li>Sem prejuízo do disposto no <a href="#24">artigo 24.º</a>, no caso de contratos de locação ou de aquisição de bens móveis, pode adotar-se o ajuste direto quando:
+										<ol type="a">
+											<li>Se trate de bens destinados à substituição parcial ou à ampliação de bens ou equipamentos de específico uso corrente da entidade adjudicante, desde que o contrato a celebrar o seja com a entidade com a qual foi celebrado o contrato inicial de locação ou de aquisição de bens e a mudança de fornecedor obrigasse a entidade adjudicante a adquirir material de características técnicas diferentes, originando incompatibilidades ou dificuldades técnicas de utilização e manutenção desproporcionadas;</li>
+											<li>Se trate de bens produzidos ou a produzir para fins de investigação, de experimentação, de estudo ou desenvolvimento, desde que tais bens não sejam produzidos com finalidade comercial, ou com vista a amortizar o custo dessas atividades, e o valor estimado do contrato seja inferior aos limiares estabelecidos nas <a href="#474">alíneas b) e c) do n.º 3 do artigo 474.º</a>;</li>
+											<li>Se trate de adquirir bens cotados e adquiridos num mercado de matérias-primas;</li>
+											<li>Se trate de adquirir bens, em condições especialmente mais vantajosas do que as normalmente existentes no mercado, a entidades que cessem definitivamente a sua atividade comercial, a curadores, liquidatários, administradores de insolvência ou ainda no âmbito de acordo judicial ou procedimento da mesma natureza previsto na legislação aplicável;</li>
+											<li>Se trate de locar ou adquirir bens ao abrigo de um acordo-quadro celebrado nos termos do disposto na <a href="#252">alínea a) do n.º 1 do artigo 252.º</a>;</li>
+											<li>Se trate de adquirir água ou energia, desde que a entidade adjudicante exerça a atividade de colocação à disposição, de exploração ou de alimentação de redes fixas de prestação de serviços ao público no domínio da produção, do transporte ou da distribuição de, respetivamente, água potável ou eletricidade, gás ou combustível para aquecimento.</li>
+										</ol>
+									</li>
+									<li>Sem prejuízo do disposto no <a href="#24">artigo 24.º</a>, para a formação de contratos que digam direta e principalmente respeito a uma ou a várias das atividades exercidas nos setores da água, da energia, dos transportes e dos serviços postais pelas entidades adjudicantes referidas no <a href="#7">n.º 1 do artigo 7.º</a>, o ajuste direto também pode ser adotado quando:
+										<ol type="a">
+											<li>Se trate de adquirir bens destinados a revenda ou a locação a terceiros, diretamente ou através da sua incorporação noutros bens móveis:
+												<ol type="i">
+													<li>A entidade adjudicante não goze de direitos especiais ou exclusivos para a revenda ou a locação daqueles bens; e</li>
+													<li>Outras entidades possam revender ou locar livremente bens do mesmo tipo em condições idênticas às das que goza a entidade adjudicante;</li>
+												</ol>
+											</li>
+											<li>Se trate de adquirir bens que se encontram disponíveis no mercado por um período de tempo muito curto e cujo preço seja consideravelmente inferior aos preços normalmente praticados no mercado.</li>
+										</ol>
+									</li>
+									<li>As entidades adjudicantes devem comunicar à Comissão Europeia, a pedido desta, as categorias de bens objeto dos contratos celebrados na sequência de ajuste direto adotado ao abrigo do disposto na alínea a) do número anterior.									</li>
+								</ol>
+							<h6 class="article" id="27">Escolha do ajuste direto para a formação de contratos de aquisição de serviços</h6>
+								<ol>
+									<li>Sem prejuízo do disposto no <a href="#24">artigo 24.º</a>, no caso de contratos de aquisição de serviços, pode adotar-se o ajuste direto quando:
+										<ol type="a">
+											<li>Se trate de novos serviços que consistam na repetição de serviços similares que tenham sido objeto de contrato anteriormente celebrado pela mesma entidade adjudicante com o mesmo adjudicatário, desde que, de forma cumulativa:
+												<ol type="i">
+													<li>Esses serviços estejam em conformidade com um projeto base comum;</li>
+													<li>Aquele contrato tenha sido celebrado, há menos de três anos, na sequência de concurso público, de concurso limitado por prévia qualificação, de procedimento de negociação, de diálogo concorrencial ou de parceria para a inovação;</li>
+													<li>O anúncio do procedimento tenha sido publicado no Jornal Oficial da União Europeia, no caso de o somatório do valor estimado do contrato e do preço contratual relativo ao contrato inicial ser igual ou superior ao valor referido, consoante os casos, nas <a href="#474">alíneas b) ou c) do n.º 3 do artigo 474.º</a>; e</li>
+													<li>A possibilidade de adoção do ajuste direto tenha sido indicada no anúncio ou no programa do concurso;</li>
+												</ol>
+											</li>
+											<li>A natureza das respetivas prestações, nomeadamente as inerentes a serviços de natureza intelectual, não permita a elaboração de especificações contratuais suficientemente precisas para que sejam definidos os atributos qualitativos das propostas necessários à fixação de um critério de adjudicação, nos termos do disposto no <a href="#74">artigo 74.º</a>, e desde que a definição quantitativa dos atributos das propostas, no âmbito de outros tipos de procedimento, seja desadequada a essa fixação tendo em conta os objetivos da aquisição pretendida;</li>
+											<li>Se trate de serviços relativos à aquisição ou à locação, independentemente da respetiva modalidade financeira, de quaisquer bens imóveis, ou a direitos sobre esses bens, salvo os contratos de prestação de serviços financeiros celebrados simultânea, prévia ou posteriormente ao contrato de aquisição ou de locação, seja qual for a sua forma;</li>
+											<li>Se trate de serviços de arbitragem, conciliação ou mediação;</li>
+											<li>Se trate de serviços de investigação e desenvolvimento não abrangidos pela <a href="#5">alínea j) do n.º 4 do artigo 5.º</a>, desde que o valor estimado do contrato seja inferior aos limiares estabelecidos nas <a href="#474">alíneas b) e c) do n.º 3 do artigo 474.º</a>;</li>
+											<li>(Revogada.)</li>
+											<li>Se trate de contrato que, na sequência de um concurso de conceção, deva ser celebrado com o concorrente selecionado ou com um dos concorrentes selecionados nesse concurso, desde que tal intenção tenha sido manifestada nos respetivos termos de referência e de acordo com as regras neles estabelecidas;</li>
+											<li>Se trate de adquirir serviços ao abrigo de um acordo-quadro, nos termos do disposto na <a href="#252">alínea a) do n.º 1 do artigo 252.º</a>;</li>
+											<li>Se trate de adquirir serviços, em condições especialmente mais vantajosas do que as normalmente existentes no mercado, a entidades que cessem definitivamente a sua atividade comercial, a curadores, liquidatários, administradores de insolvência ou ainda no âmbito de acordo judicial ou procedimento da mesma natureza previsto na legislação aplicável.</li>
+										</ol>
+									</li>
+									<li>(Revogado.)</li>
+									<li>Só pode ser adotado o ajuste direto ao abrigo do disposto na alínea b) do n.º 1 quando o respetivo preço base seja inferior aos valores resultantes da aplicação da <a href="#20">alínea b) do n.º 1 do artigo 20.º</a></li>
+									<li>Não pode ser adotado o ajuste direto ao abrigo do disposto na alínea b) do n.º 1 quando o serviço a adquirir consista na elaboração de um plano, de um projeto ou de uma qualquer criação conceptual nos domínios artístico, do ordenamento do território, do planeamento urbanístico, da arquitetura, da engenharia ou do processamento de dados.</li>
+									<li>A decisão de escolha do ajuste direto ao abrigo do disposto na alínea g) do n.º 1 só pode ser tomada no prazo de um ano a contar da decisão de adjudicação tomada no concurso de conceção, devendo o convite à apresentação de proposta ser enviado dentro do mesmo prazo, sob pena de caducidade daquela decisão.</li>
+									<li>A entidade adjudicante deve indemnizar os concorrentes pelos encargos em que comprovadamente incorreram com a elaboração das respetivas propostas apresentadas no concurso de conceção quando a decisão de escolha do ajuste direto, ao abrigo do disposto na alínea g) do n.º 1, tenha caducado ou não tenha sido tomada no prazo previsto no número anterior.</li>
+									<li>(Revogado.)</li>
+								</ol>
+							<h6 class="articleA" id="27-A">Consulta prévia</h6>
+								<ol>
+									<li class="nostyle">Nas situações previstas nos artigos <a href="#24">24.º</a> a <a href="#27">27.º</a>, deve adotar-se o procedimento de consulta prévia sempre que o recurso a mais de uma entidade seja possível e compatível com o fundamento invocado para a adoção deste procedimento.</li>
+								</ol>
+							<h6 class="article" id="28">Escolha de concurso sem publicação de anúncio no Jornal Oficial da União Europeia</h6>
+								<ol>
+									<li class="nostyle">Escolha de concurso sem publicação de anúncio no Jornal Oficial da União Europeia</li>
+									<li class="nostyle">Pode adotar-se o concurso público ou o concurso limitado por prévia qualificação, sem publicação do respetivo anúncio no Jornal Oficial da União Europeia, nos casos em que pode ser adotado o ajuste direto ao abrigo do disposto nos artigos anteriores do presente capítulo, com exceção daqueles em que só seja possível convidar uma entidade e do caso previsto na alínea b) do n.º 1 do artigo anterior.</li>
+								</ol>
+							<h6 class="article" id="29">Escolha do procedimento de negociação e do diálogo concorrencial</h6>
+							<h6 class="article" id="30">(Revogado.)</h6>
+							<h6 class="articleA" id="30-A">Escolha da parceria para a inovação</h6>
+				<h4 class="chapter" id="p2t1c4">Outras regras de escolha do procedimento</h4>
+							<h6 class="article" id="31">Escolha do procedimento em função do tipo de contrato</h6>
+								<ol>
+									<li>Sem prejuízo do disposto nos artigos <a href="#24">24.º</a> e <a href="#30-A">30.º-A</a>, para a formação de contratos de concessão de obras públicas e de serviços públicos, bem como de contratos de sociedade, deve ser adotado, em alternativa, o concurso público, o concurso limitado por prévia qualificação, o procedimento de negociação ou o diálogo concorrencial.</li>
+									<li>O disposto no número anterior é também aplicável quando os contratos nele referidos não impliquem o pagamento de um preço pela entidade adjudicante ou sejam contratos sem valor.</li>
+									<li>Quando razões de interesse público relevante o justifiquem, pode adotar-se o ajuste direto para a formação de contratos de sociedade.</li>
+									<li>Caso o valor do contrato de concessão de obra ou serviço público seja inferior a (euro) 75 000 e a sua duração seja inferior a um ano, podem ser utilizados os procedimentos de consulta prévia ou ajuste direto.</li>
+								</ol>
+							<h6 class="article" id="32">Escolha do procedimento para a formação de contratos mistos</h6>
+								<ol>
+									<li>Só é permitida a celebração de contratos mistos se as prestações a abranger pelo respetivo objeto forem técnica ou funcionalmente incindíveis ou, não o sendo, se a sua separação causar graves inconvenientes para a entidade adjudicante.</li>
+									<li>Na formação de contrato misto cujo objeto abranja simultaneamente prestações típicas de mais do que um tipo de contrato, aplica-se, em matéria de escolha do procedimento, o regime previsto para o tipo contratual que caracteriza o objeto principal do mesmo, atendendo, designadamente, a elementos tais como o valor estimado do contrato ou as suas prestações essenciais.</li>
+									<li>Quando for possível identificar separadamente as diferentes partes de um determinado contrato, o seu objeto principal é determinado em função do valor estimado mais elevado.</li>
+									<li>Quando o contrato for composto por prestações típicas pertencentes a um ou mais contratos abrangidos, e a um ou mais contratos não abrangidos, pela parte ii, aplica-se a todo o contrato o regime correspondente da parte ii, relevando para o efeito o valor total do contrato.</li>
+									<li>Se um dos tipos contratuais em causa na situação do número anterior for abrangido pelo regime do Decreto-Lei n.º 104/2011, de 6 de outubro, à formação do contrato é aplicável esse regime.</li>
+									<li>Sem prejuízo do disposto nos n.<sup>os</sup> 1 a 4, a formação do contrato misto está sujeita ao cumprimento dos trâmites procedimentais e outros requisitos legais específicos, devidamente conjugados, aplicáveis aos vários tipos contratuais abrangidos pelo contrato.</li>
+									<li>(Revogado.)</li>
+									<li>(Revogado.)</li>
+									<li>(Revogado.)</li>
+								</ol>
+							<h6 class="article" id="33">Escolha do procedimento em função da entidade adjudicante</h6>
+								<ol>
+									<li>Sem prejuízo do disposto nos artigos <a href="#24">24.º</a> a <a href="#27">27.º</a>, para a formação de contratos que digam direta e principalmente respeito a uma ou a várias das atividades exercidas nos setores da água, da energia, dos transportes e dos serviços postais pelas entidades adjudicantes referidas no <a href="#7">n.º 1 do artigo 7.º</a>, estas entidades devem adotar, em alternativa, o concurso público, o concurso limitado por prévia qualificação, o procedimento de negociação, o diálogo concorrencial, ou ainda, se cumpridos os pressupostos previstos no <a href="#30-A">artigo 30.º-A</a>, a parceria para a inovação.</li>
+									<li>(Revogado.)</li>
+									<li>Ainda que os contratos a celebrar não digam apenas respeito a uma ou a várias das atividades por elas exercidas nos setores da água, da energia, dos transportes e dos serviços postais, o disposto no n.º 1 é sempre aplicável às entidades adjudicantes referidas no <a href="#7">n.º 1 do artigo 7.º</a>, desde que não seja possível determinar a que atividade tais contratos dizem principalmente respeito.</li>
+									<li>O disposto no n.º 1 não é aplicável às entidades adjudicantes referidas no <a href="#2">n.º 2 do artigo 2.º</a> quando os contratos a celebrar não digam apenas respeito a uma ou a várias das atividades por elas exercidas nos setores da água, da energia, dos transportes e dos serviços postais e não seja possível determinar a que atividade tais contratos dizem principalmente respeito.</li>
+								</ol>
+			<h3 class="title" id="p2t2">Fase de formação do contrato</h3>
+				<h4 class="chapter" id="p2t2c1">Preparação do procedimento</h4>
+							<h6 class="article" id="34">Anúncio de pré-informação</h6>
+								<ol>
+									<li>As entidades adjudicantes referidas no <a href="#2">artigo 2.º</a> enviam para publicação no Jornal Oficial da União Europeia um anúncio de pré-informação, nos termos do n.º 1 do artigo 48.º da Diretiva n.º 2014/24/UE, do Parlamento Europeu e do Conselho, de 26 de fevereiro de 2014, no qual indicam:
+										<ol type="a">
+											<li>No caso de contratos de locação ou de aquisição de bens móveis ou de contratos de aquisição de serviços, o preço contratual estimado de todos os contratos a celebrar durante os 12 meses seguintes e cujo preço seja igual ou superior ao limiar aplicável nos termos do <a href="#474">artigo 474.º</a>;</li>
+											<li>No caso de contratos de empreitada ou concessão de obras públicas ou concessão de serviço público, as respetivas características essenciais, quando o preço ou valor contratual estimado de todos os contratos a celebrar durante os 12 meses seguintes seja igual ou superior ao limiar aplicável nos termos do <a href="#474">artigo 474.º</a></li>
+										</ol>
+									</li>
+									<li>As entidades adjudicantes referidas no <a href="#2">artigo 2.º</a> podem enviar para publicação no Jornal Oficial da União Europeia um anúncio de pré-informação, nos termos dos n.<sup>os</sup> 2 e 3 do artigo 31.º da Diretiva n.º 2014/23/UE, do Parlamento Europeu e do Conselho, de 26 de fevereiro de 2014, quando se trate de concessão de serviços sociais ou outros serviços específicos enumerados no anexo iv daquela diretiva.</li>
+									<li>O período abrangido pelo anúncio de pré-informação não pode ser superior a 12 meses a contar da data em que o anúncio é enviado para publicação, exceto no caso dos contratos de serviços sociais e outros serviços específicos, em que o referido período pode ser superior a 12 meses.</li>
+									<li>Os preços contratuais estimados de todos os contratos a celebrar previstos nos n.<sup>os</sup> 1 e 2 incluem o valor estimado dos acordos-quadro que as entidades adjudicantes estejam dispostas a celebrar naquele período e cujo objeto abranja prestações típicas dos contratos referidos no n.º 1.</li>
+									<li>O preço contratual estimado de todos os contratos a celebrar para cuja formação as entidades adjudicantes adotem os procedimentos de consulta prévia ou ajuste direto em função de critérios materiais não é contabilizado para efeitos do preço contratual estimado de todos os contratos a celebrar previsto no n.º 1.</li>
+									<li>Os anúncios de pré-informação relativos aos contratos referidos na alínea a) do n.º 1 são enviados imediatamente após o início de cada exercício orçamental.</li>
+									<li>Os anúncios de pré-informação relativos aos contratos referidos na alínea b) do n.º 1 são enviados imediatamente após a aprovação do plano de atividades em que se inserem.</li>
+									<li>O cálculo dos preços contratuais estimados referidos nos n.<sup>os</sup> 1 a 3 deve ser efetuado de acordo com as regras previstas no artigo 5.º da Diretiva n.º 2014/24/UE, do Parlamento Europeu e do Conselho, de 26 de fevereiro de 2014.</li>
+								</ol>
+							<h6 class="article" id="35">Anúncio periódico indicativo</h6>
+								<ol>
+									<li>Quando os contratos a celebrar digam direta e principalmente respeito a uma ou a várias das atividades exercidas nos setores da água, da energia, dos transportes e dos serviços postais pelas entidades adjudicantes referidas no <a href="#7">n.º 1 do artigo 7.º</a>, estas podem enviar para publicação no Jornal Oficial da União Europeia um anúncio periódico indicativo, contendo as menções previstas no artigo 67.º da Diretiva n.º 2014/25/UE, do Parlamento Europeu e do Conselho, de 26 de fevereiro de 2014, ao qual é aplicável o disposto no artigo anterior, com as devidas adaptações.</li>
+									<li>O período abrangido pelo anúncio de pré-informação não pode ser superior a 12 meses a contar da data em que o anúncio é enviado para publicação, exceto no caso dos contratos de serviços sociais e outros serviços específicos, em que o referido período pode ser superior a 12 meses.</li>
+								</ol>
+							<h6 class="articleA" id="35-A">Consulta preliminar ao mercado</h6>
+								<ol>
+									<li>Antes da abertura de um procedimento de formação de contrato público, a entidade adjudicante pode realizar consultas informais ao mercado, designadamente através da solicitação de informações ou pareceres de peritos, autoridades independentes ou agentes económicos, que possam ser utilizados no planeamento da contratação, sem prejuízo do disposto na <a href="#55">alínea j) do n.º 1 do artigo 55.º</a>
+									<li>A consulta preliminar prevista no número anterior não pode ter por efeito distorcer a concorrência, nem resultar em qualquer violação dos princípios da não discriminação e da transparência.</li>
+									<li>Quando um candidato ou concorrente, ou uma empresa associada a um candidato ou concorrente, tiver apresentado informação ou parecer à entidade adjudicante ou tiver sido consultada, nos termos dos números anteriores, ou tiver participado de qualquer outra forma na preparação do procedimento de formação do contrato, a entidade adjudicante deve tomar as medidas adequadas para evitar qualquer distorção da concorrência em virtude dessa participação.</li>
+									<li>Para efeitos do disposto no número anterior, são consideradas medidas adequadas, entre outras, a comunicação aos restantes candidatos ou concorrentes de todas as informações pertinentes trocadas no âmbito da participação do candidato ou concorrente na preparação do procedimento de formação do contrato, com inclusão dessas informações nas peças do procedimento.</li>
+								</ol>
+				<h4 class="chapter" id="p2t2c2">Início do procedimento</h4>
+							<h6 class="article" id="36">Decisão de contratar e decisão de autorização da despesa</h6>
+								<ol>
+									<li>O procedimento de formação de qualquer contrato inicia-se com a decisão de contratar, a qual deve ser fundamentada e cabe ao órgão competente para autorizar a despesa inerente ao contrato a celebrar, podendo essa decisão estar implícita nesta última.</li>
+									<li>Quando o contrato a celebrar não implique o pagamento de um preço pela entidade adjudicante, a decisão de contratar cabe ao órgão desta que for competente para o efeito nos termos da respetiva lei orgânica ou dos seus estatutos.</li>
+									<li>Quando o valor do contrato for igual ou superior a (euro) 5 000 000, a fundamentação prevista no n.º 1 deve basear-se numa avaliação de custo/benefício e deve conter, nomeadamente e quando aplicável:
+										<ol type="a">
+											<li>A identificação do tipo de beneficiários do contrato a celebrar;</li>
+											<li>A taxa prevista de utilização da infraestrutura, serviço ou bem;</li>
+											<li>A análise da rentabilidade;</li>
+											<li>Os custos de manutenção;</li>
+											<li>A avaliação dos riscos potenciais e formas de mitigação dos mesmos;</li>
+											<li>O impacto previsível para a melhoria da organização;</li>
+											<li>O impacto previsível no desenvolvimento ou na reconversão do país ou da região coberta pelo investimento.</li>
+										</ol>
+									</li>
+									<li>Quando o tipo de procedimento utilizado seja a parceria para a inovação, o limiar referido no número anterior é de (euro) 2 500 000.</li>
+									<li>As peças do procedimento devem identificar todos os pareceres prévios, licenciamentos e autorizações necessárias que possam condicionar o procedimento e a execução do contrato.</li>
+									<li>O disposto nos números anteriores não prejudica a aplicação de regimes especiais.</li>
+								</ol>
+							<h6 class="article" id="37">Decisão de contratar nas parcerias público-privadas</h6>
+							<h6 class="article" id="38">Decisão de escolha do procedimento</h6>
+								<ol>
+									<li class="nostyle">A decisão de escolha do procedimento de formação de contratos, de acordo com as regras fixadas no presente Código, deve ser fundamentada e cabe ao órgão competente para a decisão de contratar.</li>
+								</ol>
+							<h6 class="article" id="39">Agrupamento de entidades adjudicantes</h6>
+								<ol>
+									<li>As entidades adjudicantes podem agrupar-se com vista à:
+										<ol type="a">
+											<li>Formação de contratos cuja execução seja do interesse de todas;</li>
+											<li>Formação de um acordo-quadro de que todas possam beneficiar;</li>
+											<li>Gestão conjunta de sistemas de aquisição dinâmicos;</li>
+											<li>Aquisição conjunta utilizando catálogos eletrónicos.</li>
+										</ol>
+									</li>
+									<li>As entidades adjudicantes devem designar qual delas constitui o representante do agrupamento para efeitos de condução do procedimento de formação do contrato ou do acordo-quadro a celebrar.</li>
+									<li>A decisão de contratar, a decisão de escolha do procedimento, a aprovação das peças do procedimento, a designação do júri, a decisão de qualificação dos candidatos e a decisão de adjudicação, bem como os restantes atos cuja competência esteja atribuída ao órgão com competência para a decisão de contratar, devem ser tomadas conjuntamente pelos órgãos competentes de todas as entidades que integram o agrupamento, eventualmente através de conferência procedimental, nos termos gerais.</li>
+									<li>No caso de agrupamentos de entidades adjudicantes constituídos por pelo menos uma das referidas no <a href="#2">n.º 1 do artigo 2.º</a>, o ajuste direto, a consulta prévia, o concurso público ou o concurso limitado por prévia qualificação adotados nos termos do disposto nos artigos <a href="#19">19.º</a> e <a href="#20">20.º</a> só permite a celebração de contratos de valor inferior ao mais baixo dos limites neles referidos, consoante o caso.</li>
+									<li>No caso de agrupamentos de entidades adjudicantes, só pode ser adotado um procedimento em função de um dos critérios materiais previstos nos capítulos <a href="#p2t1c3">iii</a> e <a href="#p2t1c4">iv</a> do <a href="#p2t1">título anterior</a> quando tal critério se verifique relativamente a todas as entidades que o constituem.</li>
+									<li>As entidades adjudicantes membro do agrupamento só são solidariamente responsáveis pelo cumprimento das obrigações por si assumidas quando tais obrigações o sejam na sua totalidade pelo conjunto dos seus membros.</li>
+									<li>Salvo disposição especial constante de acordo internacional celebrado entre os Estados em causa, quando o agrupamento for constituído também com entidades adjudicantes de outros Estados-Membros da União Europeia, as entidades adjudicantes devem celebrar um acordo prévio que determine:
+										<ol type="a">
+											<li>As responsabilidades das partes e as disposições nacionais aplicáveis, as quais, por sua vez, devem constar dos documentos do respetivo procedimento de contratação;</li>
+											<li>A organização interna do procedimento de contratação, nomeadamente a sua gestão, a distribuição das obras, fornecimentos ou serviços a adjudicar e a celebração dos contratos.</li>
+										</ol>
+									</li>
+									<li>Tendo em vista a gestão conjunta, com caráter regular, de procedimentos de formação de contratos públicos, uma ou mais entidades adjudicantes sujeitas ao presente Código podem associar-se com uma ou mais entidades adjudicantes de outros Estados-Membros da União Europeia, constituindo uma entidade jurídica comum, nomeadamente sob a forma de agrupamento europeu de cooperação territorial.</li>
+									<li>Para efeitos do disposto no número anterior, as entidades adjudicantes participantes devem definir, através de decisão do órgão competente da entidade jurídica comum, a legislação nacional aplicável em matéria de contratos públicos de entre:
+										<ol type="a">
+											<li>Legislação do Estado onde a entidade jurídica comum tem a sua sede social;</li>
+											<li>Legislação do Estado onde a entidade jurídica comum desenvolve as suas atividades.</li>
+										</ol>
+									</li>
+								</ol>
+				<h4 class="chapter" id="p2t2c3">Peças do procedimento</h4>
+							<h6 class="article" id="40">Tipos de peças</h6>
+								<ol>
+									<li>As peças dos procedimentos de formação de contratos são as seguintes:
+										<ol type="a">
+											<li>No ajuste direto, o convite à apresentação das propostas e o caderno de encargos, sem prejuízo do disposto no <a href="#128">artigo 128.º</a>;</li>
+											<li>Na consulta prévia, o convite à apresentação de propostas e o caderno de encargos;</li>
+											<li>No concurso público, o anúncio, o programa do procedimento e o caderno de encargos;</li>
+											<li>No concurso limitado por prévia qualificação, o anúncio, o programa do procedimento, o convite à apresentação de propostas e o caderno de encargos;</li>
+											<li>No procedimento de negociação, o anúncio, o programa do procedimento, o convite à apresentação de propostas e o caderno de encargos;</li>
+											<li>No diálogo concorrencial, o anúncio, o programa do procedimento, a memória descritiva, o convite à apresentação de soluções, o convite à apresentação de propostas e o caderno de encargos;</li>
+											<li>Na parceria para a inovação, o anúncio, o programa do procedimento, o convite à apresentação de propostas e o caderno de encargos.</li>
+										</ol>
+									</li>
+									<li>As peças do procedimento referidas no número anterior, incluindo a minuta do anúncio, são aprovadas pelo órgão competente para a decisão de contratar.</li>
+									<li>Nos concursos de conceção, os termos de referência constituem a única peça do procedimento, sendo aprovados pelo órgão competente para a decisão de selecionar um ou vários trabalhos de conceção.</li>
+									<li>As indicações constantes do programa do procedimento, do caderno de encargos e da memória descritiva prevalecem sobre as indicações do anúncio em caso de divergência.</li>
+									<li>As peças do procedimento prevalecem sobre as indicações constantes da plataforma eletrónica de contratação, em caso de divergência.</li>
+								</ol>
+							<h6 class="article" id="41">Programa do procedimento</h6>
+								<ol>
+									<li class="nostyle">O programa do procedimento é o regulamento que define os termos a que obedece a fase de formação do contrato até à sua celebração.</li>
+								</ol>
+							<h6 class="article" id="42">Caderno de encargos</h6>
+								<ol>
+									<li>O caderno de encargos é a peça do procedimento que contém as cláusulas a incluir no contrato a celebrar.</li>
+									<li>Nos casos de manifesta simplicidade das prestações que constituem o objeto do contrato a celebrar, as cláusulas do caderno de encargos podem consistir numa mera fixação de especificações técnicas e numa referência a outros aspetos essenciais da execução desse contrato, tais como o preço ou o prazo.</li>
+									<li>As cláusulas do caderno de encargos relativas aos aspetos da execução do contrato submetidos à concorrência podem fixar os respetivos parâmetros base a que as propostas estão vinculadas.</li>
+									<li>Os parâmetros base referidos no número anterior podem dizer respeito a quaisquer aspetos da execução do contrato, tais como o preço a pagar ou a receber pela entidade adjudicante, a sua revisão, o prazo de execução das prestações objeto do contrato ou as suas características técnicas ou funcionais, bem como às condições da modificação do contrato, devendo ser definidos através de limites mínimos ou máximos, consoante os casos, sem prejuízo dos limites resultantes das vinculações legais ou regulamentares aplicáveis.</li>
+									<li>O caderno de encargos pode também descrever aspetos da execução do contrato não submetidos à concorrência, nomeadamente mediante a fixação de limites mínimos ou máximos a que as propostas estão vinculadas.</li>
+									<li>6 - Os aspetos da execução do contrato, constantes das cláusulas do caderno de encargos, podem dizer respeito, desde que relacionados com tal execução, a condições de natureza social, ambiental, ou que se destinem a favorecer:
+										<ol type="a">
+											<li>A aplicação de medidas de promoção da igualdade de género e da igualdade salarial no trabalho;</li>
+											<li>O aumento da participação das mulheres no mercado de trabalho;</li>
+											<li>A conciliação da vida profissional com a vida familiar e pessoal dos trabalhadores afetos à execução do contrato;</li>
+											<li>A inclusão de pessoas com deficiência no mercado de trabalho.</li>
+										</ol>
+									</li>
+									<li>(Revogado.)</li>
+									<li>(Revogado.)</li>
+									<li>(Revogado.)</li>
+									<li>(Revogado.)</li>
+									<li>Para efeitos do disposto nos n.<sup>os</sup> 3 e 5, consideram-se aspetos submetidos à concorrência todos aqueles que são objeto de avaliação de acordo com o critério de adjudicação, e aspetos não submetidos à concorrência todos aqueles que, sendo apreciados, não são objeto de avaliação e classificação.</li>
+								</ol>
+							<h6 class="article" id="43">Caderno de encargos do procedimento de formação de contratos de empreitada</h6>
+							<h6 class="article" id="44">Cadernos de encargos relativos a contratos de concessão</h6>
+							<h6 class="article" id="45">Caderno de encargos das parcerias público-privadas</h6>
+							<h6 class="article" id="46">Formulários de caderno de encargos</h6>
+							<h6 class="articleA" id="46-A">Adjudicação por lotes</h6>
+								<ol>
+									<li>As entidades adjudicantes podem prever, nas peças do procedimento, a adjudicação por lotes.</li>
+									<li>Na formação de contratos públicos de aquisição ou locação de bens, ou aquisição de serviços, de valor superior a (euro) 135 000, e empreitadas de obras públicas de valor superior a (euro) 500 000, a decisão de não contratação por lotes deve ser fundamentada, constituindo fundamento, designadamente, as seguintes situações:
+										<ol type="a">
+											<li>Quando as prestações a abranger pelo respetivo objeto forem técnica ou funcionalmente incindíveis ou, não o sendo, a sua separação causar graves inconvenientes para a entidade adjudicante;</li>
+											<li>Quando, por motivos de urgência ou por imperativos técnicos ou funcionais, a gestão de um único contrato se revele mais eficiente para a entidade adjudicante.</li>
+										</ol>
+									</li>
+									<li>O disposto no número anterior não se aplica às entidades adjudicantes referidas nos artigos <a href="#7">7.º</a> e <a href="#12">12.º</a></li>
+									<li>A entidade adjudicante pode limitar o número máximo de lotes que podem ser adjudicados a cada concorrente, devendo indicar essas limitações no convite ou no programa do procedimento, bem como os critérios objetivos e não discriminatórios em que se baseie a escolha dos lotes a adjudicar a cada concorrente nos casos em que a aplicação dos critérios de adjudicação resulte na atribuição, ao mesmo concorrente, de um número de lotes superior ao máximo fixado.</li>
+									<li>O disposto nos números anteriores não prejudica a possibilidade de a entidade adjudicante celebrar contratos que combinem vários ou a totalidade dos lotes, desde que essa possibilidade seja expressamente incluída no convite ou no programa do procedimento, caso em que devem ser previamente estabelecidos e indicados os critérios que fundamentam as várias hipóteses de combinação previstas.</li>
+								</ol>
+							<h6 class="article" id="47">Preço base</h6>
+								<ol>
+									<li>O preço base, que deve ser definido pela entidade adjudicante no caderno de encargos, é o montante máximo que esta entidade se dispõe a pagar pela execução de todas as prestações que constituem o objeto do contrato, incluindo eventuais renovações do contrato.</li>
+									<li>Quando o contrato a celebrar não implique o pagamento de um preço pela entidade adjudicante, o preço base corresponde ao montante previsível a receber pelas prestações que constituem o objeto do contrato.</li>
+									<li>A fixação do preço base deve ser fundamentada com base em critérios objetivos, tais como os preços atualizados do mercado obtidos através da consulta preliminar prevista no <a href="#35-A">artigo 35.º-A</a>, ou os custos médios unitários, resultantes de anteriores procedimentos, para prestações do mesmo tipo.</li>
+									<li>O preço base deve respeitar os limites de valor até aos quais pode ser utilizado o tipo de procedimento em causa e os limites máximos de autorização de despesa do órgão competente para a decisão de contratar, se aplicáveis.</li>
+									<li>Em casos excecionais, devidamente fundamentados, a entidade adjudicante pode não fixar preço base, desde que o procedimento permita a celebração de contratos de qualquer valor e o órgão competente para a decisão de contratar não esteja sujeito a limites máximos de autorização de despesa ou ao regime de autorização de despesas.</li>
+									<li>No caso de agrupamentos de entidades adjudicantes, o valor a considerar para efeitos do n.º 4, na parte em que se refere ao valor de autorização de despesa, corresponde à soma dos valores máximos até aos quais os órgãos competentes de cada uma daquelas entidades, por lei ou por delegação, podem autorizar a respetiva fração da despesa inerente ao contrato a celebrar.</li>
+								</ol>
+							<h6 class="article" id="48">Fundamentação do prazo de vigência</h6>
+								<ol>
+									<li class="nostyle">No caso de contratos de locação ou de aquisição de bens móveis ou de aquisição de serviços, a fixação no caderno de encargos de um prazo de vigência do contrato a celebrar superior a três anos deve ser fundamentada.</li>
+								</ol>
+							<h6 class="article" id="49">Especificações técnicas</h6>
+								<ol>
+									<li>As especificações técnicas, tal como definidas no anexo vii ao presente Código, do qual faz parte integrante, devem constar no caderno de encargos e devem definir as características exigidas para as obras, bens móveis e serviços.</li>
+									<li>As características exigidas para as obras, bens móveis e serviços podem também incluir uma referência ao processo ou método específico de produção ou execução das obras, bens móveis ou serviços solicitados ou a um processo específico para outra fase do seu ciclo de vida, mesmo que tais fatores não façam parte da sua substância material, desde que estejam ligados ao objeto do contrato e sejam proporcionais ao seu valor e aos seus objetivos.</li>
+									<li>As especificações técnicas podem concretizar se é exigida a transmissão de direitos de propriedade intelectual.</li>
+									<li>As especificações técnicas devem permitir a igualdade de acesso dos operadores económicos ao procedimento de contratação e não devem criar obstáculos injustificados à abertura dos contratos públicos à concorrência.</li>
+									<li>Em relação a todos os contratos cujo objeto se destine a ser utilizado por pessoas singulares, quer seja o público em geral quer o pessoal da entidade adjudicante, as especificações técnicas devem, salvo em casos devidamente justificados, ser elaboradas de modo a ter em conta os critérios de acessibilidade para as pessoas com deficiência ou de conceção para todos os utilizadores.</li>
+									<li>Sempre que existam normas de acessibilidade obrigatórias adotadas por ato legislativo da União Europeia, as especificações técnicas devem ser definidas por referência a essas normas, no que respeita aos critérios de acessibilidade para as pessoas com deficiência ou de conceção para todos os utilizadores.</li>
+									<li>Sem prejuízo das regras técnicas nacionais vinculativas, na medida em que sejam compatíveis com o direito da União Europeia, as especificações técnicas devem ser formuladas segundo uma das seguintes modalidades:
+										<ol type="a">
+											<li>Em termos de desempenho ou de requisitos funcionais, que podem incluir critérios ambientais, desde que os parâmetros sejam suficientemente precisos para permitir que os concorrentes determinem o objeto do contrato e que a entidade adjudicante proceda à respetiva adjudicação;</li>
+											<li>Por referência a especificações técnicas definidas e, por ordem de preferência, a normas nacionais que transponham normas europeias, a homologações técnicas europeias, a especificações técnicas comuns, a normas internacionais e a outros sistemas técnicos de referência estabelecidos pelos organismos europeus de normalização ou, quando estes não existam, a normas nacionais, a homologações técnicas nacionais ou a especificações técnicas nacionais em matéria de conceção, cálculo e execução das obras e de utilização dos fornecimentos, devendo cada referência ser acompanhada da menção «ou equivalente»;</li>
+											<li>Em termos do desempenho ou dos requisitos funcionais a que se refere a alínea a), com referência às especificações técnicas a que se refere a alínea b) como meio de presunção de conformidade com esse desempenho ou com esses requisitos funcionais;</li>
+											<li>Por referência às especificações técnicas a que se refere a alínea b), para determinadas características, e por referência ao desempenho ou aos requisitos funcionais a que se refere a alínea a), para outras.</li>
+										</ol>
+									</li>
+									<li>A menos que o objeto do contrato o justifique, as especificações técnicas não podem fazer referência a determinado fabrico ou proveniência, a um procedimento específico que caracterize os produtos ou serviços prestados por determinado fornecedor, ou a marcas comerciais, patentes, tipos, origens ou modos de produção determinados que tenham por efeito favorecer ou eliminar determinadas empresas ou produtos.</li>
+									<li>As referências mencionadas no número anterior só são autorizadas, a título excecional, no caso de não ser possível uma descrição suficientemente precisa e inteligível do objeto do contrato nos termos do n.º 7, devendo, no entanto, ser acompanhada da menção «ou equivalente».</li>
+									<li>Sempre que a entidade adjudicante recorra à possibilidade de remeter para as especificações técnicas a que se refere na alínea b) do n.º 7, não pode excluir uma proposta com o fundamento de que as obras, bens móveis ou serviços dela constantes não estão em conformidade com as suas especificações técnicas de referência, se o concorrente demonstrar na sua proposta por qualquer meio adequado, nomeadamente os meios de prova referidos no <a href="#49-A">n.º 2 do artigo 49.º-A</a>, que as soluções propostas satisfazem de modo equivalente os requisitos definidos nas especificações técnicas.</li>
+									<li>Sempre que a entidade adjudicante recorra à possibilidade, prevista na alínea a) do n.º 7, de formular especificações técnicas em termos de exigências de desempenho ou de requisitos funcionais, não deve excluir uma proposta que esteja em conformidade com uma norma nacional que transponha uma norma europeia, uma homologação técnica europeia, uma especificação técnica comum, uma norma internacional ou um sistema técnico de referência estabelecido por um organismo de normalização europeu, quando essas especificações corresponderem aos critérios de desempenho ou cumprirem os requisitos funcionais impostos.</li>
+									<li>O concorrente pode demonstrar na sua proposta, por qualquer meio adequado, incluindo os meios referidos no <a href="#49-A">artigo 49.º-A</a>, que a obra, bem móvel ou serviço em conformidade com a norma em questão corresponde ao desempenho exigido ou cumpre os requisitos funcionais da entidade adjudicante.</li>
+									<li>(Revogado.)</li>
+									<li>(Revogado.)</li>
+								</ol>
+							<h6 class="articleA" id="49-A">Rótulos e relatórios de ensaio, certificação e outros meios de prova</h6>
+								<ol>
+									<li class="nostyle">A entidade adjudicante pode exigir, nos termos a definir por portaria do membro do Governo responsável pela área das obras públicas:
+										<ol type="a">
+											<li>Rótulo específico para atestar que as obras, bens móveis ou serviços correspondem às características exigidas;</li>
+											<li>Apresentação de um relatório de ensaio de um organismo de avaliação da conformidade ou um certificado emitido por tal organismo como meio de prova da conformidade com os requisitos ou critérios estabelecidos;</li>
+											<li>Apresentação de amostras de produtos que pretendem adquirir.</li>
+										</ol>
+									</li>
+								</ol>
+							<h6 class="article" id="50">Esclarecimentos, retificação e alteração das peças procedimentais</h6>
+								<ol>
+									<li>No primeiro terço do prazo fixado para a apresentação das propostas, os interessados podem solicitar os esclarecimentos necessários à boa compreensão e interpretação das peças do procedimento e, no mesmo prazo, devem apresentar uma lista na qual identifiquem, expressa e inequivocamente, os erros e as omissões das peças do procedimento por si detetados.</li>
+									<li>Para efeitos do presente Código consideram-se erros e omissões das peças do procedimento os que digam respeito a:
+										<ol type="a">
+											<li>Aspetos ou dados que se revelem desconformes com a realidade;</li>
+											<li>Espécie ou quantidade de prestações estritamente necessárias à integral execução do objeto do contrato a celebrar;</li>
+											<li>Condições técnicas de execução do objeto do contrato a celebrar que o interessado não considere exequíveis;</li>
+											<li>Erros e omissões do projeto de execução que não se incluam nas alíneas anteriores.</li>
+										</ol>
+									</li>
+									<li>A lista a apresentar ao órgão competente para a decisão de contratar deve identificar, expressa e inequivocamente, os erros ou omissões do caderno de encargos detetados, com exceção dos referidos na alínea d) do número anterior e daqueles que por eles apenas pudessem ser detetados na fase de execução do contrato, atuando com a diligência objetivamente exigível em face das circunstâncias concretas.</li>
+									<li>O incumprimento do dever a que se referem os números anteriores tem as consequências previstas nos <a href="#378">n.<sup>os</sup> 3 e 4 do artigo 378.º</a></li>
+									<li>Até ao termo do segundo terço do prazo fixado para a apresentação das propostas, ou até ao prazo fixado no convite ou no programa de concurso:
+										<ol type="a">
+											<li>O órgão competente para a decisão de contratar, ou o órgão para o efeito indicado nas peças do procedimento, deve prestar os esclarecimentos solicitados;</li>
+											<li>O órgão competente para a decisão de contratar pronuncia-se sobre os erros e as omissões identificados pelos interessados, considerando-se rejeitados todos os que, até ao final daquele prazo, não sejam por ele expressamente aceites.</li>
+										</ol>
+									</li>
+									<li>O órgão competente para a decisão de contratar deve identificar os termos do suprimento de cada um dos erros ou das omissões aceites nos termos do disposto na alínea b) do número anterior.</li>
+									<li>Independentemente do disposto nos números anteriores, o órgão competente para a decisão de contratar pode, oficiosamente, proceder à retificação de erros ou omissões das peças do procedimento, bem como prestar esclarecimentos, no mesmo prazo referido no n.º 5, ou até ao final do prazo de entrega de candidaturas ou propostas, devendo, neste caso, atender-se ao disposto no <a href="#64">artigo 64.º</a></li>
+									<li>Os esclarecimentos, as retificações e as listas com a identificação dos erros e omissões detetados pelos interessados devem ser disponibilizados na plataforma eletrónica utilizada pela entidade adjudicante e juntos às peças do procedimento que se encontrem patentes para consulta, devendo todos os interessados que as tenham obtido ser imediatamente notificados desse facto.</li>
+									<li>Os esclarecimentos e as retificações fazem parte integrante das peças do procedimento a que dizem respeito e prevalecem sobre estas em caso de divergência.</li>
+								</ol>
+							<h6 class="article" id="51">Prevalência</h6>
+								<ol>
+									<li class="nostyle">As normas constantes do presente Código relativas às fases de formação e de execução do contrato prevalecem sobre quaisquer disposições das peças do procedimento com elas desconformes.</li>
+								</ol>
+				<h4 class="chapter" id="p2t2c4">Regras de participação</h4>
+							<h6 class="article" id="52">Candidatos</h6>
+								<ol>
+									<li class="nostyle">É candidato a entidade, pessoa singular ou coletiva, que participa na fase de qualificação de um concurso limitado por prévia qualificação, de um procedimento de negociação, de um diálogo concorrencial ou de uma parceria para a inovação, mediante a apresentação de uma candidatura.</li>
+								</ol>
+							<h6 class="article" id="53">Concorrentes</h6>
+								<ol>
+									<li>É concorrente a entidade, pessoa singular ou coletiva, que participa em qualquer procedimento de formação de um contrato mediante a apresentação de uma proposta.</li>
+								</ol>
+							<h6 class="article" id="54">Agrupamentos</h6>
+								<ol>
+									<li>Podem ser candidatos ou concorrentes agrupamentos de pessoas singulares ou coletivas, qualquer que seja a atividade por elas exercida, sem que entre as mesmas exista qualquer modalidade jurídica de associação.</li>
+									<li>Os membros de um agrupamento candidato ou de um agrupamento concorrente não podem ser candidatos ou concorrentes no mesmo procedimento, nos termos do disposto nos artigos anteriores, nem integrar outro agrupamento candidato ou outro agrupamento concorrente.</li>
+									<li>Todos os membros de um agrupamento concorrente são solidariamente responsáveis, perante a entidade adjudicante, pela manutenção da proposta.</li>
+									<li>Em caso de adjudicação, todos os membros do agrupamento concorrente, e apenas estes, devem associar-se, antes da celebração do contrato, na modalidade jurídica prevista no programa do procedimento.</li>
+								</ol>
+							<h6 class="articleA" id="54-A">Contratos reservados</h6>
+							<h6 class="article" id="55">Impedimentos</h6>
+								<ol>
+									<li>Não podem ser candidatos, concorrentes ou integrar qualquer agrupamento, as entidades que:
+										<ol type="a">
+											<li>Se encontrem em estado de insolvência, declarada por sentença judicial, em fase de liquidação, dissolução ou cessação de atividade, sujeitas a qualquer meio preventivo de liquidação de patrimónios ou em qualquer situação análoga, ou tenham o respetivo processo pendente, salvo quando se encontrarem abrangidas ou tenham pendente um plano de recuperação de empresas, judicial ou extrajudicial, previsto na lei;</li>
+											<li>Tenham sido condenadas por sentença transitada em julgado por qualquer crime que afete a sua honorabilidade profissional, no caso de pessoas singulares, ou, no caso de pessoas coletivas, quando tenham sido condenados por aqueles crimes a pessoa coletiva ou os titulares dos seus órgãos sociais de administração, direção ou gerência, e estes se encontrem em efetividade de funções, em qualquer dos casos sem que entretanto tenha ocorrido a respetiva reabilitação;</li>
+											<li>Tenham sido objeto de aplicação de sanção administrativa por falta grave em matéria profissional, se entretanto não tiver ocorrido a sua reabilitação, no caso de se tratar de pessoas singulares, ou, no caso de se tratar de pessoas coletivas, tenham sido objeto de aplicação daquela sanção administrativa os titulares dos órgãos sociais de administração, direção ou gerência das mesmas e estes se encontrem em efetividade de funções;</li>
+											<li>Não tenham a sua situação regularizada relativamente a contribuições para a segurança social em Portugal ou, se for o caso, no Estado de que sejam nacionais ou no qual se situe o seu estabelecimento principal;</li>
+											<li>Não tenham a sua situação regularizada relativamente a impostos devidos em Portugal ou, se for o caso, no Estado de que sejam nacionais ou no qual se situe o seu estabelecimento principal;</li>
+											<li>Tenham sido objeto de aplicação de sanção acessória de proibição de participação em concursos públicos prevista em legislação especial, nomeadamente nos regimes contraordenacionais em matéria laboral, de concorrência e de igualdade e não-discriminação, bem como da sanção prevista no <a href="#460">artigo 460.º</a>, durante o período fixado na decisão condenatória;</li>
+											<li>Tenham sido objeto de aplicação, há menos de dois anos, de sanção administrativa ou judicial pela utilização ao seu serviço de mão-de-obra legalmente sujeita ao pagamento de impostos e contribuições para a segurança social, não declarada nos termos das normas que imponham essa obrigação, em Portugal ou no Estado de que sejam nacionais ou no qual se situe o seu estabelecimento principal;</li>
+											<li>Tenham sido condenadas por sentença transitada em julgado por algum dos seguintes crimes, se entretanto não tiver ocorrido a sua reabilitação, no caso de se tratar de pessoas singulares, ou, no caso de se tratar de pessoas coletivas, tenham sido condenados pelos mesmos crimes a pessoa coletiva e os titulares dos seus órgãos sociais de administração, direção ou gerência das mesmas e estes se encontrem em efetividade de funções, se entretanto não tiver ocorrido a sua reabilitação:
+												<ol type="i">
+													<li>Participação numa organização criminosa, tal como definida no n.º 1 do artigo 2.º da Decisão-Quadro 2008/841/JAI do Conselho, de 24 de outubro de 2008;</li>
+													<li>Corrupção, tal como definida no artigo 3.º da Convenção relativa à luta contra a corrupção em que estejam implicados funcionários da União Europeia ou dos Estados-Membros da União Europeia e no n.º 1 do artigo 2.º da Decisão-Quadro 2003/568/JAI do Conselho, de 22 de julho de 2003, e nos artigos 372.º a 374.º-B do Código Penal;</li>
+													<li>Fraude, na aceção do artigo 1.º da Convenção relativa à Proteção dos Interesses Financeiros das Comunidades Europeias;</li>
+													<li>Branqueamento de capitais ou financiamento do terrorismo, tal como definidos no artigo 1.º da Diretiva n.º 2015/849, do Parlamento Europeu e do Conselho, de 20 de maio de 2015, relativa à prevenção da utilização do sistema financeiro para efeitos de branqueamento de capitais ou de financiamento do terrorismo;</li>
+													<li>Infrações terroristas ou infrações relacionadas com um grupo terrorista, tal como definidas nos artigos 3.º e 4.º da Diretiva n.º 2017/541, do Parlamento Europeu e do Conselho, de 15 de março de 2017, relativa à luta contra o terrorismo, ou qualquer infração relacionada com atividades terroristas, incluindo cumplicidade, instigação e tentativa, nos termos do artigo 14.º da referida diretiva;</li>
+													<li>Trabalho infantil e outras formas de tráfico de seres humanos, tal como definidos no artigo 2.º da Diretiva n.º 2011/36/UE, do Parlamento Europeu e do Conselho, de 5 de abril de 2011;</li>
+												</ol>
+											</li>
+											<li>Tenham, a qualquer título, prestado, direta ou indiretamente, assessoria ou apoio técnico na preparação e elaboração das peças do procedimento que lhes confira vantagem que falseie as condições normais de concorrência;</li>
+											<li>Tenham diligenciado no sentido de influenciar indevidamente a decisão de contratar do órgão competente, de obter informações confidenciais suscetíveis de lhe conferir vantagens indevidas no procedimento, ou tenham prestado informações erróneas suscetíveis de alterar materialmente as decisões de exclusão, qualificação ou adjudicação;</li>
+											<li>Estejam abrangidas por conflitos de interesses que não possam ser eficazmente corrigidos por outras medidas menos gravosas que a exclusão;</li>
+											<li>Tenham acusado deficiências significativas ou persistentes na execução de, pelo menos, um contrato público anterior nos últimos três anos, tendo tal facto conduzido à resolução desse contrato por incumprimento, ao pagamento de indemnização resultante de incumprimento, à aplicação de sanções que tenham atingido os valores máximos aplicáveis nos termos dos <a href="#329">n.<sup>os</sup> 2 e 3 do artigo 329.º</a>, ou a outras sanções equivalentes.</li>
+										</ol>
+									</li>
+									<li>Para efeitos do disposto na alínea k) do número anterior, podem ser ponderadas, como medidas menos gravosas que a exclusão, designadamente, a substituição de membros do júri ou de peritos que prestem apoio ao júri, a instituição de sistemas de reconfirmação de análises, apreciações ou aferições técnicas, ou a proibição de o concorrente recorrer a um determinado subcontratado.</li>
+								</ol>
+							<h6 class="articleA" id="55-A">Relevação dos impedimentos</h6>
+								<ol>
+									<li>O disposto nas <a href="#55">alíneas d) e e) do n.º 1 do artigo anterior</a> aplica-se sem prejuízo dos regimes de regularização de dívidas fiscais e dívidas à Segurança Social em vigor.</li>
+									<li>O candidato ou concorrente que se encontre numa das situações referidas nas <a href="#55">alíneas b), c), g), h) ou l) do n.º 1 do artigo anterior</a> pode demonstrar que as medidas por si tomadas são suficientes para demonstrar a sua idoneidade para a execução do contrato e a não afetação dos interesses que justificam aqueles impedimentos, não obstante a existência abstrata de causa de exclusão, nomeadamente através de:
+										<ol type="a">
+											<li>Demonstração de que ressarciu ou tomou medidas para ressarcir eventuais danos causados pela infração penal ou falta grave;</li>
+											<li>Esclarecimento integral dos factos e circunstâncias por meio de colaboração ativa com as autoridades competentes;</li>
+											<li>Adoção de medidas técnicas, organizativas e de pessoal suficientemente concretas e adequadas para evitar outras infrações penais ou faltas graves.</li>
+											<li>Tendo por base os elementos referidos no número anterior, bem como a gravidade e as circunstâncias específicas da infração ou falta cometida, a entidade adjudicante pode tomar a decisão de não relevar o impedimento.</li>
+										</ol>
+									</li>
+									<li>As sanções de proibição de participação em procedimentos de formação de contratos públicos que tenham sido aplicadas, ou consideradas válidas, mediante decisão transitada em julgado não são passíveis de relevação nos termos do presente artigo.</li>
+								</ol>
+				<h4 class="chapter" id="p2t2c5">Proposta</h4>
+							<h6 class="article" id="56">Noção de proposta</h6>
+								<ol>
+									<li>A proposta é a declaração pela qual o concorrente manifesta à entidade adjudicante a sua vontade de contratar e o modo pelo qual se dispõe a fazê-lo.</li>
+									<li>Para efeitos do presente Código, entende-se por atributo da proposta qualquer elemento ou característica da mesma que diga respeito a um aspeto da execução do contrato submetido à concorrência pelo caderno de encargos.</li>
+								</ol>
+							<h6 class="article" id="57">Documentos da proposta</h6>
+								<ol>
+									<li>A proposta é constituída pelos seguintes documentos:
+										<ol type="a">
+											<li>Declaração do <a href="#a1">anexo i ao presente Código</a>, do qual faz parte integrante;</li>
+											<li>Documentos que, em função do objeto do contrato a celebrar e dos aspetos da sua execução submetidos à concorrência pelo caderno de encargos, contenham os atributos da proposta, de acordo com os quais o concorrente se dispõe a contratar;</li>
+											<li>Documentos exigidos pelo programa do procedimento ou convite que contenham os termos ou condições relativos a aspetos da execução do contrato não submetidos à concorrência pelo caderno de encargos, aos quais a entidade adjudicante pretende que o concorrente se vincule;</li>
+											<li>(Revogada.)</li>
+										</ol>
+									</li>
+									<li>No caso de se tratar de procedimento de formação de contrato de empreitada ou de concessão de obras públicas, a proposta deve ainda ser constituída por:
+										<ol type="a">
+											<li>Uma lista dos preços unitários de todas as espécies de trabalho previstas no projeto de execução;</li>
+											<li>Um plano de trabalhos, tal como definido no <a href="#361">artigo 361.º</a>, quando o caderno de encargos seja integrado por um projeto de execução;</li>
+											<li>Um programa preliminar, nos casos previstos no <a href="#43">n.º 3 do artigo 43.º</a>, competindo a elaboração do projeto de execução ao adjudicatário.</li>
+										</ol>
+									</li>
+									<li>Integram também a proposta quaisquer outros documentos que o concorrente apresente por os considerar indispensáveis para os efeitos do disposto na parte final da alínea b) do n.º 1.</li>
+									<li>Os documentos referidos nos n.<sup>os</sup> 1 e 2 devem ser assinados pelo concorrente ou por representante que tenha poderes para o obrigar.</li>
+									<li>Quando a proposta seja apresentada por um agrupamento concorrente, os documentos referidos no n.º 1 devem ser assinados pelo representante comum dos membros que o integram, caso em que devem ser juntos à proposta os instrumentos de mandato emitidos por cada um dos seus membros ou, não existindo representante comum, devem ser assinados por todos os seus membros ou respetivos representantes.</li>
+									<li>Nos procedimentos com publicação de anúncio no Jornal Oficial da União Europeia, é apresentado, em substituição da declaração do <a href="#a1">anexo i do presente Código</a>, o Documento Europeu Único de Contratação Pública.</li>
+								</ol>
+							<h6 class="article" id="58">Idioma dos documentos da proposta</h6>
+								<ol>
+									<li>Os documentos que constituem a proposta são obrigatoriamente redigidos em língua portuguesa.</li>
+									<li>Em função da especificidade técnica das prestações objeto do contrato a celebrar, o programa do procedimento ou o convite, podem admitir que alguns dos documentos referidos nas <a href="#57">alíneas b) e c) do n.º 1 do artigo anterior</a> sejam redigidos em língua estrangeira, indicando os idiomas admitidos.</li>
+									<li>Os documentos referidos no <a href="#57">n.º 3 do artigo anterior</a> podem ser redigidos em língua estrangeira, salvo se o programa do procedimento dispuser diferentemente.</li>
+									<li>(Revogado.)</li>
+								</ol>
+							<h6 class="article" id="59">Propostas variantes</h6>
+								<ol>
+									<li>São variantes as propostas que, relativamente a um ou mais aspetos da execução do contrato a celebrar, contenham atributos que digam respeito a condições contratuais alternativas nos termos expressamente admitidos pelo caderno de encargos.</li>
+									<li>Nos casos previstos no número anterior, é sempre permitida a apresentação de propostas variantes, salvo quando o programa do procedimento não o permita expressamente, sendo que a apresentação de propostas variantes implica a apresentação de proposta base.</li>
+									<li>Quando respeitem a aspetos da execução do contrato a celebrar que se encontrem submetidos à concorrência pelo caderno de encargos para efeitos da apresentação de propostas base, as alternativas referidas no n.º 1 só podem ser admitidas fora dos limites daquela concorrência.</li>
+									<li>Quando o caderno de encargos admita condições contratuais alternativas nos termos do disposto no n.º 1, proposta base é aquela que não as apresenta.</li>
+									<li>Os aspetos do caderno de encargos relativamente aos quais sejam admitidas alternativas para efeitos da apresentação de propostas variantes devem corresponder a fatores ou subfatores de densificação do critério de adjudicação da proposta economicamente mais vantajosa.</li>
+									<li>A exclusão da proposta base implica necessariamente a exclusão das propostas variantes apresentadas pelo mesmo concorrente.</li>
+									<li>Nos casos em que o programa do procedimento não permita a apresentação de propostas variantes, cada concorrente só pode apresentar uma única proposta.</li>
+								</ol>
+							<h6 class="article" id="60">Indicação do preço</h6>
+								<ol>
+									<li>Os preços constantes da proposta são indicados em algarismos e não incluem o IVA.</li>
+									<li>Quando os preços constantes da proposta forem também indicados por extenso, em caso de divergência, estes prevalecem, para todos os efeitos, sobre os indicados em algarismos.</li>
+									<li>Sempre que na proposta sejam indicados vários preços, em caso de qualquer divergência entre eles, prevalecem sempre, para todos os efeitos, os preços parciais, unitários ou não, mais decompostos.</li>
+									<li>No caso de se tratar de procedimento de formação de contrato de empreitada ou de concessão de obras públicas, o concorrente deve indicar na proposta os preços parciais dos trabalhos que se propõe executar correspondentes às habilitações contidas nos alvarás ou nos certificados de empreiteiro de obras públicas, ou nas declarações emitidas pelo Instituto dos Mercados Públicos, do Imobiliário e da Construção, I. P., nos termos da portaria referida no <a href="#81">n.º 2 do artigo 81.º</a></li>
+									<li>O disposto no número anterior é aplicável aos agrupamentos concorrentes, devendo estes, para o efeito, indicar na proposta os preços parciais dos trabalhos que cada um dos seus membros se propõe executar.</li>
+								</ol>
+							<h6 class="article" id="61">(Revogado.)</h6>
+							<h6 class="article" id="62">Modo de apresentação das propostas</h6>
+								<ol>
+									<li>Os documentos que constituem a proposta são apresentados diretamente em plataforma eletrónica utilizada pela entidade adjudicante, sem prejuízo do disposto na <a href="#115">alínea g) do n.º 1 do artigo 115.º</a></li>
+									<li>(Revogado.)</li>
+									<li>(Revogado.)</li>
+									<li>Os termos a que deve obedecer a apresentação e a receção das propostas, conforme o disposto no n.º 1, são definidos por diploma próprio.</li>
+									<li>Quando, pela sua natureza, qualquer documento dos que constituem a proposta não possa ser apresentado nos termos do disposto no n.º 1, deve ser encerrado em invólucro opaco e fechado:
+										<ol type="a">
+											<li>No rosto do qual se deve indicar a designação do procedimento e da entidade adjudicante;</li>
+											<li>Que deve ser entregue diretamente ou enviado por correio registado à entidade adjudicante, devendo, em qualquer caso, a respetiva receção ocorrer dentro do prazo fixado para a apresentação das propostas;</li>
+											<li>Cuja receção deve ser registada por referência à respetiva data e hora.</li>
+										</ol>
+									</li>
+									<li>Na formação dos contratos de empreitada de obras públicas devem, sempre que possível, ser utilizados meios eletrónicos específicos de modelização eletrónica de dados de construção.</li>
+								</ol>
+							<h6 class="articleA" id="62-A">Catálogos eletrónicos</h6>
+							<h6 class="article" id="63">Fixação do prazo para a apresentação das propostas</h6>
+							<h6 class="article" id="64">Prorrogação do prazo fixado para a apresentação das propostas</h6>
+								<ol>
+									<li>Quando as retificações ou os esclarecimentos previstos no <a href="#50">artigo 50.º</a> sejam comunicados para além do prazo estabelecido para o efeito, o prazo fixado para a apresentação das propostas deve ser prorrogado, no mínimo, por período equivalente ao do atraso verificado.</li>
+									<li>Quando as retificações ou a aceitação de erros ou de omissões das peças do procedimento referidas no <a href="#50">artigo 50.º</a>, independentemente do momento da sua comunicação, implicarem alterações de aspetos fundamentais das peças do procedimento, o prazo fixado para a apresentação das propostas deve ser prorrogado, no mínimo, por período equivalente ao tempo decorrido desde o início daquele prazo até à comunicação das retificações ou à publicitação da decisão de aceitação de erros ou de omissões.</li>
+									<li>A pedido fundamentado de qualquer interessado que tenha adquirido as peças do procedimento, o prazo fixado para a apresentação das propostas pode ser prorrogado pelo período considerado adequado, o qual aproveita a todos os interessados.</li>
+									<li>As decisões de prorrogação nos termos do disposto nos números anteriores cabem ao órgão competente para a decisão de contratar e devem ser juntas às peças do procedimento e notificadas a todos os interessados que as tenham adquirido, publicando-se imediatamente aviso daquelas decisões, nos termos do disposto no <a href="#130">n.º 1 do artigo 130.º</a>, nos <a href="#131">n.<sup>os</sup> 1 a 3 do artigo 131.º</a>, no <a href="#167">n.º 1 do artigo 167.º</a>, no <a href="#197">artigo 197.º</a> e no <a href="#208">artigo 208.º</a></li>
+								</ol>
+							<h6 class="article" id="65">Prazo da obrigação de manutenção das propostas</h6>
+								<ol>
+									<li class="nostyle">Sem prejuízo da possibilidade de fixação de um prazo superior no programa do procedimento ou no convite, os concorrentes são obrigados a manter as respetivas propostas pelo prazo de 66 dias contados da data do termo do prazo fixado para a apresentação das propostas.</li>
+								</ol>
+							<h6 class="article" id="66">Classificação de documentos da proposta</h6>
+								<ol>
+									<li>Por motivos de segredo comercial, industrial, militar ou outro, os interessados podem requerer, até ao termo do primeiro terço do prazo fixado para a apresentação das propostas, a classificação, nos termos da lei, de documentos que constituem a proposta, para efeitos da restrição ou da limitação do acesso aos mesmos na medida do estritamente necessário.</li>
+									<li>A decisão sobre a classificação de documentos que constituem a proposta deve ser notificada aos interessados, pelo órgão competente para a decisão de contratar, até ao termo do segundo terço do prazo fixado para a apresentação das propostas.</li>
+									<li>Considera-se não escrita ou não declarada a classificação de um documento que não tenha sido expressamente autorizada nos termos do disposto nos números anteriores.</li>
+									<li>Se no decurso do procedimento deixarem de se verificar os pressupostos que determinaram a classificação de documentos que constituem as propostas, o órgão competente para a decisão de contratar deve promover, oficiosamente, a respetiva desclassificação, informando do facto todos os interessados.</li>
+									<li>Quando, por força da classificação de documentos que constituem a proposta, não seja possível apresentá-los nos termos do disposto no <a href="#62">artigo 62.º</a> ou no prazo fixado no programa do procedimento, o órgão competente para a decisão de contratar pode estabelecer, oficiosamente ou a pedido do interessado, um modo alternativo de apresentação dos documentos em causa ou a prorrogação daquele prazo na medida do estritamente necessário.</li>
+									<li>A entidade adjudicante não deve divulgar as informações constantes dos documentos classificados das propostas.</li>
+									<li>A entidade adjudicante pode impor aos concorrentes requisitos destinados a proteger as informações de natureza confidencial por ela disponibilizadas ao longo do procedimento de formação do contrato público.</li>
+								</ol>
+				<h4 class="chapter" id="p2t2c6">Júri do procedimento</h4>
+							<h6 class="article" id="67">Júri</h6>
+								<ol>
+									<li>Com exceção do ajuste direto e dos casos previstos no n.º 3, os procedimentos para a formação de contratos são conduzidos por um júri, designado pelo órgão competente para a decisão de contratar, composto, em número ímpar, por um mínimo de três membros efetivos, um dos quais preside, e dois suplentes.</li>
+									<li>Os titulares do órgão competente para a decisão de contratar podem ser designados membros do júri.</li>
+									<li>Tratando-se de consulta prévia ou de concurso público urgente, o órgão competente para a decisão de contratar pode decidir que os procedimentos sejam conduzidos pelos serviços da entidade adjudicante, considerando-se feitas a estes as referências feitas, no presente Código, ao júri.</li>
+									<li>O júri pode ser dispensado nos procedimentos em que seja apresentada apenas uma proposta.</li>
+									<li>Antes do início de funções, os membros do júri e todos os demais intervenientes no processo de avaliação de propostas, designadamente peritos, subscrevem declaração de inexistência de conflitos de interesses, conforme modelo previsto no anexo xiii ao presente Código e que dele faz parte integrante.</li>
+								</ol>
+							<h6 class="article" id="68">Funcionamento</h6>
+								<ol>
+									<li>O júri do procedimento inicia o exercício das suas funções no dia útil subsequente ao do envio do anúncio para publicação ou do convite.</li>
+									<li>O júri só pode funcionar quando o número de membros presentes na reunião corresponda ao número de membros efetivos.</li>
+									<li>As deliberações do júri, que devem ser sempre fundamentadas, são tomadas por maioria de votos, não sendo admitida a abstenção.</li>
+									<li>Nas deliberações em que haja voto de vencido de algum membro do júri, devem constar da ata as razões da sua discordância.</li>
+									<li>O júri pode designar um secretário de entre o pessoal dos serviços da entidade adjudicante, com a aprovação do respetivo dirigente máximo.</li>
+									<li>Quando o considerar conveniente, o órgão competente para a decisão de contratar pode designar peritos ou consultores para apoiarem o júri do procedimento no exercício das suas funções, podendo aqueles participar, sem direito de voto, nas reuniões do júri.</li>
+								</ol>
+							<h6 class="article" id="69">Competência do júri</h6>
+								<ol>
+									<li>Compete nomeadamente ao júri:
+										<ol type="a">
+											<li>Proceder à apreciação das candidaturas;</li>
+											<li>Proceder à apreciação das propostas;</li>
+											<li>Proceder à apreciação de soluções e projetos;</li>
+											<li>Elaborar os relatórios de análise das candidaturas, das propostas e das soluções e projetos.</li>
+										</ol>
+									</li>
+									<li>Cabe ainda ao júri exercer a competência que lhe seja delegada pelo órgão competente para a decisão de contratar, não lhe podendo este, porém, delegar a competência para a retificação das peças do procedimento, a decisão sobre erros ou omissões identificados pelos interessados, a decisão de qualificação dos candidatos ou a decisão de adjudicação.</li>
+								</ol>
+				<h4 class="chapter" id="p2t2c7">Análise das propostas e adjudicação</h4>
+							<h6 class="article" id="70">Análise das propostas</h6>
+								<ol>
+									<li>As propostas são analisadas em todos os seus atributos, representados pelos fatores e subfatores que densificam o critério de adjudicação, e termos ou condições.</li>
+									<li>São excluídas as propostas cuja análise revele:
+										<ol type="a">
+											<li>Que não apresentam algum dos atributos ou algum dos termos ou condições, nos termos, respetivamente, do disposto nas <a href="#57">alíneas b) e c) do n.º 1 do artigo 57.º</a>;</li>
+											<li>Que apresentam atributos que violem os parâmetros base fixados no caderno de encargos ou que apresentem quaisquer termos ou condições que violem aspetos da execução do contrato a celebrar por aquele não submetidos à concorrência, sem prejuízo do disposto nos <a href="#49">n.<sup>os</sup> 4 a 6 e 8 a 11 do artigo 49.º</a>;</li>
+											<li>A impossibilidade de avaliação das mesmas em virtude da forma de apresentação de algum dos respetivos atributos;</li>
+											<li>Que o preço contratual seria superior ao preço base;</li>
+											<li>Um preço ou custo anormalmente baixo, cujos esclarecimentos justificativos não tenham sido apresentados ou não tenham sido considerados nos termos do disposto no artigo seguinte;</li>
+											<li>Que o contrato a celebrar implicaria a violação de quaisquer vinculações legais ou regulamentares aplicáveis;</li>
+											<li>A existência de fortes indícios de atos, acordos, práticas ou informações suscetíveis de falsear as regras de concorrência.</li>
+										</ol>
+									</li>
+									<li>A exclusão de quaisquer propostas com fundamento no disposto na alínea e) do número anterior, bem como a existência de indícios de práticas restritivas do comércio, ainda que não tenham dado origem à exclusão da proposta, devem ser comunicadas à Autoridade de Segurança Alimentar e Económica.</li>
+									<li>A exclusão de quaisquer propostas com fundamento no disposto na alínea g) do n.º 2, bem como a existência de indícios de práticas restritivas da concorrência, ainda que não tenham dado origem à exclusão da proposta, devem ser comunicadas à Autoridade da Concorrência.</li>
+									<li>A exclusão de quaisquer propostas com fundamento no disposto na alínea e) do n.º 2, devido ao facto do operador económico ter obtido um auxílio estatal e não puder provar que o mesmo é compatível com o mercado interno na aceção do artigo 107.º do Tratado sobre o Funcionamento da União Europeia, deve ser comunicada à Autoridade da Concorrência e, quando o anúncio do respetivo procedimento tenha sido publicado no Jornal Oficial da União Europeia, também à Comissão Europeia.</li>
+								</ol>
+							<h6 class="article" id="71">Preço ou custo anormalmente baixo</h6>
+								<ol>
+									<li>As entidades adjudicantes podem definir, no programa de concurso ou no convite, as situações em que o preço ou o custo de uma proposta é considerado anormalmente baixo, tendo em conta o desvio percentual em relação à média dos preços das propostas a admitir, ou outros critérios considerados adequados.</li>
+									<li>A entidade adjudicante deve fundamentar a necessidade de fixação do preço ou do custo anormalmente baixo, bem como os critérios que presidiram a essa fixação, designadamente os preços médios obtidos na consulta preliminar ao mercado, se tiver existido.</li>
+									<li>O órgão competente para a decisão de contratar deve fundamentar a decisão de exclusão de uma proposta com essa justificação, solicitando previamente ao respetivo concorrente que preste esclarecimentos, por escrito e em prazo adequado, relativos aos elementos constitutivos relevantes da proposta.</li>
+									<li>Na análise dos esclarecimentos prestados pelo concorrente nos termos do número anterior, pode tomar-se em consideração justificações inerentes, designadamente:
+										<ol type="a">
+											<li>À economia do processo de construção, de fabrico ou de prestação do serviço;</li>
+											<li>Às soluções técnicas adotadas ou às condições excecionalmente favoráveis de que o concorrente comprovadamente disponha para a execução da prestação objeto do contrato a celebrar;</li>
+											<li>À originalidade da obra, dos bens ou dos serviços propostos;</li>
+											<li>Às específicas condições de trabalho de que beneficia o concorrente;</li>
+											<li>À possibilidade de obtenção de um auxílio de Estado pelo concorrente, desde que legalmente concedido;</li>
+											<li>À verificação da decomposição do respetivo preço, por meio de documentos comprovativos dos preços unitários incorporados no mesmo, nomeadamente folhas de pagamento e declarações de fornecedores, que atestem a conformidade dos preços apresentados e demonstrem a sua racionalidade económica;</li>
+											<li>Ao cumprimento das obrigações decorrentes da legislação em matéria ambiental, social e laboral, referidas no <a href="#1-A">n.º 2 do artigo 1.º-A</a>.</li>
+										</ol>
+									</li>
+								</ol>
+							<h6 class="article" id="72">Esclarecimentos e suprimento de propostas e candidaturas</h6>
+								<ol>
+									<li>O júri do procedimento pode pedir aos concorrentes quaisquer esclarecimentos sobre as propostas apresentadas que considere necessários para efeito da análise e da avaliação das mesmas.</li>
+									<li>Os esclarecimentos prestados pelos respetivos concorrentes fazem parte integrante das mesmas, desde que não contrariem os elementos constantes dos documentos que as constituem, não alterem ou completem os respetivos atributos, nem visem suprir omissões que determinam a sua exclusão nos termos do disposto na alínea a) do <a href="#">n.º 2 do artigo 70.º</a></li>
+									<li>O júri deve solicitar aos candidatos e concorrentes que, no prazo máximo de cinco dias, procedam ao suprimento das irregularidades das suas propostas e candidaturas causadas por preterição de formalidades não essenciais e que careçam de suprimento, incluindo a apresentação de documentos que se limitem a comprovar factos ou qualidades anteriores à data de apresentação da proposta ou candidatura, e desde que tal suprimento não afete a concorrência e a igualdade de tratamento.</li>
+									<li>O júri procede à retificação oficiosa de erros de escrita ou de cálculo contidos nas candidaturas ou propostas, desde que seja evidente para qualquer destinatário a existência do erro e os termos em que o mesmo deve ser corrigido.</li>
+									<li>Os pedidos do júri formulados nos termos dos n.<sup>os</sup> 1 e 3, bem como as respetivas respostas, devem ser disponibilizados em plataforma eletrónica utilizada pela entidade adjudicante, devendo todos os candidatos e concorrentes ser imediatamente notificados desse facto.</li>
+								</ol>
+							<h6 class="article" id="73">Noção de adjudicação</h6>
+							<h6 class="article" id="74">Critério de adjudicação</h6>
+							<h6 class="article" id="75">Fatores e subfatores</h6>
+							<h6 class="article" id="76">Dever de adjudicação</h6>
+							<h6 class="article" id="77">Notificação da decisão de adjudicação</h6>
+							<h6 class="article" id="78">Anúncio da adjudicação</h6>
+							<h6 class="articleA" id="78-A">Anúncio voluntário de transparência</h6>
+							<h6 class="article" id="79">Causas de não adjudicação</h6>
+							<h6 class="article" id="80">Revogação da decisão de contratar</h6>
+				<h4 class="chapter" id="p2t2c8">Habilitação</h4>
+							<h6 class="article" id="81">Documentos de habilitação</h6>
+							<h6 class="article" id="82">(Revogado.)</h6>
+							<h6 class="article" id="83">(Revogado.)</h6>
+							<h6 class="articleA" id="83-A">Força probatória dos documentos de habilitação</h6>
+							<h6 class="article" id="84">(Revogado.)</h6>
+							<h6 class="article" id="85">Notificação da apresentação dos documentos de habilitação</h6>
+							<h6 class="article" id="86">Não apresentação dos documentos de habilitação</h6>
+							<h6 class="article" id="87">Falsidade de documentos e declarações</h6>
+							<h6 class="articleA" id="87-A">Outras causas de caducidade da adjudicação</h6>
+				<h4 class="chapter" id="p2t2c9">Caução</h4>
+							<h6 class="article" id="88">Função da caução</h6>
+							<h6 class="article" id="89">Valor da caução</h6>
+							<h6 class="article" id="90">Modo de prestação da caução</h6>
+							<h6 class="article" id="91">Não prestação da caução</h6>
+				<h4 class="chapter" id="p2t2c10">Confirmação de compromissos</h4>
+							<h6 class="article" id="92">Prorrogação do prazo para a confirmação de compromissos</h6>
+							<h6 class="article" id="93">Não confirmação de compromissos</h6>
+				<h4 class="chapter" id="p2t2c11">Celebração do contrato</h4>
+							<h6 class="article" id="94">Redução do contrato a escrito</h6>
+							<h6 class="article" id="95">Inexigibilidade e dispensa de redução do contrato a escrito</h6>
+							<h6 class="article" id="96">Conteúdo do contrato</h6>
+							<h6 class="article" id="97">Preço contratual</h6>
+							<h6 class="article" id="98">Aprovação da minuta do contrato</h6>
+							<h6 class="article" id="99">Ajustamentos ao conteúdo do contrato a celebrar</h6>
+							<h6 class="article" id="100">Notificação da minuta do contrato</h6>
+							<h6 class="article" id="101">Aceitação da minuta do contrato</h6>
+							<h6 class="article" id="102">Reclamação da minuta do contrato</h6>
+							<h6 class="article" id="103">Notificação dos ajustamentos ao contrato</h6>
+							<h6 class="article" id="104">Outorga do contrato</h6>
+							<h6 class="article" id="105">Não outorga do contrato</h6>
+							<h6 class="article" id="106">Representação na outorga do contrato</h6>
+				<h4 class="chapter" id="p2t2c12">Relatórios</h4>
+							<h6 class="article" id="107">Informações sobre o procedimento</h6>
+							<h6 class="article" id="108">(Revogado.)</h6>
+				<h4 class="chapter" id="p2t2c13">Delegação de competências</h4>
+							<h6 class="article" id="109">Norma de habilitação</h6>
+							<h6 class="article" id="110">Delegação de competências nos órgãos dos institutos públicos</h6>
+							<h6 class="article" id="111">Delegação das competências do Conselho de Ministros ou do Conselho do Governo Regional</h6>
+			<h3 class="title" id="p2t3">Tramitação procedimental</h3>
+				<h4 class="chapter" id="p2t3c1">Consulta prévia e ajuste direto</h4>
+					<h5 class="section" id="p2t3c1s1">Disposições comuns</h5>
+								<h6 class="article" id="112">Noção de consulta prévia e de ajuste direto</h6>
+								<h6 class="article" id="113">Escolha das entidades convidadas</h6>
+					<h5 class="section" id="p2t3c1s2">Regime geral</h5>
+							<h6 class="article" id="114">Número de entidades convidadas</h6>
+							<h6 class="article" id="115">Convite</h6>
+							<h6 class="article" id="116">Esclarecimentos e retificação das peças do procedimento</h6>
+							<h6 class="article" id="117">Agrupamentos</h6>
+							<h6 class="article" id="118">Negociações</h6>
+							<h6 class="article" id="119">Representação dos concorrentes nas sessões de negociação</h6>
+							<h6 class="article" id="120">Formalidades a observar</h6>
+							<h6 class="article" id="121">Versões finais das propostas</h6>
+							<h6 class="article" id="122">Relatório preliminar</h6>
+							<h6 class="article" id="123">Audiência prévia</h6>
+							<h6 class="article" id="124">Relatório final</h6>
+							<h6 class="article" id="125">Adjudicação no caso de apresentação de uma única proposta</h6>
+							<h6 class="article" id="126">(Revogado.)</h6>
+							<h6 class="article" id="127">Publicitação e eficácia do contrato</h6>
+					<h5 class="section" id="p2t3c1s3">Ajuste direto simplificado</h5>
+							<h6 class="article" id="128">Tramitação</h6>
+							<h6 class="article" id="129">Prazo e preços</h6>
+				<h4 class="chapter" id="p2t3c2">Concurso público</h4>
+					<h5 class="section" id="p2t3c2s1">Anúncio e peças do concurso</h5>
+							<h6 class="article" id="130">Anúncio</h6>
+							<h6 class="article" id="131">Anúncio no Jornal Oficial da União Europeia</h6>
+							<h6 class="article" id="132">Programa do concurso</h6>
+							<h6 class="article" id="133">Disponibilização eletrónica das peças do concurso</h6>
+							<h6 class="article" id="134">(Revogado.)</h6>
+					<h5 class="section" id="p2t3c2s2">Apresentação das propostas</h5>
+							<h6 class="article" id="135">Prazo mínimo para a apresentação das propostas em concursos públicos sem publicidade internacional</h6>
+							<h6 class="article" id="136">Prazos mínimos para a apresentação das propostas em concursos públicos com publicidade internacional</h6>
+							<h6 class="article" id="137">Retirada da proposta</h6>
+							<h6 class="article" id="138">Lista dos concorrentes e consulta das propostas apresentadas</h6>
+					<h5 class="section" id="p2t3c2s3">Avaliação das propostas</h5>
+							<h6 class="article" id="139">Modelo de avaliação das propostas</h6>
+					<h5 class="section" id="p2t3c2s4">Leilão eletrónico</h5>
+							<h6 class="article" id="140">Âmbito</h6>
+							<h6 class="article" id="141">Indicações relativas ao leilão eletrónico</h6>
+							<h6 class="article" id="142">Convite</h6>
+							<h6 class="article" id="143">Regras do leilão eletrónico</h6>
+							<h6 class="article" id="144">Confidencialidade</h6>
+							<h6 class="article" id="145">Modos de encerramento do leilão eletrónico</h6>
+					<h5 class="section" id="p2t3c2s5">Preparação da adjudicação</h5>
+							<h6 class="article" id="146">Relatório preliminar</h6>
+							<h6 class="article" id="147">Audiência prévia</h6>
+							<h6 class="article" id="148">Relatório final</h6>
+					<h5 class="section" id="p2t3c2s6">Fase de negociação das propostas</h5>
+							<h6 class="article" id="149">Âmbito</h6>
+							<h6 class="article" id="150">Indicações relativas à fase de negociação</h6>
+							<h6 class="article" id="151">Remissão</h6>
+							<h6 class="article" id="152">Segundo relatório preliminar</h6>
+							<h6 class="article" id="153">Audiência prévia</h6>
+							<h6 class="article" id="154">Segundo relatório final</h6>
+					<h5 class="section" id="p2t3c2s7">Concurso público urgente</h5>
+							<h6 class="article" id="155">Âmbito e pressupostos</h6>
+							<h6 class="article" id="156">Tramitação</h6>
+							<h6 class="article" id="157">Anúncio</h6>
+							<h6 class="article" id="158">Prazo mínimo para a apresentação das propostas</h6>
+							<h6 class="article" id="159">Prazo da obrigação de manutenção das propostas</h6>
+							<h6 class="article" id="160">Adjudicação</h6>
+							<h6 class="article" id="161">Prazo para a apresentação dos documentos de habilitação</h6>
+				<h4 class="chapter" id="p2t3c3">Concurso limitado por prévia qualificação</h4>
+					<h5 class="section" id="p2t3c3s1">Disposições gerais</h5>
+							<h6 class="article" id="162">Regime</h6>
+							<h6 class="article" id="163">Fases do procedimento</h6>
+							<h6 class="article" id="164">Programa do concurso</h6>
+							<h6 class="article" id="165">Requisitos mínimos</h6>
+							<h6 class="article" id="166">Esclarecimentos e retificação das peças do concurso</h6>
+					<h5 class="section" id="p2t3c3s2">Fase da apresentação das candidaturas e da qualificação dos candidatos</h5>
+							<h6 class="article" id="167">Anúncio</h6>
+							<h6 class="article" id="168">Documentos da candidatura</h6>
+							<h6 class="article" id="169">Idioma dos documentos da candidatura</h6>
+							<h6 class="article" id="170">Modo de apresentação das candidaturas</h6>
+							<h6 class="article" id="171">Apresentação das candidaturas por agrupamentos</h6>
+							<h6 class="article" id="172">Fixação do prazo para a apresentação das candidaturas</h6>
+							<h6 class="article" id="173">Prazo mínimo para a apresentação das candidaturas em concursos limitados por prévia qualificação sem publicidade internacional</h6>
+							<h6 class="article" id="174">Prazos mínimos para a apresentação das candidaturas em concursos limitados por prévia qualificação com publicidade internacion</li>
+							<h6 class="article" id="175">Prorrogação do prazo fixado para a apresentação das candidaturas</h6>
+							<h6 class="article" id="176">Retirada da candidatura</h6>
+							<h6 class="article" id="177">Lista dos candidatos e consulta das candidaturas apresentadas</h6>
+							<h6 class="article" id="178">Análise das candidaturas</h6>
+							<h6 class="article" id="179">Modelo simples de qualificação</h6>
+							<h6 class="article" id="180">Revogação, invalidade, ineficácia ou extinção da declaração bancária</h6>
+							<h6 class="article" id="181">Modelo complexo de qualificação: Sistema de seleção</h6>
+							<h6 class="article" id="182">Preenchimento dos requisitos mínimos por agrupamentos candidatos</h6>
+							<h6 class="article" id="183">Esclarecimentos sobre os documentos destinados à qualificação dos candidatos</h6>
+							<h6 class="article" id="184">Relatório preliminar da fase de qualificação</h6>
+							<h6 class="article" id="185">Audiência prévia</h6>
+							<h6 class="article" id="186">Relatório final da fase de qualificação</h6>
+							<h6 class="article" id="187">Dever de qualificação</h6>
+							<h6 class="article" id="188">Notificação da decisão de qualificação</h6>
+					<h5 class="section" id="p2t3c3s3">Fase da apresentação e análise das propostas e da adjudicação</h5>
+							<h6 class="article" id="189">Convite</h6>
+							<h6 class="article" id="190">Prazo mínimo para a apresentação das propostas em concursos limitados por prévia qualificação sem publicidade internacional</h6>
+							<h6 class="article" id="191">Prazos mínimos para a apresentação das propostas em concursos limitados por prévia qualificação com publicidade internacional</h6>
+							<h6 class="article" id="192">Acordo sobre a fixação do prazo para a apresentação das propostas</h6>
+				<h4 class="chapter" id="p2t3c4">Procedimento de negociação</h4>
+					<h5 class="section" id="p2t3c4s1">Disposições gerais</h5>
+							<h6 class="article" id="193">Regime</h6>
+							<h6 class="article" id="194">Fases do procedimento</h6>
+							<h6 class="article" id="195">Inadmissibilidade de leilão eletrónico</h6>
+							<h6 class="article" id="196">Programa do procedimento de negociação</h6>
+					<h5 class="section" id="p2t3c4s2">Fase da apresentação das candidaturas e da qualificação dos candidatos</h5>
+							<h6 class="article" id="197">Anúncios</h6>
+							<h6 class="article" id="198">Prazos mínimos para a apresentação das candidaturas</h6>
+					<h5 class="section" id="p2t3c4s3">Fase da apresentação e análise das versões iniciais das propostas</h5>
+							<h6 class="article" id="199">Convite</h6>
+							<h6 class="article" id="200">Remissão</h6>
+					<h5 class="section" id="p2t3c4s4">Fase da negociação das proposta</h5>
+							<h6 class="article" id="201">Início da negociação</h6>
+							<h6 class="article" id="202">Negociação e apresentação das versões finais das propostas</h6>
+					<h5 class="section" id="p2t3c4s5">Fase da análise das versões finais das propostas e da adjudicação</h5>
+							<h6 class="article" id="203">Remissão</h6>
+				<h4 class="chapter" id="p2t3c5">Diálogo concorrencial</h4>
+					<h5 class="section" id="p2t3c5s1">Disposições gerais</h5>
+							<h6 class="article" id="204">Regime</h6>
+							<h6 class="article" id="205">Fases do procedimento</h6>
+							<h6 class="article" id="206">Programa do procedimento de diálogo concorrencial</h6>
+							<h6 class="article" id="207">Memória descritiva e caderno de encargos</h6>
+					<h5 class="section" id="p2t3c5s2">Fase da apresentação das candidaturas e da qualificação dos candidatos</h5>
+							<h6 class="article" id="208">Anúncios</h6>
+					<h5 class="section" id="p2t3c5s3">Fase da apresentação das soluções e de diálogo com os candidatos qualificados</h5>
+							<h6 class="article" id="209">Convite à apresentação das soluções</h6>
+							<h6 class="article" id="210">Apresentação de soluções</h6>
+							<h6 class="article" id="211">Idioma das soluções</h6>
+							<h6 class="article" id="212">Admissão e exclusão das soluções</h6>
+							<h6 class="article" id="213">Diálogo</h6>
+							<h6 class="article" id="214">Formalidades a observar</h6>
+							<h6 class="article" id="215">Relatório do diálogo</h6>
+							<h6 class="article" id="216">Notificação da conclusão do diálogo</h6>
+					<h5 class="section" id="p2t3c5s4">Fase da apresentação e análise das propostas e da adjudicação</h5>
+							<h6 class="article" id="217">Convite</h6>
+							<h6 class="article" id="218">Prazos mínimos para a apresentação das propostas em procedimento de diálogo concorrencial</h6>
+				<h4 class="chapter" id="p2t3c6">Parceria para a inovação</h4>
+							<h6 class="articleA" id="218-A">Regime</h6>
+							<h6 class="articleA" id="218-B">Convite à apresentação de propostas de projetos de investigação e desenvolvimento</h6>
+							<h6 class="articleA" id="218-C">Negociação das propostas de projetos de investigação e desenvolvimento</h6>
+							<h6 class="articleA" id="218-D">Análise das propostas e celebração da parceria</h6>
+			<h3 class="title" id="p2t4">Instrumentos procedimentais especiais</h3>
+				<h4 class="chapter" id="p2t4c1">Concurso de conceção</h4>
+							<h6 class="article" id="219">(Revogado.)</h6>
+							<h6 class="articleA" id="219-A">Âmbito e modalidades</h6>
+							<h6 class="articleA" id="219-B">Disposições gerais</h6>
+							<h6 class="articleA" id="219-C">Publicidade</h6>
+							<h6 class="articleA" id="219-D">Termos de referência</h6>
+							<h6 class="articleA" id="219-E">Júri do concurso de conceção</h6>
+							<h6 class="articleA" id="219-F">Formalidades do concurso público de conceção</h6>
+							<h6 class="articleA" id="219-G">Formalidades do concurso limitado de conceção</h6>
+							<h6 class="articleA" id="219-H">Formalidades do concurso de conceção simplificado</h6>
+							<h6 class="articleA" id="219-I">Decisão de seleção e prémios</h6>
+							<h6 class="articleA" id="219-J">Concurso de ideias</h6>
+							<h6 class="article" id="220">(Revogado.)</h6>
+							<h6 class="article" id="221">(Revogado.)</h6>
+							<h6 class="article" id="222">(Revogado.)</h6>
+							<h6 class="article" id="223">(Revogado.)</h6>
+							<h6 class="article" id="224">(Revogado.)</h6>
+							<h6 class="article" id="225">(Revogado.)</h6>
+							<h6 class="article" id="226">(Revogado.)</h6>
+							<h6 class="article" id="227">(Revogado.)</h6>
+							<h6 class="article" id="228">(Revogado.)</h6>
+							<h6 class="article" id="229">(Revogado.)</h6>
+							<h6 class="article" id="230">(Revogado.)</h6>
+							<h6 class="article" id="231">(Revogado.)</h6>
+							<h6 class="article" id="232">(Revogado.)</h6>
+							<h6 class="article" id="233">(Revogado.)</h6>
+							<h6 class="article" id="234">(Revogado.)</h6>
+							<h6 class="article" id="235">(Revogado.)</h6>
+							<h6 class="article" id="236">(Revogado.)</h6>
+				<h4 class="chapter" id="p2t4c2">Sistemas de aquisição dinâmicos</h4>
+							<h6 class="article" id="237">Noção</h6>
+							<h6 class="article" id="238">Fases do sistema</h6>
+							<h6 class="article" id="239">(Revogado.)</h6>
+							<h6 class="article" id="240">Peças do procedimento</h6>
+							<h6 class="article" id="241">(Revogado.)</h6>
+							<h6 class="articleA" id="241-A">Participação e qualificação dos candidatos</h6>
+							<h6 class="articleA" id="241-B">Convite à apresentação de proposta</h6>
+							<h6 class="articleA" id="241-C">Leilão e catálogos eletrónicos</h6>
+							<h6 class="articleA" id="241-D">Atualização da documentação dos candidatos qualificados</h6>
+							<h6 class="article" id="242">(Revogado.)</h6>
+							<h6 class="article" id="243">(Revogado.)</h6>
+							<h6 class="article" id="244">(Revogado.)</h6>
+				<h4 class="chapter" id="p2t4c3">Sistemas de qualificação</h4>
+							<h6 class="article" id="245">Instituição de sistemas de qualificação</h6>
+							<h6 class="article" id="246">Regras dos sistemas de qualificação</h6>
+							<h6 class="article" id="247">Participação num sistema de qualificação</h6>
+							<h6 class="article" id="248">Atualização das regras e dos critérios de qualificação</h6>
+							<h6 class="article" id="249">Decisão de qualificação</h6>
+							<h6 class="article" id="250">Seleção dos interessados qualificados</h6>
+				<h4 class="chapter" id="p2t4c4">Serviços sociais e outros serviços específicos</h4>
+							<h6 class="articleA" id="250-A">Contratos de serviços sociais e de outros serviços específicos</h6>
+							<h6 class="articleA" id="250-B">Publicação de anúncios</h6>
+							<h6 class="articleA" id="250-C">Procedimentos pré-contratuais</h6>
+							<h6 class="articleA" id="250-D">Contratos reservados para determinados serviços</h6>
+			<h3 class="title" id="p2t5">Acordos-quadro</h3>
+				<h4 class="chapter" id="p2t5c1">Celebração de acordos-quadro</h4>
+							<h6 class="article" id="251">Noção</h6>
+							<h6 class="article" id="252">Modalidades de acordos-quadro</h6>
+							<h6 class="article" id="253">Procedimento de formação dos acordos-quadro</h6>
+							<h6 class="article" id="254">Caução</h6>
+							<h6 class="article" id="255">Obrigação de celebração de contratos ao abrigo de acordo-quadro</h6>
+							<h6 class="article" id="256">Prazo máximo de vigência dos acordos-quadro</h6>
+							<h6 class="articleA" id="256-A">Obtenção de preço mais vantajoso fora do acordo-quadro</h6>
+				<h4 class="chapter" id="p2t5c2">Celebração de contratos ao abrigo de acordos-quadro</h4>
+							<h6 class="article" id="257">Regras gerais</h6>
+							<h6 class="article" id="258">Celebração de contratos ao abrigo de acordos-quadro cujos termos abranjam todos os seus aspetos submetidos à concorrência</h6>
+							<h6 class="article" id="259">Celebração de contratos ao abrigo de acordos-quadro cujos termos não abranjam todos os seus aspetos submetidos à concorrência</h6>
+			<h3 class="title" id="p2t6">Centrais de compras</h3>
+				<h4 class="chapter" id="p2t6c1">Disposições gerais</h4>
+							<h6 class="article" id="260">Centrais de compras</h6>
+							<h6 class="article" id="261">Principais atividades das centrais de compras</h6>
+							<h6 class="article" id="262">Âmbito subjetivo das centrais de compras</h6>
+				<h4 class="chapter" id="p2t6c2">Acordos-quadro celebrados por centrais de compras</h4>
+							<h6 class="article" id="263">Admissibilidade da celebração de acordos-quadro por centrais de compras</h6>
+							<h6 class="article" id="264">Remissão</h6>
+							<h6 class="article" id="265">Procedimento de formação dos contratos públicos de aprovisionamento</h6>
+							<h6 class="article" id="266">Prazo máximo de vigência dos contratos públicos de aprovisionamento</h6>
+			<h3 class="titleA" id="p2t6A">Alienação de bens móveis</h3>
+							<h6 class="articleA" id="266-A">Âmbito</h6>
+							<h6 class="articleA" id="266-B">Disponibilização</h6>
+							<h6 class="articleA" id="266-C">Alienação</h6>
+			<h3 class="title" id="p2t7">Garantias administrativas</h3>
+							<h6 class="article" id="267">Direito aplicável</h6>
+							<h6 class="article" id="268">Natureza</h6>
+							<h6 class="article" id="269">Decisões impugnáveis</h6>
+							<h6 class="article" id="270">Prazo de impugnação</h6>
+							<h6 class="article" id="271">Apresentação da impugnação</h6>
+							<h6 class="article" id="272">Efeitos da impugnação</h6>
+							<h6 class="article" id="273">Audiência dos contrainteressados</h6>
+							<h6 class="article" id="274">Decisão</h6>
+			<h3 class="title" id="p2t8">Extensão do âmbito de aplicação</h3>
+							<h6 class="article" id="275">Contratos subsidiados</h6>
+							<h6 class="article" id="276">Contratos a celebrar por concessionários de obras públicas que não sejam entidades adjudicantes</h6>
+							<h6 class="article" id="277">Contratos a celebrar por entidades beneficiárias de direitos especiais ou exclusivos no exercício de atividades de serviço público</h6>
+		<h2 class="part" id="p3">Regime substantivo dos contratos administrativos</h2>
+			<h3 class="title" id="p3t1">Regime substantivo dos contratos administrativos</h3>
+				<h4 class="chapter" id="p3t1c1">Disposições gerais</h4>
+							<h6 class="article" id="278">Utilização do contrato administrativo</h6>
+							<h6 class="article" id="279">Contrato como fonte da relação jurídica administrativa</h6>
+							<h6 class="article" id="280">Direito aplicável</h6>
+							<h6 class="article" id="281">Proporcionalidade e conexão material das prestações contratuais</h6>
+							<h6 class="article" id="282">Reposição do equilíbrio financeiro do contrato</h6>
+				<h4 class="chapter" id="p3t1c2">Invalidade do contrato</h4>
+							<h6 class="article" id="283">Invalidade consequente de atos procedimentais inválidos</h6>
+							<h6 class="articleA" id="283-A">(Revogado.)</h6>
+							<h6 class="article" id="284">Invalidade própria do contrato</h6>
+							<h6 class="article" id="285">Regime de invalidade</h6>
+				<h4 class="chapter" id="p3t1c3">Execução do contrato</h4>
+							<h6 class="article" id="286">Princípios fundamentais</h6>
+							<h6 class="article" id="287">Eficácia do contrato</h6>
+							<h6 class="article" id="288">Execução pessoal</h6>
+							<h6 class="article" id="289">Colaboração recíproca</h6>
+							<h6 class="article" id="290">Informação e sigilo</h6>
+							<h6 class="articleA" id="290-A">Gestor do contrato</h6>
+							<h6 class="article" id="291">Proteção do cocontratante pelo contraente público</h6>
+							<h6 class="article" id="292">Adiantamentos de preço</h6>
+							<h6 class="article" id="293">Garantia suplementar dos adiantamentos</h6>
+							<h6 class="article" id="294">Substituição da caução</h6>
+							<h6 class="article" id="295">Liberação da caução</h6>
+							<h6 class="article" id="296">Execução da caução</h6>
+							<h6 class="article" id="297">Suspensão da execução</h6>
+							<h6 class="article" id="298">Recomeço da execução</h6>
+							<h6 class="article" id="299">Prazo de pagamento</h6>
+							<h6 class="articleA" id="299-A">Vencimento das obrigações pecuniárias</h6>
+							<h6 class="articleA" id="299-B">Fatura eletrónica</h6>
+							<h6 class="article" id="300">Revisão de preços</h6>
+							<h6 class="article" id="301">Prémios por cumprimento antecipado</h6>
+							<h6 class="articleA" id="301-A">Contratos com forte componente de inovação</h6>
+				<h4 class="chapter" id="p3t1c4">Conformação da relação contratual</h4>
+							<h6 class="article" id="302">Poderes do contraente público</h6>
+							<h6 class="article" id="303">Princípios respeitantes aos poderes de direção e de fiscalização</h6>
+							<h6 class="article" id="304">Direção do modo de execução das prestações</h6>
+							<h6 class="article" id="305">Fiscalização do modo de execução do contrato</h6>
+							<h6 class="article" id="306">Fiscalização do modo de execução dos projetos de investigação e desenvolvimento</h6>
+							<h6 class="article" id="307">Natureza das declarações do contraente público</h6>
+							<h6 class="article" id="308">Formação dos atos administrativos do contraente público</h6>
+							<h6 class="article" id="309">Executividade dos atos administrativos do contraente público</h6>
+							<h6 class="article" id="310">Acordos endocontratuais</h6>
+				<h4 class="chapter" id="p3t1c5">Modificações objetivas do contrato</h4>
+							<h6 class="article" id="311">Modificação objetiva do contrato</h6>
+							<h6 class="article" id="312">Fundamentos</h6>
+							<h6 class="article" id="313">Limites</h6>
+							<h6 class="article" id="314">Consequências</h6>
+							<h6 class="article" id="315">Publicidade das modificações</h6>
+				<h4 class="chapter" id="p3t1c6">Cessão da posição contratual e subcontratação</h4>
+							<h6 class="article" id="316">Âmbito</h6>
+							<h6 class="article" id="317">Limites à cessão e à subcontratação pelo cocontratante</h6>
+							<h6 class="article" id="318">Cessão e subcontratação pelo cocontratante</h6>
+							<h6 class="articleA" id="318-A">Cessão da posição contratual por incumprimento do cocontratante</h6>
+							<h6 class="article" id="319">Autorização à subcontratação pelo cocontratante na fase de execução</h6>
+							<h6 class="article" id="320">Recusa de autorização à subcontratação</h6>
+							<h6 class="article" id="321">Responsabilidade do cocontratante</h6>
+							<h6 class="articleA" id="321-A">Pagamento direto ao subcontratado</h6>
+							<h6 class="article" id="322">Direitos de step in e step out</h6>
+							<h6 class="article" id="323">Alterações societárias</h6>
+							<h6 class="article" id="324">Cessão da posição contratual pelo contraente público</h6>
+				<h4 class="chapter" id="p3t1c7">Incumprimento do contrato</h4>
+							<h6 class="article" id="325">Incumprimento por facto imputável ao cocontratante</h6>
+							<h6 class="article" id="326">Atrasos nos pagamentos</h6>
+							<h6 class="article" id="327">Exceção de não cumprimento invocável pelo cocontratante</h6>
+							<h6 class="article" id="328">Direito de retenção</h6>
+							<h6 class="article" id="329">Aplicação das sanções contratuais</h6>
+				<h4 class="chapter" id="p3t1c8">Extinção do contrato em geral</h4>
+							<h6 class="article" id="330">Causas de extinção</h6>
+							<h6 class="article" id="331">Revogação</h6>
+							<h6 class="article" id="332">Resolução do contrato por iniciativa do cocontratante</h6>
+							<h6 class="article" id="333">Resolução sancionatória</h6>
+							<h6 class="article" id="334">Resolução por razões de interesse público</h6>
+							<h6 class="article" id="335">Outros fundamentos de resolução pelo contraente público</h6>
+				<h4 class="chapter" id="p3t1c9">Regras especiais</h4>
+					<h5 class="section" id="p3t1c9s1">Contratos sobre o exercício de poderes públicos</h5>
+							<h6 class="article" id="336">Negociabilidade da vigência dos vínculos contratuais</h6>
+							<h6 class="article" id="337">Causas específicas de caducidade</h6>
+					<h5 class="section" id="p3t1c9s2">Contratos interadministrativos</h5>
+							<h6 class="article" id="338">Contratos entre contraentes públicos</h6>
+					<h5 class="section" id="p3t1c9s3">Execução e modificação de parcerias público-privadas</h5>
+							<h6 class="article" id="339">Dever de informação</h6>
+							<h6 class="article" id="340">Fiscalização, acompanhamento e modificação de parcerias público-privadas</h6>
+							<h6 class="article" id="341">Partilha de benefícios</h6>
+							<h6 class="article" id="342">Acompanhamento de processos arbitrais</h6>
+			<h3 class="title" id="p3t2">Contratos administrativos em especial</h3>
+				<h4 class="chapter" id="p3t2c1">Empreitadas de obras públicas</h4>
+					<h5 class="section" id="p3t2c1s1">Disposições gerais</h5>
+							<h6 class="article" id="343">Noção</h6>
+							<h6 class="article" id="344">Partes</h6>
+							<h6 class="article" id="345">Garantias administrativas do empreiteiro relativamente a eventos que devam ser formalizados em auto</h6>
+					<h5 class="section" id="p3t2c1s2">Direitos e obrigações das partes</h5>
+							<h6 class="article" id="346">Manutenção da boa ordem no local dos trabalhos</h6>
+							<h6 class="article" id="347">Publicidade</h6>
+							<h6 class="article" id="348">Menções obrigatórias no local dos trabalhos</h6>
+							<h6 class="article" id="349">Meios destinados à execução da obra e dos trabalhos preparatórios ou acessórios</h6>
+							<h6 class="article" id="350">Trabalhos preparatórios ou acessórios</h6>
+							<h6 class="article" id="351">Expropriações, servidões e ocupação de prédios</h6>
+							<h6 class="article" id="352">Posse administrativa e constituição de servidões</h6>
+							<h6 class="article" id="353">Reforço da caução</h6>
+							<h6 class="article" id="354">Reposição do equilíbrio financeiro por agravamento dos custos na realização da obra</h6>
+					<h5 class="section" id="p3t2c1s3">Consignação da obra</h5>
+							<h6 class="article" id="355">Regra geral</h6>
+							<h6 class="article" id="356">Dever de consignar</h6>
+							<h6 class="article" id="357">Plano final de consignação</h6>
+							<h6 class="article" id="358">Consignação total e parcial</h6>
+							<h6 class="article" id="359">Prazo e auto de consignação</h6>
+							<h6 class="article" id="360">Modificação das condições locais e suspensão do procedimento de consignação</h6>
+					<h5 class="section" id="p3t2c1s4">Execução dos trabalhos</h5>
+							<h6 class="article" id="361">Plano de trabalhos</h6>
+							<h6 class="article" id="362">Prazo de execução da obra e das prestações de conceção</h6>
+							<h6 class="article" id="363">Início dos trabalhos</h6>
+							<h6 class="article" id="364">Património cultural e restos humanos</h6>
+					<h5 class="section" id="p3t2c1s5">Suspensão dos trabalhos</h5>
+							<h6 class="article" id="365">Suspensão pelo dono da obra</h6>
+							<h6 class="article" id="366">Suspensão pelo empreiteiro</h6>
+							<h6 class="article" id="367">Suspensão autorizada pelo dono da obra</h6>
+							<h6 class="article" id="368">Suspensão por período excessivo</h6>
+							<h6 class="article" id="369">Auto de suspensão</h6>
+					<h5 class="section" id="p3t2c1s6">Modificações objetivas</h5>
+							<h6 class="article" id="370">Trabalhos complementares</h6>
+							<h6 class="article" id="371">Obrigação de execução de trabalhos complementares</h6>
+							<h6 class="article" id="372">Recusa da execução de trabalhos complementares</h6>
+							<h6 class="article" id="373">Preço e prazo de execução dos trabalhos complementares</h6>
+							<h6 class="article" id="374">Prorrogação do prazo de execução da obra</h6>
+							<h6 class="article" id="375">Formalização dos trabalhos complementares</h6>
+							<h6 class="article" id="376">(Revogado.)</h6>
+							<h6 class="article" id="377">(Revogado.)</h6>
+							<h6 class="article" id="378">Responsabilidade pelos trabalhos complementares</h6>
+							<h6 class="article" id="379">Trabalhos a menos</h6>
+							<h6 class="article" id="380">Inutilização de trabalhos já executados</h6>
+							<h6 class="article" id="381">Indemnização por redução do preço contratual</h6>
+							<h6 class="article" id="382">Revisão ordinária de preços</h6>
+					<h5 class="section" id="p3t2c1s7">Subempreitadas</h5>
+							<h6 class="article" id="383">Limites às subempreitadas</h6>
+							<h6 class="article" id="384">Forma e conteúdo</h6>
+							<h6 class="article" id="385">Subempreitadas na fase de execução</h6>
+							<h6 class="article" id="386">Oposição e recusa de autorização à subempreitada</h6>
+					<h5 class="section" id="p3t2c1s8">Medição e pagamento</h5>
+						<h55 class="subsection" id="p3t2c1s8s1">Medição</h55>
+							<h6 class="article" id="387">Objeto da medição</h6>
+							<h6 class="article" id="388">Procedimento e critérios da medição</h6>
+							<h6 class="article" id="389">Situação de trabalhos</h6>
+							<h6 class="article" id="390">Erros de medição</h6>
+							<h6 class="article" id="391">Situação provisória de trabalhos</h6>
+						<h55 class="subsection" id="p3t2c1s8s2">Pagamento</h55>
+							<h6 class="article" id="392">Liquidação e pagamento</h6>
+							<h6 class="article" id="393">Pagamento provisório</h6>
+					<h5 class="section" id="p3t2c1s9">Receção provisória e definitiva</h5>
+							<h6 class="article" id="394">Vistoria</h6>
+							<h6 class="article" id="395">Auto de receção provisória</h6>
+							<h6 class="article" id="396">Defeitos da obra</h6>
+							<h6 class="article" id="397">Garantia da obra</h6>
+							<h6 class="article" id="398">Receção definitiva</h6>
+					<h5 class="section" id="p3t2c1s10">Liquidação da empreitada e relatório final</h5>
+							<h6 class="article" id="399">Elaboração da conta</h6>
+							<h6 class="article" id="400">Elementos da conta</h6>
+							<h6 class="article" id="401">Notificação da conta final ao empreiteiro</h6>
+							<h6 class="article" id="402">Relatório final da obra</h6>
+					<h5 class="section" id="p3t2c1s11">Incumprimento do contrato</h5>
+							<h6 class="article" id="403">Atraso na execução da obra</h6>
+							<h6 class="article" id="404">Desvio do plano de trabalhos</h6>
+					<h5 class="section" id="p3t2c1s12">Extinção do contrato</h5>
+							<h6 class="article" id="405">Resolução pelo dono da obra</h6>
+							<h6 class="article" id="406">Resolução pelo empreiteiro</h6>
+				<h4 class="chapter" id="p3t2c2">Concessões de obras públicas e de serviços públicos</h4>
+					<h5 class="section" id="p3t2c2s1">Disposições gerais</h5>
+							<h6 class="article" id="407">Noção</h6>
+							<h6 class="article" id="408">Aplicação subsidiária</h6>
+							<h6 class="article" id="409">Exercício de poderes e prerrogativas de autoridade</h6>
+							<h6 class="article" id="410">Prazo</h6>
+							<h6 class="articleA" id="410-A">Valor do contrato de concessão</h6>
+							<h6 class="article" id="411">Concessionário</h6>
+							<h6 class="article" id="412">Outras atividades</h6>
+							<h6 class="article" id="413">Partilha de riscos</h6>
+							<h6 class="article" id="414">Obrigações do concessionário</h6>
+							<h6 class="article" id="415">Direitos do concessionário</h6>
+							<h6 class="article" id="416">Viabilidade económico-financeira do projeto</h6>
+							<h6 class="article" id="417">Cedência de elementos ao concedente</h6>
+							<h6 class="article" id="418">Indicadores de acompanhamento e avaliação do desempenho do concessionário</h6>
+							<h6 class="article" id="419">Bens afetos à concessão</h6>
+							<h6 class="article" id="420">Direitos do concedente</h6>
+							<h6 class="articleA" id="420-A">Modificações ao contrato</h6>
+							<h6 class="article" id="421">Sequestro</h6>
+							<h6 class="article" id="422">Resgate</h6>
+							<h6 class="article" id="423">Resolução pelo concedente</h6>
+							<h6 class="article" id="424">Responsabilidade perante terceiros</h6>
+							<h6 class="article" id="425">Efeitos da extinção do contrato no termo previsto</h6>
+					<h5 class="section" id="p3t2c2s2">Concessão de obras públicas</h5>
+							<h6 class="article" id="426">Remissão</h6>
+							<h6 class="article" id="427">Conservação e uso da obra e dos bens afetos à concessão</h6>
+							<h6 class="article" id="428">Zonas de exploração comercial</h6>
+					<h5 class="section" id="p3t2c2s3">Concessão de serviços públicos</h5>
+							<h6 class="article" id="429">Princípios gerais e regime especial</h6>
+							<h6 class="article" id="430">Contratos afins</h6>
+				<h4 class="chapter" id="p3t2c3">Locação de bens móveis</h4>
+							<h6 class="article" id="431">Noção</h6>
+							<h6 class="article" id="432">Remissão</h6>
+							<h6 class="article" id="433">Obrigações de reparação e manutenção</h6>
+							<h6 class="article" id="434">Indemnização por mora do contraente público nos pagamentos</h6>
+							<h6 class="article" id="435">Cedência do gozo e sublocação do bem locado</h6>
+							<h6 class="article" id="436">Resolução pelo contraente público</h6>
+				<h4 class="chapter" id="p3t2c4">Aquisição de bens móveis</h4>
+							<h6 class="article" id="437">Noção</h6>
+							<h6 class="article" id="438">Remissão</h6>
+							<h6 class="article" id="439">Objeto</h6>
+							<h6 class="article" id="440">Prazo</h6>
+							<h6 class="article" id="441">Conformidade dos bens a entregar</h6>
+							<h6 class="article" id="442">Acompanhamento do fabrico</h6>
+							<h6 class="article" id="443">Entrega dos bens</h6>
+							<h6 class="article" id="444">Obrigações do fornecedor em relação aos bens entregues</h6>
+							<h6 class="article" id="445">Encargos gerais</h6>
+							<h6 class="article" id="446">Continuidade de fabrico</h6>
+							<h6 class="article" id="447">Direitos de propriedade intelectual</h6>
+							<h6 class="article" id="448">Resolução pelo contraente público</h6>
+							<h6 class="article" id="449">Resolução pelo fornecedor</h6>
+				<h4 class="chapter" id="p3t2c5">Aquisição de serviços</h4>
+							<h6 class="article" id="450">Noção</h6>
+							<h6 class="article" id="451">Remissão</h6>
+							<h6 class="article" id="452">Instalações e equipamentos</h6>
+							<h6 class="article" id="453">Obrigações de serviço público</h6>
+							<h6 class="article" id="454">Serviços complementares</h6>
+		<h2 class="part" id="p4">Governação e regime sancionatório</h2>
+				<h4 class="chapter" id="p4c1">Governação</h4>
+							<h6 class="articleA" id="454-A">Acompanhamento e monitorização dos contratos públicos</h6>
+							<h6 class="articleA" id="454-B">Auditoria e fiscalização dos contratos públicos</h6>
+							<h6 class="articleA" id="454-C">Dever de colaboração com outras autoridades</h6>
+				<h4 class="chapter" id="p4c2">Regime sancionatório</h4>
+							<h6 class="article" id="455">Restrição do âmbito de aplicação</h6>
+							<h6 class="article" id="456">Contraordenações muito graves</h6>
+							<h6 class="article" id="457">Contraordenações graves</h6>
+							<h6 class="article" id="458">Contraordenações simples</h6>
+							<h6 class="article" id="459">Tentativa e negligência</h6>
+							<h6 class="article" id="460">Sanção de proibição de participação</h6>
+							<h6 class="article" id="461">Competência para o processo de contraordenação</h6>
+							<h6 class="article" id="462">Cobrança das coimas</h6>
+							<h6 class="article" id="463">Publicidade da sanção</h6>
+							<h6 class="article" id="464">Responsabilidade criminal</h6>
+							<h6 class="articleA" id="464-A">Proibição de participação decorrente de incumprimento contratual</h6>
+		<h2 class="part" id="p5">Disposições finais</h2>
+							<h6 class="article" id="465">Publicitação dos contratos</h6>
+							<h6 class="article" id="466">(Revogado.)</h6>
+							<h6 class="article" id="467">Notificações</h6>
+							<h6 class="article" id="468">Comunicações</h6>
+							<h6 class="article" id="469">Data da notificação e da comunicação</h6>
+							<h6 class="article" id="470">Contagem dos prazos na fase de formação dos contratos</h6>
+							<h6 class="article" id="471">Contagem dos prazos na fase de execução dos contratos</h6>
+							<h6 class="article" id="472">Obrigações perante a Comissão Europeia</h6>
+							<h6 class="article" id="473">Imposto sobre o valor acrescentado</h6>
+							<h6 class="article" id="474">Montantes dos limiares europeus</h6>
+							<h6 class="article" id="475">Base de dados de certificados (e-Certis)</h6>
+							<h6 class="article" id="476">Resolução alternativa de litígios</h6>
+		<h2 class="annex">Anexos</h2>
+			<h3 class="annex" id="a1">Modelo de declaração</h3>
+			<h3 class="annex" id="a2">Modelo de declaração</h3>
+			<h3 class="annex" id="a3">Modelo de ficha</h3>
+			<h3 class="annex" id="a4">(Revogado.)</h3>
+			<h3 class="annex" id="a5">Modelo de declaração</h3>
+			<h3 class="annex" id="a6">Modelo de declaração bancária</h3>
+			<h3 class="annex" id="a7">Especificações técnicas</h3>
+			<h3 class="annex" id="a8">Lista de serviços de investigação e de desenvolvimento</h3>
+			<h3 class="annex" id="a9">Lista de serviços de saúde, serviços sociais, serviços de ensino e outros serviços específicos</h3>
+			<h3 class="annex" id="a10">Lista de serviços de saúde, serviços sociais e serviços culturais que podem participar em procedimentos reservados</h3>
+			<h3 class="annex" id="a11">Lista de atividades de construção civil</h3>
+			<h3 class="annex" id="a12">Modelos para a aceitação da jurisdição de centro de arbitragem institucionalizado</h3>
+			<h3 class="annex" id="a13">Modelo de declaração de inexistência de conflito de interesses</h3>
+			<h3 class="annex" id="a14">Recurso a catálogos eletrónicos no sistema de aquisição dinâmico e nos acordos-quadro</h3>
+		</div>
+	<footer>
+		<details>
+			<summary>Conteúdos do Estado Português. Disponibilizado sem garantia de atualidade ou correção. Original em <a href="https://dre.pt/web/guest/pesquisa/-/search/108086621/details/maximized" target="_blank">https://dre.pt/</a>.</summary>
+			<p>O presente site é disponibilizado pela GGL de forma graciosa para utilização por todos os seus visitantes, no entanto, não é dada qualquer garantia da actualidade ou correcção do seu conteúdo, pelo que toda a informação recolhida deve ser verificada na documentação oficial. De qualquer modo agradecemos a todos os visitantes a indicação de erros encontrados ou de necessidade de actualização, bem como da sugestão de melhorias ou novas funcionalidades.</p>
+			<p>Os conteúdos são do Estado Português e a fonte pode ser acedida em <a href="https://dre.pt/web/guest/pesquisa/-/search/108086621/details/maximized" target="_blank">https://dre.pt/web/guest/pesquisa/-/search/108086621/details/maximized</a></p>
+			<p>A GGL deseja-Vos um bom uso.</p>
+		</details>
+	</footer>
+</body>
+</html>
