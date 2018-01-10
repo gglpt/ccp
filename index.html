@@ -22,43 +22,46 @@
 		.bs-docs-sidebar .nav ul.nav {display: none; }
 		.bs-docs-sidebar .nav > .active > ul.nav {display: block; }
 		*/
-		.bs-docs-sidebar .nav li {display: none;}
-		.bs-docs-sidebar .nav > .active, .bs-docs-sidebar .nav > .active ~ li {display: block;}
+		.bs-docs-sidebar .nav li { display: none; }
+		.bs-docs-sidebar .affix > li, .bs-docs-sidebar .nav > .active, .bs-docs-sidebar .nav > .active ~ li { display: block; }
+		.bs-docs-sidebar .nav li a { font-weight: bold; }
+		.bs-docs-sidebar .nav li a:only-child { font-weight: normal; }
 		.bs-docs-sidebar .nav > li > a, 
 		.bs-docs-sidebar .nav .nav > li > a,
 		.bs-docs-sidebar .nav .nav .nav > li > a,
 		.bs-docs-sidebar .nav .nav .nav .nav > li > a,
 		.bs-docs-sidebar .nav .nav .nav .nav .nav > li > a,
-		.bs-docs-sidebar .nav .nav .nav .nav .nav .nav > li > a {padding-left: 10px;}
-		.nav-pills li {margin-top: 2px; margin-bottom: 2px;}
-		.nav-pills.active {margin-top: 2px; margin-bottom: 2px; padding-left: 10px;}
+		.bs-docs-sidebar .nav .nav .nav .nav .nav .nav > li > a { padding-left: 10px; }
+		.nav-pills li { margin-top: 2px; margin-bottom: 2px; }
+		.nav-pills.active { margin-top: 2px; margin-bottom: 2px; padding-left: 10px; }
 	</style>
 	<style type="text/css">
-		html {font-family: sans-serif;}
-		body {counter-reset: part 0 article;}
-		h2.annex {counter-reset: annex;}
-		h2.part {counter-reset: title;}
-		h2.part:before {font-weight: bold; content: "PARTE " counter(part, upper-roman) ": "; counter-increment: part;}
-		h3.title {counter-reset: titleA 0 chapter 0 articleA;}
-		h3.title:before {content: "TÍTULO " counter(title, upper-roman) ": "; counter-increment: title}
-		h3.titleA:before {content: "TÍTULO " counter(title, upper-roman) "-" counter(titleA, upper-alpha) ": "; counter-increment: titleA}
-		h3.annex {margin-left: 1em;}
-		h4.chapter {counter-reset: articleA 0 section;}
-		h4.chapter:before {content: "CAPÍTULO " counter(chapter, upper-roman) ": "; counter-increment: chapter}
-		h5.section {font-size: 1em; counter-reset: subsection;}
-		h5.section:before {content: "SECÇÃO " counter(section, upper-roman) ": "; counter-increment: section}
-		h55, h6 {display: block; font-size: 1em; -webkit-margin-before: 1.67em; -webkit-margin-after: 1.67em; -webkit-margin-start: 0px; -webkit-margin-end: 0px;}
-		h55.subsection:before {content: "SUBSECÇÃO " counter(subsection, upper-roman) ": "; counter-increment: subsection}
-		h6 {padding-top: 10px; margin-left: 1em;}
-		h6.article {counter-reset: articleA; font-weight: bold;}
-		h6.articleA {font-weight: bold;}
-		h6.article:before {content: "Artigo " counter(article) ".º: "; counter-increment: article;}
-		h6.articleA:before {content: "Artigo " counter(article) ".º-" counter(articleA, upper-alpha) ": "; counter-increment: articleA;}
-		h3.annex:before {content: "ANEXO " counter(annex, upper-roman) ": "; counter-increment: annex;}
-		li {margin-top: 1em; font-family: Lato, sans-serif; font-size: 15px;}
-		li.nostyle {list-style-type: none;}
-		table {width: 100%; border-collapse: collapse;}
-		table, th, td {border: 1px solid black; vertical-align:top;}
+		html { font-family: sans-serif; }
+		body { counter-reset: part 0 article; }
+		h2.annex { counter-reset: annex; }
+		h2.part { counter-reset: title; }
+		h2.part:before { font-weight: bold; content: "PARTE " counter(part, upper-roman) ": "; counter-increment: part; }
+		h3.title { counter-reset: titleA 0 chapter 0 articleA; }
+		h3.title:before { content: "TÍTULO " counter(title, upper-roman) ": "; counter-increment: title }
+		h3.titleA:before { content: "TÍTULO " counter(title, upper-roman) "-" counter(titleA, upper-alpha) ": "; counter-increment: titleA }
+		h3.annex { margin-left: 1em; }
+		h4.chapter { counter-reset: articleA 0 section; }
+		h4.chapter:before { content: "CAPÍTULO " counter(chapter, upper-roman) ": "; counter-increment: chapter }
+		h5.section { font-size: 1em; counter-reset: subsection; }
+		h5.section:before { content: "SECÇÃO " counter(section, upper-roman) ": "; counter-increment: section }
+		h55, h6 { display: block; font-size: 1em; -webkit-margin-before: 1.67em; -webkit-margin-after: 1.67em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; }
+		h55.subsection:before { content: "SUBSECÇÃO " counter(subsection, upper-roman) ": "; counter-increment: subsection }
+		h2, h3, h4, h5, h6 { padding-top: 1em; }
+		h6 { margin-left: 1em; }
+		h6.article { counter-reset: articleA; font-weight: bold; }
+		h6.articleA { font-weight: bold; }
+		h6.article:before { content: "Artigo " counter(article) ".º: "; counter-increment: article; }
+		h6.articleA:before { content: "Artigo " counter(article) ".º-" counter(articleA, upper-alpha) ": "; counter-increment: articleA; }
+		h3.annex:before { content: "ANEXO " counter(annex, upper-roman) ": "; counter-increment: annex; }
+		li { margin-top: 1em; font-family: Lato, sans-serif; font-size: 15px; }
+		li.nostyle { list-style-type: none; }
+		table { width: 100%; border-collapse: collapse; }
+		table, th, td { border: 1px solid black; vertical-align:top; }
 	</style>
 	<script type="application/javascript">
 		function docSetup() {
@@ -97,7 +100,7 @@
 				if (item.nodeType !== 1) return;
 				var currentLevel = mapHeadingLevel[item.nodeName];
 				if (currentLevel > levels[levels.length - 1]) {
-					res += '<ul' + ' class="nav nav-pills nav-stacked"' + (first?' data-spy="affix" data-offset-top="205"':'') + '><li><a href="#' + item.id + '"' + (first?' class="active"':'') + '>' + composeReference(item.className, item.id, '') + '</a>';
+					res += '<ul' + ' class="nav nav-pills nav-stacked"' + (first?' data-spy="affix" data-offset-top="205"':'') + '><li><a href="#' + item.id + '"' + '>' + composeReference(item.className, item.id, '') + '</a>';
 					first = 0;
 					levels.push(currentLevel);
 				} else if (currentLevel < levels[levels.length - 1]) {
@@ -150,7 +153,7 @@
 		}
 	</script>
 </head>
-<body onload="docSetup('autoEpigraphs')" data-spy="scroll" data-target=".bs-docs-sidebar" data-offset="140">
+<body onload="docSetup('autoEpigraphs')" data-spy="scroll" data-target=".bs-docs-sidebar" data-offset="180">
 <h1>CCP - Código da Contratação Pública</h1>
 <div class="container">
 	<div class="row">
