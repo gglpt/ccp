@@ -20,10 +20,6 @@
 		.affix {position: fixed; }
 		.affix-top, .affix {width: 129px; }
 		.bs-docs-sidebar.affix {top: 40px; z-index: 9999 !important; }
-		/*
-		.bs-docs-sidebar .nav ul.nav {display: none; }
-		.bs-docs-sidebar .nav > .active > ul.nav {display: block; }
-		*/
 		.bs-docs-sidebar .nav li { display: none; }
 		.bs-docs-sidebar .affix > li, .bs-docs-sidebar .nav > .active, .bs-docs-sidebar .nav > .active ~ li { display: block; }
 		.bs-docs-sidebar .nav li a { font-weight: bold; }
@@ -40,24 +36,6 @@
 	<style type="text/css">
 		html { font-family: sans-serif; }
 		body { counter-reset: part 0 article; }
-/*
-		h2.annex { counter-reset: annex; }
-		h2.part { counter-reset: title; }
-		h2.part:before { font-weight: bold; content: "PARTE " counter(part, upper-roman) ": "; counter-increment: part; }
-		h3.title { counter-reset: titleA 0 chapter 0 articleA; }
-		h3.title:before { content: "TÍTULO " counter(title, upper-roman) ": "; counter-increment: title }
-		h3.titleA:before { content: "TÍTULO " counter(title, upper-roman) "-" counter(titleA, upper-alpha) ": "; counter-increment: titleA }
-		h4.chapter { counter-reset: articleA 0 section; }
-		h4.chapter:before { content: "CAPÍTULO " counter(chapter, upper-roman) ": "; counter-increment: chapter }
-		h5.section { font-size: 1em; counter-reset: subsection; }
-		h5.section:before { content: "SECÇÃO " counter(section, upper-roman) ": "; counter-increment: section }
-		h55.subsection:before { content: "SUBSECÇÃO " counter(subsection, upper-roman) ": "; counter-increment: subsection }
-		h6.article { counter-reset: articleA; }
-		h6.articleA { font-weight: bold; }
-		h6.article:before { content: "Artigo " counter(article) ".º: "; counter-increment: article; }
-		h6.articleA:before { content: "Artigo " counter(article) ".º-" counter(articleA, upper-alpha) ": "; counter-increment: articleA; }
-		h3.annex:before { content: "ANEXO " counter(annex, upper-roman) ": "; counter-increment: annex; }
-*/
 		h2, h3, h4, h5, h6 { padding-top: 1em; }
 		h3.annex, h6 { margin-left: 1em; }
 		h55, h6 { display: block; font-size: 1em; -webkit-margin-before: 1.67em; -webkit-margin-after: 1.67em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; }
@@ -74,9 +52,8 @@
 					case 'TOC': ccpTOC('ccp', 'tocSeed'); break;
 					case 'autoATitles': autoATitles(); break;
 					case 'completeEpigraphs': completeEpigraphs(); break;
-				}
-			}
-		}
+					case 'fulfillTopAlign': fulfillTopAlign(); break;
+		}	}	}
 		// Prototype extensions
 		String.prototype.getTag = function() { return this.slice(this.indexOf('#') + 1) }
 		Document.prototype.getElementsByClassNameAsArray = function() {
@@ -97,20 +74,16 @@
 			var aTitlesMap = {}, item;
 			docSectionTypes.forEach(function(sectionType) {
 				for (section of document.getElementsByClassName(sectionType)) {section.textContent = composeTitle(section, ': '); }
+		}	);	}
+		function fulfillTopAlign() {fulfill(['article', 'articleA', 'annex'], 'glyphicon glyphicon-object-align-top', setTopAlign); }
+		function composeTitle(item, tag) {return composeReference(item.className, item.id, tag) + item.firstChild.textContent.trim(); }
+		function setTopAlign(item, iconSpec) {item.innerHTML = '<a href="#' + item.id + '"><span class="' + iconSpec + '"></span></a>&nbsp;' + item.firstChild.textContent.trim(); }
+		function fulfill(sectionTypes, fulfillment, runner) {
+			var aTitlesMap = {}, item;
+			sectionTypes.forEach(function(sectionType) {
+				for (section of document.getElementsByClassName(sectionType)) runner(section, fulfillment);
 			});
-
-			var items = ['part', 'title', 'chapter', 'setion', 'subsection', 'article', 'articleA', 'annex'];
-			for (epigraph of items) {
-				var epigraphs = document.getElementsByClassName(epigraph);
-				for (item of epigraphs) {
-					//console.log(item);
-					if (item.firstChild) {
-						item.text = composeTitle(item, ': ') + item.text;
-					}
-				}
-			}
 		}
-		function composeTitle(item, tag) {return composeReference(item.className, item.id, tag) + item.firstChild.textContent.trim();  }
 		function ccpTOC(what, whereTo) {
 			var placeHolder = document.getElementById(whereTo);
 			if (placeHolder === null) { alert("Placeholder '" + whereTo + "' not found in page body. TOC not inserted."); return; }
@@ -123,7 +96,8 @@
 				if (item.nodeType !== 1) return;
 				var currentLevel = mapHeadingLevel[item.nodeName];
 				if (currentLevel > levels[levels.length - 1]) {
-					res +=  '<ul' + ' class="nav nav-pills nav-stacked"' + (first?' id="nav" data-spy="affix" data-offset-top="305"':'') +
+					//res +=  '<ul' + ' class="nav nav-pills nav-stacked"' + (first?' id="nav" data-spy="affix" data-offset-top="100"':'') +
+					res +=  '<ul' + ' class="nav nav-pills nav-stacked"' + (first?' id="nav" data-spy="affix"':'') +
 							'><li><a href="#' + item.id + '"' + '>' + composeReference(item.className, item.id, '') + '</a>';
 					first = 0;
 					levels.push(currentLevel);
@@ -139,7 +113,7 @@
 			res += '</li></ul>'
 			placeHolder.innerHTML = res;
 			assignAffix('#nav');
-			enableScrollSpy('.bs-docs-sidebar', 180);
+			enableScrollSpy('.bs-docs-sidebar', 89);
 			refreshScrollSpy();
 			$("#tocSeed a").on('click', new SmoothScroll(800).runner(event));
 		}
@@ -186,7 +160,7 @@
 		}	);	}	};	};	}
 	</script>
 </head>
-<body onload="docSetup('TOC', 'autoATitles', 'completeEpigraphs')">
+<body onload="docSetup('TOC', 'autoATitles', 'completeEpigraphs', 'fulfillTopAlign')">
 <h1>CCP - Código da Contratação Pública</h1>
 <div class="container-fluid">
 	<div class="row">
@@ -3548,9 +3522,41 @@
 					<h2 class="annex">Anexos</h2>
 					<section>
 						<h3 class="annex" id="a1">Modelo de declaração</h3>
+						<p class="font-weight-light">[a que se refere a <a href="#57">alínea a) do n.º 1 do artigo 57.º</a> ou a <a href="#256-A">subalínea i) da alínea b) e alínea c) do n.º 3 do artigo 256.º-A</a>, conforme aplicável]</p>
+						<ol>
+							<li>... (nome, número de documento de identificação e morada), na qualidade de representante legal de <sup>(1)</sup>... (firma, número de identificação fiscal e sede ou, no caso de agrupamento concorrente, firmas, números de identificação fiscal e sedes), tendo tomado inteiro e perfeito conhecimento do caderno de encargos relativo à execução do contrato a celebrar na sequência do procedimento de... (designação ou referência ao procedimento em causa) e, se for o caso, do caderno de encargos do acordo-quadro aplicável ao procedimento, declara, sob compromisso de honra, que a sua representada <sup>(2)</sup> se obriga a executar o referido contrato em conformidade com o conteúdo do mencionado caderno de encargos, relativamente ao qual declara aceitar, sem reservas, todas as suas cláusulas.</li>
+							<li>Declara também que executa o referido contrato nos termos previstos nos seguintes documentos, que junta em anexo <sup>(3)</sup>:
+							<ol type="a">
+								<li>...</li>
+								<li>...</li>
+							</ol>
+							</li>
+							<li>Declara ainda que renuncia a foro especial e se submete, em tudo o que respeitar à execução do referido contrato, ao disposto na legislação portuguesa aplicável.</li>
+							<li>Mais declara, sob compromisso de honra, que não se encontra em nenhuma das situações previstas no <a href="#55">n.º 1 do artigo 55.º do Código dos Contratos Públicos</a>.</li>
+							<li>O declarante tem pleno conhecimento de que a prestação de falsas declarações implica, consoante o caso, a exclusão da proposta apresentada ou a caducidade da adjudicação que eventualmente sobre ela recaia e constitui contraordenação muito grave, nos termos do <a href="#456">artigo 456.º do Código dos Contratos Públicos</a>, a qual pode determinar a aplicação da sanção acessória de privação do direito de participar, como candidato, como concorrente ou como membro de agrupamento candidato ou concorrente, em qualquer procedimento adotado para a formação de contratos públicos, sem prejuízo da participação à entidade competente para efeitos de procedimento criminal.</li>
+							<li>Quando a entidade adjudicante o solicitar, o concorrente obriga-se, nos termos do disposto no <a href="#81">artigo 81.º do Código dos Contratos Públicos</a>, a apresentar os documentos comprovativos de que não se encontra nas situações previstas nas <a href="#55">alíneas b), d), e) e i) do n.º 1 do artigo 55.º do referido Código</a>.</li>
+							<li>O declarante tem ainda pleno conhecimento de que a não apresentação dos documentos solicitados nos termos do número anterior, por motivo que lhe seja imputável, determina a caducidade da adjudicação que eventualmente recaia sobre a proposta apresentada e constitui contraordenação muito grave, nos termos do <a href="#456">artigo 456.º do Código dos Contratos Públicos</a>, a qual pode determinar a aplicação da sanção acessória de privação do direito de participar, como candidato, como concorrente ou como membro de agrupamento candidato ou concorrente, em qualquer procedimento adotado para a formação de contratos públicos, sem prejuízo da participação à entidade competente para efeitos de procedimento criminal.</li>
+						</ol>
+						<p>... (local),... (data),... [assinatura <sup>(4)</sup>].</p>
+						<p><sup>(1)</sup> Aplicável apenas a concorrentes que sejam pessoas coletivas.</p>
+						<p><sup>(2)</sup> No caso de o concorrente ser uma pessoa singular, suprimir a expressão «a sua representada».</p>
+						<p><sup>(3)</sup> Enumerar todos os documentos que constituem a proposta, para além desta declaração, nos termos do disposto nas <a href="#57">alíneas b), c) e d) do n.º 1 e nos n.<sup>os</sup> 2 e 3 do artigo 57.º</a></p>
+						<p><sup>(4)</sup> Nos termos do disposto nos <a href="#57">n.<sup>os</sup> 4 e 5 do artigo 57.º</a></p>
 					</section>
 					<section>
 						<h3 class="annex" id="a2">Modelo de declaração</h3>
+						<p class="font-weight-light">[a que se refere a <a href="#81">alínea a) do n.º 1 do artigo 81.º</a>]</p>
+						<ol>
+							<li>... (nome, número de documento de identificação e morada), na qualidade de representante legal de <sup>(1)</sup>... (firma, número de identificação fiscal e sede ou, no caso de agrupamento concorrente, firmas, números de identificação fiscal e sedes), adjudicatário(a) no procedimento de... (designação ou referência ao procedimento em causa), declara, sob compromisso de honra, que a sua representada <sup>(2)</sup> não se encontra em nenhuma das situações previstas no <a href="#55">n.º 1 do artigo 55.º do Código dos Contratos Públicos</a>:</li>
+							<li>O declarante junta em anexo [ou indica...como endereço do sítio da Internet onde podem ser consultados <sup>(3)</sup>] os documentos comprovativos de que a sua representada <sup>(4)</sup> não se encontra nas situações previstas nas <a href="#55">alíneas b), d), e) e i) do n.º 1 do artigo 55.º do Código dos Contratos Públicos</a>.</li>
+							<li>O declarante tem pleno conhecimento de que a prestação de falsas declarações implica a caducidade da adjudicação e constitui contraordenação muito grave, nos termos do <a href="#456">artigo 456.º do Código dos Contratos Públicos</a>, a qual pode determinar a aplicação da sanção acessória de privação do direito de participar, como candidato, como concorrente ou como membro de agrupamento candidato ou concorrente, em qualquer procedimento adotado para a formação de contratos públicos, sem prejuízo da participação à entidade competente para efeitos de procedimento criminal.</li>
+						</ol>
+						<p>... (local),... (data),... [assinatura <sup>(5)</sup>].</p>
+						<p>(1) Aplicável apenas a concorrentes que sejam pessoas coletivas.</p>
+						<p>(2) No caso de o concorrente ser uma pessoa singular, suprimir a expressão «a sua representada».</p>
+						<p>(3) Acrescentar as informações necessárias à consulta, se for o caso.</p>
+						<p>(4) No caso de o concorrente ser uma pessoa singular, suprimir a expressão «a sua representada».</p>
+						<p>(5) Nos termos do disposto nos <a href="#57">n.<sup>os</sup> 4 e 5 do artigo 57.º</a></p>
 					</section>
 					<section>
 						<h3 class="annex" id="a3">Modelo de ficha</h3>
