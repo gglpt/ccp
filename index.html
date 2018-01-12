@@ -8,12 +8,18 @@
 	<meta name="author" content="ABS" />
 	<meta name="language" content="pt" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/manifest.json">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+	<meta name="theme-color" content="#ffffff">
 	<link rel="apple-touch-icon" href="https://lh4.googleusercontent.com/ZE-FVukn0qq3jZeA8uE768e0PgfVgQLKUkLCVde3yhlIGyWUy78btAJ3Ijfa2lQlTiiyo8Q-=w16383" />
 	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+	<link href='http://fonts.googleapis.com/css?family=Lato:300,300italic' rel='stylesheet' type='text/css'>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<noscript><p>O seu Web browser não suporta JavaScript. A experiência de utilização deste site melhora consideravelmente com a utilização de JavaScript.</p>
-	</noscript>
+	<noscript><p>O seu Web browser não suporta JavaScript. A experiência de utilização deste site melhora consideravelmente com a utilização de JavaScript.</p></noscript>
 	<style type="text/css">
 		.body {position: relative; }
 		.affix-top {position: fixed; }
@@ -32,23 +38,30 @@
 		.bs-docs-sidebar .nav .nav .nav .nav .nav .nav > li > a { padding-left: 10px; }
 		.nav-pills li { margin-top: 2px; margin-bottom: 2px; }
 		.nav-pills.active { margin-top: 2px; margin-bottom: 2px; padding-left: 10px; }
+		.navbar-brand {background: url(http://gglpt.github.io/ccp/GGLlogo.png) 28px 8px / 40px no-repeat; }
+		.brand-name {font-family: 'Lato', sans-serif !important; font-size: 20px; font-weight: 300 !important; padding-left: 84px; padding-top: 18px; color: #ffffff !important; }
+		.navbar-nav > li > a {padding-top:5px !important; } 
+		.navbar {min-height:32px !important }
 	</style>
 	<style type="text/css">
 		html { font-family: sans-serif; }
-		body { counter-reset: part 0 article; }
 		h2, h3, h4, h5, h6 { padding-top: 1em; }
 		h3.annex, h6 { margin-left: 1em; }
 		h55, h6 { display: block; font-size: 1em; -webkit-margin-before: 1.67em; -webkit-margin-after: 1.67em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; }
 		h6 { font-weight: bold; }
 		li { margin-top: 1em; font-family: Lato, sans-serif; font-size: 15px; }
 		li.nostyle { list-style-type: none; }
-		table { width: 100%; border-collapse: collapse; }
+/*		table { width: 100%; border-collapse: collapse; }
 		table, th, td { border: 1px solid black; vertical-align:top; }
+		*/
 	</style>
 	<script type="application/javascript">
+		const DOC_SECTIONS_TYPES = ['part', 'title', 'chapter', 'section', 'subsection', 'article', 'articleA', 'annex'];
+		const DOC_SECTIONS_MAP = {part:'PARTE', title:'TÍTULO', titleA:'TÍTULO', chapter:'CAPÍTULO', section:'SECÇÃO', subsection:'SUBSECÇÃO', article:'Artigo', articleA:'Artigo', annex:'ANEXO'};
 		function docSetup() {
 			for (arg of arguments) {
 				switch (arg) {
+					case 'topMenu': topMenu('menuSeed'); break;
 					case 'TOC': ccpTOC('ccp', 'tocSeed'); break;
 					case 'autoATitles': autoATitles(); break;
 					case 'fulfillEpigraphs': fulfillEpigraphs(); break;
@@ -62,34 +75,47 @@
 			return res;
 		}
 		// Ops
-		const docSectionTypes = ['part', 'title', 'chapter', 'section', 'subsection', 'article', 'articleA', 'annex'];
 		function autoATitles() {
 			var aTitlesMap = {}, item;
-			const epigraphs = document.getElementsByClassNameAsArray("part", "title", "chapter", "setion", "subsection", "article", "articleA", "annex");
+			const epigraphs = document.getElementsByClassNameAsArray(DOC_SECTIONS_TYPES);
 			const anchors = document.getElementsByTagName("a");
 			for (item of epigraphs) { if (item.firstChild) aTitlesMap[item.id] = composeTitle(item, ': '); }
 			for (item of anchors) { item.title = aTitlesMap[item.href.getTag()]; }
 		}
-		function fulfillEpigraphs() {fulfill(docSectionTypes, ': ', setEpigraph); }
+		function fulfillEpigraphs() {fulfill(DOC_SECTIONS_TYPES, ': ', setEpigraph); }
 		function fulfillTopAlign() {fulfill(['article', 'articleA', 'annex'], 'glyphicon glyphicon-chevron-up', setTopAlign); }
 		function composeTitle(item, tag) {return composeReference(item.className, item.id, tag) + item.firstChild.textContent.trim(); }
 		function setEpigraph(item, tag) {item.textContent = composeTitle(item, tag); }
 		function setTopAlign(item, iconSpec) {item.innerHTML = '<a href="#' + item.id + '"><span class="' + iconSpec + '"></span></a>&nbsp;' + item.firstChild.textContent.trim(); }
 		function fulfill(sectionTypes, fulfillment, runner) {
 			sectionTypes.forEach(function(sectionType) {for (section of document.getElementsByClassName(sectionType)) runner(section, fulfillment); }); }
+		function topMenu(whereTo) {
+			var placeHolder = document.getElementById(whereTo);
+			if (placeHolder === null) { alert("Placeholder '" + whereTo + "' not found in page body. TopMenu not inserted."); return; }
+			placeHolder.innerHTML = '<div class="navbar navbar-inverse navbar-fixed-top"><div class="container-fluid"><div class="navbar-header">\
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">\
+					<span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>\
+					<a class="navbar-brand brand-name" href="http://ggl.pt" target="_blank">Ggl Consulting</a></div>\
+					<div class="collapse navbar-collapse"><ul class="nav navbar-nav">\
+					<li class="active"><a href="#">Início</a></li><li><a href="#">Legislação</a></li><li><a href="#">Notificações</a></li>\
+					<li><a href="http://ggl.pt" target="_blank">GGL</a></li></ul></div></div></div>';
+		}
 		function ccpTOC(what, whereTo) {
+			const SCROLL_SPY_TAG = '.bs-docs-sidebar', SCROLL_SPY_MONITOR = 89, AFFIX_TAG = '#nav',
+				SMOOTH_SCROLL_PARENT_TAG = '#tocSeed', SMOOTH_SCROLL_TIMER = 800,
+				HEADINGS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h55', 'h6'],
+				HEADING_LEVEL_MAP = {H1:0, H2:1, H3:2, H4:3, H5:4, H55:5 , H6:6 }
 			var placeHolder = document.getElementById(whereTo);
 			if (placeHolder === null) { alert("Placeholder '" + whereTo + "' not found in page body. TOC not inserted."); return; }
-			const mapHeadingLevel = {H1:0, H2:1, H3:2, H4:3, H5:4, H55:5 , H6:6 }
-			const docToC = document.getElementById(what).querySelectorAll("h1, h2, h3, h4, h5, h55, h6");
-			var levels = [0], res = '', item, isFirst = 1;
+			var docToC = document.getElementById(what).querySelectorAll(HEADINGS);
+			var levels = [0], res = '', item, isFirst = true;
 			[].forEach.call(docToC, function(item) {
 				if (item.nodeType !== 1) return;
-				var currentLevel = mapHeadingLevel[item.nodeName];
+				var currentLevel = HEADING_LEVEL_MAP[item.nodeName];
 				if (currentLevel > levels[levels.length - 1]) {
 					res +=  '<ul' + ' class="nav nav-pills nav-stacked"' + (isFirst?' id="nav" data-spy="affix"':'') +
 							'><li><a href="#' + item.id + '"' + '>' + composeReference(item.className, item.id, '') + '</a>';
-					isFirst = 0;
+					isFirst = false;
 					levels.push(currentLevel);
 				} else if (currentLevel < levels[levels.length - 1]) {
 					while (currentLevel < levels[levels.length - 1]) {
@@ -101,21 +127,17 @@
 			}	);
 			res += '</li></ul>'
 			placeHolder.innerHTML = res;
-			assignAffix('#nav');
-			enableScrollSpy('.bs-docs-sidebar', 89);
+			assignAffix(AFFIX_TAG);
+			enableScrollSpy(SCROLL_SPY_TAG, SCROLL_SPY_MONITOR);
 			refreshScrollSpy();
-			$("#tocSeed a").on('click', new SmoothScroll(800).runner(event));
+			$(SMOOTH_SCROLL_PARENT_TAG + ' a').on('click', new SmoothScroll(SMOOTH_SCROLL_TIMER).runner(event));
 		}
 		// Tools: check, convert & compose
-		function toRoman(v) {
-			const r = [ 'I',  'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI',
-						'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX'];
-			return isNumber(v) ? r[v-1] : '';
-		}
+		function toRoman(v) {return isNumber(v) ?
+			[ 'I',  'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX'][v-1] : ''; }
 		function isNumber(v) {return isUndefined(v) ? false : !("" + v).match(/[a-z]/i); }
 		function isUndefined(v) {return (typeof v === "undefined"); }
 		function composeReference(clazz, id, tag) {
-			const _whatIs = {part: 'PARTE', title: 'TÍTULO', titleA: 'TÍTULO', chapter: 'CAPÍTULO', section: 'SECÇÃO', subsection: 'SUBSECÇÃO', article: 'Artigo', articleA: 'Artigo', annex: 'ANEXO'};
 			var _id;
 			switch (clazz) {
 				case 'article': case 'articleA': _id = id + '.º'; break;
@@ -130,10 +152,10 @@
 				case 'part': _id = toRoman(id.split('p')[1]); break;
 				case 'subsection': _id = toRoman(id.split('s')[2]); break;
 			}
-			return _id === '' ? '' : _whatIs[clazz] + ' ' + _id + tag;
+			return _id === '' ? '' : DOC_SECTIONS_MAP[clazz] + ' ' + _id + tag;
 		}
 		// Scroll stuff
-		function assignAffix(tag) {$('#nav').affix({offset: {top: $('#nav').offset().top}}); }
+		function assignAffix(tag) {$(tag).affix({offset: {top: $(tag).offset().top}}); }
 		function enableScrollSpy(targetValue, offsetValue) {$('body').scrollspy({ target: targetValue, offset: offsetValue }) }
 		function refreshScrollSpy() {$('body').scrollspy("refresh"); }
 		function SmoothScroll(scrollTimer) {
@@ -143,20 +165,18 @@
 					var hash = this.hash;
 					if (hash) {
 						event.preventDefault();
-						$('html, body').animate({ scrollTop: $(hash).offset().top }, scrollTimer,
-							function() {
-								window.location.hash = hash;
-		}	);	}	};	};	}
+						$('html, body').animate({ scrollTop: $(hash).offset().top }, scrollTimer, function() {window.location.hash = hash; });
+		}	};	};	}
 	</script>
 </head>
-<body onload="docSetup('TOC', 'autoATitles', 'fulfillEpigraphs', 'fulfillTopAlign')">
+<body onload="docSetup('topMenu', 'TOC', 'autoATitles', 'fulfillEpigraphs', 'fulfillTopAlign')">
+<div id="menuSeed"></div>
 <h1>CCP - Código da Contratação Pública</h1>
 <div class="container-fluid">
 	<div class="row">
 		<nav class="hidden-xs col-sm-3 col-md-3 col-lg-2 bs-docs-sidebar" id="sidebar">
 			<header>
-				<div id="tocSeed">
-				</div>
+				<div id="tocSeed"></div>
 			</header>
 		</nav>
 		<div class="col-xs-12 col-sm-9 col-md-9 col-lg-10">
@@ -4263,8 +4283,7 @@
 												<ul>
 													<li>Atividades dos serviços relacionados com a extração de petróleo e de gás, ver 11.20,</li>
 													<li>Edificação de construções totalmente pré -fabricadas a partir de partes fabricadas automaticamente, não de betão, ver divisões 20, 26 e 28,</li>
-													<li>Obras de construção, exceto de edifícios, em estádios, piscinas, ginásios, campos de ténis e de golfe e em outras instalações
-						desportivas, ver 45.23,</li>
+													<li>Obras de construção, exceto de edifícios, em estádios, piscinas, ginásios, campos de ténis e de golfe e em outras instalações desportivas, ver 45.23,</li>
 													<li>Instalações especiais, ver 45.3,</li>
 													<li>Acabamento de edifícios, ver 45.4,</li>
 													<li>Atividades de arquitetura e de engenharia, ver 74.20,</li>
