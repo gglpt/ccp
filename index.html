@@ -51,7 +51,7 @@
 				switch (arg) {
 					case 'TOC': ccpTOC('ccp', 'tocSeed'); break;
 					case 'autoATitles': autoATitles(); break;
-					case 'completeEpigraphs': completeEpigraphs(); break;
+					case 'fulfillEpigraphs': fulfillEpigraphs(); break;
 					case 'fulfillTopAlign': fulfillTopAlign(); break;
 		}	}	}
 		// Prototype extensions
@@ -70,36 +70,26 @@
 			for (item of epigraphs) { if (item.firstChild) aTitlesMap[item.id] = composeTitle(item, ': '); }
 			for (item of anchors) { item.title = aTitlesMap[item.href.getTag()]; }
 		}
-		function completeEpigraphs() {
-			var aTitlesMap = {}, item;
-			docSectionTypes.forEach(function(sectionType) {
-				for (section of document.getElementsByClassName(sectionType)) {section.textContent = composeTitle(section, ': '); }
-		}	);	}
-		function fulfillTopAlign() {fulfill(['article', 'articleA', 'annex'], 'glyphicon glyphicon-object-align-top', setTopAlign); }
+		function fulfillEpigraphs() {fulfill(docSectionTypes, ': ', setEpigraph); }
+		function fulfillTopAlign() {fulfill(['article', 'articleA', 'annex'], 'glyphicon glyphicon-chevron-up', setTopAlign); }
 		function composeTitle(item, tag) {return composeReference(item.className, item.id, tag) + item.firstChild.textContent.trim(); }
+		function setEpigraph(item, tag) {item.textContent = composeTitle(item, tag); }
 		function setTopAlign(item, iconSpec) {item.innerHTML = '<a href="#' + item.id + '"><span class="' + iconSpec + '"></span></a>&nbsp;' + item.firstChild.textContent.trim(); }
 		function fulfill(sectionTypes, fulfillment, runner) {
-			var aTitlesMap = {}, item;
-			sectionTypes.forEach(function(sectionType) {
-				for (section of document.getElementsByClassName(sectionType)) runner(section, fulfillment);
-			});
-		}
+			sectionTypes.forEach(function(sectionType) {for (section of document.getElementsByClassName(sectionType)) runner(section, fulfillment); }); }
 		function ccpTOC(what, whereTo) {
 			var placeHolder = document.getElementById(whereTo);
 			if (placeHolder === null) { alert("Placeholder '" + whereTo + "' not found in page body. TOC not inserted."); return; }
 			const mapHeadingLevel = {H1:0, H2:1, H3:2, H4:3, H5:4, H55:5 , H6:6 }
 			const docToC = document.getElementById(what).querySelectorAll("h1, h2, h3, h4, h5, h55, h6");
-			var levels = [0];
-			var res = '', item;
-			var first = 1;
+			var levels = [0], res = '', item, isFirst = 1;
 			[].forEach.call(docToC, function(item) {
 				if (item.nodeType !== 1) return;
 				var currentLevel = mapHeadingLevel[item.nodeName];
 				if (currentLevel > levels[levels.length - 1]) {
-					//res +=  '<ul' + ' class="nav nav-pills nav-stacked"' + (first?' id="nav" data-spy="affix" data-offset-top="100"':'') +
-					res +=  '<ul' + ' class="nav nav-pills nav-stacked"' + (first?' id="nav" data-spy="affix"':'') +
+					res +=  '<ul' + ' class="nav nav-pills nav-stacked"' + (isFirst?' id="nav" data-spy="affix"':'') +
 							'><li><a href="#' + item.id + '"' + '>' + composeReference(item.className, item.id, '') + '</a>';
-					first = 0;
+					isFirst = 0;
 					levels.push(currentLevel);
 				} else if (currentLevel < levels[levels.length - 1]) {
 					while (currentLevel < levels[levels.length - 1]) {
@@ -107,8 +97,7 @@
 						levels.pop(currentLevel);
 					}
 					res += '<li><a href="#' + item.id + '">' + composeReference(item.className, item.id, '') + '</a>';
-				} else
-					res += '</li><li><a href="#' + item.id + '">' + composeReference(item.className, item.id, '') + '</a>';
+				} else res += '</li><li><a href="#' + item.id + '">' + composeReference(item.className, item.id, '') + '</a>';
 			}	);
 			res += '</li></ul>'
 			placeHolder.innerHTML = res;
@@ -160,7 +149,7 @@
 		}	);	}	};	};	}
 	</script>
 </head>
-<body onload="docSetup('TOC', 'autoATitles', 'completeEpigraphs', 'fulfillTopAlign')">
+<body onload="docSetup('TOC', 'autoATitles', 'fulfillEpigraphs', 'fulfillTopAlign')">
 <h1>CCP - Código da Contratação Pública</h1>
 <div class="container-fluid">
 	<div class="row">
@@ -1620,36 +1609,126 @@
 							</article>
 							<article>
 								<h6 class="article" id="98">Aprovação da minuta do contrato</h6>
+								<ol>
+									<li>Nos casos em que a celebração do contrato implique a sua redução a escrito, a respetiva minuta é aprovada pelo órgão competente para a decisão de contratar em simultâneo com a decisão de adjudicação.</li>
+									<li>(Revogado.)</li>
+									<li>A aprovação da minuta do contrato a celebrar tem por objetivo verificar se o seu conteúdo está conforme à decisão de contratar e a todos os documentos que o integram nos termos do disposto nos <a href="#96">n.os 2 e 5 do artigo 96.º</a>, sem prejuízo de serem propostos ajustamentos nos termos do disposto no artigo seguinte.</li>
+									<li>Da minuta do contrato devem constar expressamente os termos ou condições da proposta adjudicada excluídos do contrato nos termos do disposto no <a href="#96">n.º 4 do artigo 96.º</a></li>
+								</ol>
 							</article>
 							<article>
 								<h6 class="article" id="99">Ajustamentos ao conteúdo do contrato a celebrar</h6>
+								<ol>
+									<li>O órgão competente para a decisão de contratar pode propor ajustamentos ao conteúdo do contrato a celebrar, desde que estes resultem de exigências de interesse público e, tratando-se de procedimento em que se tenha analisado e avaliado mais de uma proposta, seja objetivamente demonstrável que a respetiva ordenação não seria alterada se os ajustamentos propostos tivessem sido refletidos em qualquer das propostas.</li>
+									<li>Os ajustamentos referidos no número anterior não podem implicar, em caso algum:
+										<ol type="a">
+											<li>A violação dos parâmetros base fixados no caderno de encargos nem a dos aspetos da execução do contrato a celebrar por aquele não submetidos à concorrência;</li>
+											<li>A inclusão de soluções contidas em proposta apresentada por outro concorrente.</li>
+										</ol>
+									</li>
+								</ol>
 							</article>
 							<article>
 								<h6 class="article" id="100">Notificação da minuta do contrato</h6>
+								<ol>
+									<li>Depois de aprovada a minuta do contrato a celebrar, o órgão competente para a decisão de contratar notifica-a ao adjudicatário, assinalando expressamente os ajustamentos propostos nos termos do disposto no <a href="#99">artigo anterior</a>.</li>
+									<li>(Revogado.)</li>
+								</ol>
 							</article>
 							<article>
 								<h6 class="article" id="101">Aceitação da minuta do contrato</h6>
+								<ol>
+									<li class="nostyle">A minuta do contrato a celebrar e os ajustamentos propostos consideram-se aceites pelo adjudicatário quando haja aceitação expressa ou quando não haja reclamação nos cinco dias subsequentes à respetiva notificação, ou nos dois dias subsequentes no caso dos procedimentos de ajuste direto ou consulta prévia.</li>
+								</ol>
 							</article>
 							<article>
 								<h6 class="article" id="102">Reclamação da minuta do contrato</h6>
+								<ol>
+									<li>As reclamações da minuta do contrato a celebrar só podem ter por fundamento a previsão de obrigações que contrariem ou que não constem dos documentos que integram o contrato nos termos do disposto nos <a href="#96">n.os 2 e 5 do artigo 96.º</a> ou ainda a recusa dos ajustamentos propostos.</li>
+									<li>No prazo de 10 dias a contar da receção da reclamação, o órgão que aprovou a minuta do contrato notifica o adjudicatário da sua decisão, equivalendo o silêncio à rejeição da reclamação.</li>
+									<li>Os ajustamentos propostos que tenham sido recusados pelo adjudicatário não fazem parte integrante do contrato.</li>
+								</ol>
 							</article>
 							<article>
 								<h6 class="article" id="103">Notificação dos ajustamentos ao contrato</h6>
+								<ol>
+									<li class="nostyle">Os ajustamentos ao contrato que sejam aceites pelo adjudicatário devem ser notificados a todos os concorrentes cujas propostas não tenham sido excluídas.</li>
+								</ol>
 							</article>
 							<article>
 								<h6 class="article" id="104">Outorga do contrato</h6>
+								<ol>
+									<li>A outorga do contrato deve ter lugar no prazo de 30 dias contados da data da aceitação da minuta ou da decisão sobre a reclamação, mas nunca antes de:
+										<ol type="a">
+											<li>Decorridos 10 dias contados da data da notificação da decisão de adjudicação a todos os concorrentes;</li>
+											<li>Apresentados todos os documentos de habilitação exigidos;</li>
+											<li>Comprovada a prestação da caução, quando esta for devida, nos termos do disposto no <a href="#90">n.º 1 do artigo 90.º</a>;</li>
+											<li>Confirmados os compromissos referidos na <a href="#77">alínea c) do n.º 2 do artigo 77.º</a></li>
+										</ol>
+									</li>
+									<li>O prazo de 10 dias previsto na alínea a) do número anterior não é aplicável quando:
+										<ol type="a">
+											<li>O contrato tenha sido celebrado ao abrigo de um procedimento de ajuste direto ou de consulta prévia ou, nos demais procedimentos, quando o anúncio não tenha sido publicado no Jornal Oficial da União Europeia;</li>
+											<li>(Revogada.)</li>
+											<li>Se trate da celebração de contrato ao abrigo de acordo-quadro cujos termos abranjam todos os seus aspetos ou que tenha sido celebrado apenas com uma entidade.</li>
+											<li>Só tenha sido apresentada uma proposta.</li>
+										</ol>
+									</li>
+									<li>Sem prejuízo do disposto nos números anteriores, o órgão competente para a decisão de contratar comunica ao adjudicatário o seguinte:
+										<ol type="a">
+											<li>No caso de assinatura presencial do contrato, a data, a hora e o local em que ocorrerá a respetiva outorga, com a antecedência mínima de cinco dias;</li>
+											<li>No caso de assinatura por meios eletrónicos, o prazo para a outorga e remessa do contrato, não podendo em caso algum esse prazo ser inferior a três dias.</li>
+										</ol>
+									</li>
+								</ol>
 							</article>
 							<article>
 								<h6 class="article" id="105">Não outorga do contrato</h6>
+								<ol>
+									<li>A adjudicação caduca nos seguintes casos:
+										<ol type="a">
+											<li>Se, por facto que lhe seja imputável, o adjudicatário não comparecer no dia, hora e local fixados para a outorga do contrato;</li>
+											<li>Se, por facto que lhe seja imputável, o adjudicatário não remeter o contrato assinado eletronicamente, no prazo fixado pelo órgão competente para a decisão de contratar;</li>
+											<li>Se, no caso de o adjudicatário ser um agrupamento, os seus membros não se tiverem associado nos termos previstos no <a href="#54">n.º 4 do artigo 54.º</a></li>
+										</ol>
+									</li>
+									<li>Nos casos previstos no número anterior, o adjudicatário perde a caução prestada a favor da entidade adjudicante, devendo o órgão competente para a decisão de contratar adjudicar a proposta ordenada em lugar subsequente.</li>
+									<li>Se, por facto que lhe seja imputável, a entidade adjudicante não outorgar o contrato no prazo previsto no <a href="#104">n.º 1 do artigo anterior</a>, o adjudicatário pode desvincular-se da proposta, devendo aquela liberar a caução que este haja prestado, sem prejuízo do direito a ser indemnizado por todas as despesas e demais encargos em que comprovadamente incorreu com a elaboração da proposta e com a prestação da caução.</li>
+									<li>No caso previsto no número anterior, o adjudicatário pode, em alternativa, exigir judicialmente a celebração do contrato.</li>
+									<li>(Revogado.)</li>
+								</ol>
 							</article>
 							<article>
 								<h6 class="article" id="106">Representação na outorga do contrato</h6>
+								<ol>
+									<li>Na outorga do contrato, a representação das entidades adjudicantes referidas nas alíneas <a href="#2">a) a c), f) e g) do n.º 1 do artigo 2.º</a> cabe ao órgão competente para a decisão de contratar.</li>
+									<li>No caso das entidades adjudicantes referidas nas <a href="#2">alíneas d) e e) do n.º 1 do artigo 2.º</a>, a representação na outorga do contrato cabe ao órgão designado no respetivo diploma orgânico ou nos respetivos estatutos, independentemente do órgão que tenha tomado a decisão de contratar.</li>
+									<li>Nos casos em que o órgão competente nos termos do disposto nos números anteriores seja um órgão colegial, a representação na outorga do contrato cabe ao presidente desse órgão.</li>
+									<li>Relativamente às entidades adjudicantes referidas no <a href="#2">n.º 2 do artigo 2.º</a> ou no <a href="#7">n.º 1 do artigo 7.º</a>, a representação na outorga do contrato cabe a quem, nos termos da lei ou dos respetivos estatutos, tiver poderes para as obrigar.</li>
+									<li>A competência prevista nos números anteriores para a representação da entidade adjudicante na outorga do contrato pode ser delegada nos termos gerais.</li>
+								</ol>
 							</article>
 						</section>
 						<section>
 							<h4 class="chapter" id="p2t2c12">Relatórios</h4>
 							<article>
 								<h6 class="article" id="107">Informações sobre o procedimento</h6>
+								<ol>
+									<li>A entidade adjudicante deve conservar, pelo prazo de quatro anos a contar da data da celebração do contrato, todos os documentos relativos ao procedimento de formação que permitam justificar todas as decisões tomadas e fornecer à Comissão Europeia as informações que esta solicitar sobre o mesmo, nomeadamente:
+										<ol type="a">
+											<li>A decisão de escolha do procedimento e respetivos fundamentos;</li>
+											<li>A identificação dos candidatos e dos concorrentes;</li>
+											<li>O teor das candidaturas e das propostas apresentadas;</li>
+											<li>A decisão de qualificação e respetivos fundamentos;</li>
+											<li>A decisão de adjudicação e respetivos fundamentos;</li>
+											<li>Os fundamentos da eventual exclusão de candidaturas e de propostas;</li>
+											<li>As eventuais causas de não adjudicação;</li>
+											<li>O objeto do contrato e o respetivo preço contratual.</li>
+										</ol>
+									</li>
+									<li>O disposto no número anterior é igualmente aplicável a todas as notificações e comunicações.</li>
+									<li>A entidade adjudicante deve enviar à Comissão Europeia, a pedido desta, um relatório contendo as informações sobre o procedimento e as decisões nele tomadas.</li>
+								</ol>
 							</article>
 							<article>
 								<h6 class="article" id="108">(Revogado.)</h6>
@@ -1659,12 +1738,23 @@
 							<h4 class="chapter" id="p2t2c13">Delegação de competências</h4>
 							<article>
 								<h6 class="article" id="109">Norma de habilitação</h6>
+								<ol>
+									<li>Todas as competências atribuídas pelo presente Código ao órgão competente para a decisão de contratar podem ser delegadas, sem prejuízo do disposto na parte final no <a href="#69">n.º 2 do artigo 69.º</a></li>
+									<li>As competências atribuídas pelo <a href="#37">artigo 37.º</a> ao membro do Governo ou ao membro do Governo Regional responsável pela área das finanças e ao membro do Governo ou ao membro do Governo Regional da tutela setorial só podem ser delegadas em membros do Governo ou do Governo Regional, consoante o caso.</li>
+									<li>A delegação da competência para autorização da despesa inerente ao contrato a celebrar ou, quando o contrato a celebrar não implique o pagamento de um preço pela entidade adjudicante, a delegação da competência para a decisão de contratar, implica a delegação das demais competências do órgão competente para a decisão de contratar atribuídas pelo presente Código, exceto daquelas que o delegante expressamente reservar para si.</li>
+								</ol>
 							</article>
 							<article>
 								<h6 class="article" id="110">Delegação de competências nos órgãos dos institutos públicos</h6>
+								<ol>
+									<li class="nostyle">Quando a entidade adjudicante seja um instituto público e a competência para a autorização da despesa inerente ao contrato a celebrar tenha sido exercida pelo membro do Governo ou pelo membro do Governo Regional da tutela, consideram-se delegadas no respetivo órgão de direção todas as competências atribuídas pelo presente Código ao órgão competente para a decisão de contratar, sem prejuízo de o delegante poder reservar para si qualquer daquelas competências.</li>
+								</ol>
 							</article>
 							<article>
 								<h6 class="article" id="111">Delegação das competências do Conselho de Ministros ou do Conselho do Governo Regional</h6>
+								<ol>
+									<li class="nostyle">Quando o órgão competente para a decisão de contratar seja o Conselho de Ministros ou o Conselho do Governo Regional, consideram-se delegadas no Primeiro-Ministro ou no Presidente do Governo Regional, consoante o caso, todas as competências atribuídas pelo presente Código.</li>
+								</ol>
 							</article>
 						</section>
 					</section>
@@ -1747,6 +1837,15 @@
 								</article>
 								<article>
 									<h6 class="article" id="117">Agrupamentos</h6>
+									<ol>
+										<li>Pode apresentar proposta num procedimento de consulta prévia ou de ajuste direto um agrupamento de pessoas singulares ou coletivas, desde que um dos seus membros tenha sido a entidade convidada para esse efeito.</li>
+										<li>A entidade convidada não pode integrar um agrupamento quando a consulta prévia ou o ajuste direto seja adotado:
+											<ol type="a">
+												<li>Ao abrigo das <a href="#19">alíneas c) e d) do artigo 19.º</a>, das <a href="#20">alíneas c) e d) do artigo 20.º</a> e das <a href="#21">alíneas b) e c) do artigo 21.º</a>; ou</li>
+												<li>Para a formação de um contrato ao abrigo de um acordo-quadro.</li>
+											</ol>
+										</li>
+									</ol>
 								</article>
 								<article>
 									<h6 class="article" id="118">Negociações</h6>
@@ -1758,9 +1857,19 @@
 								</article>
 								<article>
 									<h6 class="article" id="119">Representação dos concorrentes nas sessões de negociação</h6>
+									<ol>
+										<li class="nostyle">Os concorrentes devem fazer-se representar nas sessões de negociação pelos seus representantes legais ou pelos representantes comuns dos agrupamentos concorrentes, se existirem, podendo ser acompanhados por técnicos por eles indicados.</li>
+									</ol>
 								</article>
 								<article>
 									<h6 class="article" id="120">Formalidades a observar</h6>
+									<ol>
+										<li>O júri notifica os concorrentes, com uma antecedência mínima de três dias, da data, da hora e do local da primeira sessão de negociações, agendando as restantes sessões nos termos que tiver por convenientes.</li>
+										<li>Na notificação referida no número anterior o júri deve indicar o formato adotado para as negociações, nomeadamente se decorrem em separado ou em conjunto com os diversos concorrentes, podendo, porém, a qualquer momento, alterar esse formato, desde que os informe previamente.</li>
+										<li>De cada sessão de negociações é lavrada ata, a qual deve ser assinada pelos membros presentes do júri e pelos representantes presentes dos concorrentes, devendo fazer-se menção da recusa de algum destes em assiná-la.</li>
+										<li>Os concorrentes devem ter idênticas oportunidades de propor, de aceitar e de contrapor modificações das respetivas propostas durante as sessões de negociação.</li>
+										<li>As atas e quaisquer outras informações ou comunicações, escritas ou orais, prestadas pelos concorrentes à entidade adjudicante devem manter-se sigilosas durante a fase de negociação.</li>
+									</ol>
 								</article>
 								<article>
 									<h6 class="article" id="121">Versões finais das propostas</h6>
@@ -1801,6 +1910,11 @@
 								</article>
 								<article>
 									<h6 class="article" id="127">Publicitação e eficácia do contrato</h6>
+									<ol>
+										<li>A celebração de quaisquer contratos na sequência de consulta prévia ou ajuste direto deve ser publicitada, pela entidade adjudicante, no portal dos contratos públicos através de uma ficha conforme modelo constante do anexo iii ao presente Código, do qual faz parte integrante.</li>
+										<li>(Revogado.)</li>
+										<li>A publicitação referida no n.º 1 é condição de eficácia do respetivo contrato, independentemente da sua redução ou não a escrito, nomeadamente para efeitos de quaisquer pagamentos.</li>
+									</ol>
 								</article>
 							</section>
 							<section>
@@ -1950,9 +2064,29 @@
 								<h5 class="section" id="p2t3c2s4">Leilão eletrónico</h5>
 								<article>
 									<h6 class="article" id="140">Âmbito</h6>
+									<ol>
+										<li>No caso de contratos de locação ou de aquisição de bens móveis ou de contratos de aquisição de serviços, a entidade adjudicante pode recorrer a um leilão eletrónico que consiste num processo interativo baseado num dispositivo eletrónico destinado a permitir aos concorrentes melhorar progressivamente os atributos das respetivas propostas, depois de avaliadas, obtendo-se a sua nova pontuação global através de um tratamento automático.</li>
+										<li>Só podem ser objeto de um leilão eletrónico os atributos das propostas, desde que:
+											<ol type="a">
+												<li>O caderno de encargos fixe os parâmetros base dos respetivos aspetos da execução do contrato a celebrar submetidos à concorrência; e</li>
+												<li>Tais atributos sejam definidos apenas quantitativamente.</li>
+											</ol>
+										</li>
+										<li>A entidade adjudicante não pode utilizar o leilão eletrónico de forma abusiva ou de modo a impedir, restringir ou falsear a concorrência.</li>
+									</ol>
 								</article>
 								<article>
 									<h6 class="article" id="141">Indicações relativas ao leilão eletrónico</h6>
+									<ol>
+										<li class="nostyle">Quando a entidade adjudicante decidir utilizar um leilão eletrónico, o programa do concurso deve indicar, para além dos elementos referidos no <a href="#132">artigo 132.º</a>:
+											<ol type="a">
+												<li>Os atributos das propostas objeto do leilão eletrónico;</li>
+												<li>As condições em que os concorrentes podem propor novos valores relativos aos atributos das propostas objeto do leilão eletrónico, nomeadamente as diferenças mínimas exigidas entre licitações;</li>
+												<li>Outras regras de funcionamento do leilão eletrónico;</li>
+												<li>As informações relativas ao dispositivo eletrónico a utilizar e às modalidades e especificações técnicas de ligação dos concorrentes ao mesmo.</li>
+											</ol>
+										</li>
+									</ol>
 								</article>
 								<article>
 									<h6 class="article" id="142">Convite</h6>
@@ -3885,6 +4019,22 @@
 					<section>
 						<h3 class="annex" id="a3">Modelo de ficha</h3>
 						<p class="font-weight-light">(a que se refere o <a href="#127">n.º&nbsp;1 do artigo 127.º</a> e o <a href="#465">n.º&nbsp;1 do artigo 465.º</a>)</p>
+						<table class="table table-bordered">
+							<thead class="thead-light">
+								<tr><th scope="col">Código CPV</th><th scope="col">Descrição</th></tr>
+							</thead>
+							<tbody>
+								<tr><td>Entidade adjudicante</td><td>Identificação da entidade adjudicante.</td></tr>
+								<tr><td>Adjudicatário</td><td>Identificação do adjudicatário.</td></tr>
+								<tr><td>Objeto do contrato</td><td>Descrição sumária.</td></tr>
+								<tr><td>Preço contratual</td><td>Preço calculado nos termos do disposto no artigo 17.º</td></tr>
+								<tr><td>Prazo da execução das principais prestações objeto do contrato.</td><td></td></tr>
+								<tr><td>Local da execução das principais prestações objeto do contrato.</td><td></td></tr>
+								<tr><td>Critério material de escolha do ajuste direto<sup>(1)</sup> (se aplicável).</td><td></td></tr>
+								<tr><td>Critério de escolha da entidade, quando utilizada a consulta prévia.</td><td></td></tr>
+							</tbody>
+						</table>
+						<p><sup>(1)</sup> Indicar o fundamento da escolha do procedimento de ajuste direto, incluindo a não opção pela consulta prévia nos termos do <a href="#27-A">artigo 27.º -A</a>, quando este tiver sido adotado ao abrigo do disposto nos artigos <a href="#24">24.º</a> a <a href="#27">27.º</a></p>
 					</section>
 					<section>
 						<h3 class="annex" id="a4">(Revogado.)</h3>
@@ -3942,19 +4092,434 @@
 					<section>
 						<h3 class="annex" id="a8">Lista de serviços de investigação e de desenvolvimento</h3>
 						<p class="font-weight-light">[a que se refere a <a href="#5">alínea j) do n.º&nbsp;4 do artigo 5.º</a> e <a href="#27">alínea e) do n.º&nbsp;1 do artigo 27.º</a>]</p>
+						<table class="table table-bordered">
+							<thead class="thead-light">
+								<tr><th scope="col">Código CPV</th><th scope="col">Descrição</th></tr>
+							</thead>
+							<tbody>
+								<tr><td>73000000-2</td><td>Serviços de investigação e desenvolvimento e serviços de consultoria conexos.</td></tr>
+								<tr><td>73100000-3</td><td>Serviços de desenvolvimento experimental e de investigação.</td></tr>
+								<tr><td>73110000-6</td><td>Serviços de investigação.</td></tr>
+								<tr><td>73111000-3</td><td>Serviços relacionados com laboratórios de investigação.</td></tr>
+								<tr><td>73112000-0</td><td>Serviços de investigação marinha.</td></tr>
+								<tr><td>73120000-9</td><td>Serviços de desenvolvimento experimental.</td></tr>
+								<tr><td>73300000-5</td><td>Conceção e execução em matéria de investigação e desenvolvimento.</td></tr>
+								<tr><td>73420000-2</td><td>Estudo de pré-viabilidade e demonstração tecnológica.</td></tr>
+								<tr><td>73430000-5</td><td>Ensaios e avaliações.</td></tr>
+							</tbody>
+						</table>
 					</section>
 					<section>
 						<h3 class="annex" id="a9">Lista de serviços de saúde, serviços sociais, serviços de ensino e outros serviços específicos</h3>
 						<p class="font-weight-light">[a que se refere o <a href="#6-A">artigo 6.º-A</a>, a <a href="#11">subalínea v) da alínea b) do n.º&nbsp;1 do artigo 11.º</a>, o <a href="#250-A">artigo 250.º-A</a> e a <a href="#474">alínea d) do n.º&nbsp;3 do artigo 474.º</a>]</p>
+						<table class="table table-bordered">
+							<thead class="thead-light">
+								<tr><th>Código CPV</th><th>Descrição</th></tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>75200000 -8; 75231200 -6; 75231240 -8; 79611000 -0; 79622000 -0 [Serviços de fornecimento de pessoal auxiliar doméstico]; 79624000 -4 [Serviços de fornecimento de pessoal de enfermagem] e 79625000 -1 [Serviços de fornecimento de pessoal médico] de 85000000 -9 a 85323000 -9; 98133100 -5, 98133000 -4; 98200000 -5; 98500000 -8 [Residências particulares com empregados domésticos] e 98513000 -2 a 98514000 -9 [Serviços de fornecimento de pessoal para agregados familiares, serviços de agências de pessoal para agregados familiares, serviços de empregados para agregados familiares, pessoal temporário para agregados familiares, serviços de assistência ao domicílio e serviços domésticos].</td>
+									<td>Saúde, serviços sociais e serviços conexos.</td>
+								</tr>
+								<tr>
+									<td>85321000-5 e 85322000-2, 75000000-6 [Serviços relacionados com a administração pública, a defesa e a segurança social], 75121000-0, 75122000-7, 75124000-1; de 79995000-5 a 79995200-7; de 80000000-4 [Serviços de educação e formação profissional] a 80660000-8.</td>
+									<td>Serviços administrativos nas áreas social, da educação e da saúde.</td>
+								</tr>
+								<tr>
+									<td>98000000-3; 98120000-0; 98132000-7; 98133110-8 e 98130000-3.</td>
+									<td>Outros serviços coletivos, sociais e pessoais, incluindo serviços prestados por organizações sindicais, organizações políticas, organizações de juventude e outras organizações associativas.</td>
+								</tr>
+								<tr>
+									<td>98131000-0</td>
+									<td>Serviços prestados por organizações religiosas.</td>
+								</tr>
+								<tr>
+									<td>De 75100000-7 a 75120000-3; 75123000-4; de 75125000-8 a 75131000-3.</td>
+									<td>Outros serviços administrativos e das administrações públicas.</td>
+								</tr>
+								<tr>
+									<td>De 75200000-8 a 75231000-4</td>
+									<td>Prestação de serviços à comunidade.</td>
+								</tr>
+								<tr>
+									<td>98900000-2 [Serviços prestados por organizações e entidades extraterritoriais] e 98910000-5 [Serviços específicos às organizações e entidades extraterritoriais].</td>
+									<td>Serviços internacionais.</td>
+								</tr>
+							</tbody>
+						</table>
 					</section>
 					<section>
 						<h3 class="annex" id="a10">Lista de serviços de saúde, serviços sociais e serviços culturais que podem participar em procedimentos reservados</h3>
 						<p class="font-weight-light">(a que se refere o <a href="#250-D">n.º&nbsp;1 do artigo 250.º-D</a>)</p>
+						<table class="table table-bordered">
+							<thead class="thead-light">
+								<tr><th scope="col">Código CPV</th><th scope="col">Descrição</th></tr>
+							</thead>
+							<tbody>
+								<tr><td>75121000-0</td><td>Serviços administrativos na área da educação.</td></tr>
+								<tr><td>75122000-7</td><td>Serviços administrativos na área da saúde.</td></tr>
+								<tr><td>75123000-4</td><td>Serviços administrativos na área da habitação.</td></tr>
+								<tr><td>79622000-0</td><td>Serviços de fornecimento de pessoal auxiliar doméstico.</td></tr>
+								<tr><td>79624000-4</td><td>Serviços de fornecimento de pessoal de enfermagem.</td></tr>
+								<tr><td>79625000-1</td><td>Serviços de fornecimento de pessoal médico.</td></tr>
+								<tr><td>80110000-8</td><td>Serviços de ensino pré-escolar.</td></tr>
+								<tr><td>80300000-7</td><td>Serviços de ensino superior.</td></tr>
+								<tr><td>80420000-4</td><td>Serviços de aprendizagem eletrónica (e-learning).</td></tr>
+								<tr><td>80430000-7</td><td>Serviços de ensino de nível superior para adultos.</td></tr>
+								<tr><td>80511000-9</td><td>Serviços de formação de quadros.</td></tr>
+								<tr><td>80520000-5</td><td>Instalações para formação.</td></tr>
+								<tr><td>80590000-6</td><td>Serviços de tutoria.</td></tr>
+								<tr><td>85000000-9 a 85323000-9</td><td>Serviços de saúde e ação social, vários serviços de saúde, médicos e hospitalares, serviços de assistência social, até serviços comunitários de saúde.</td></tr>
+								<tr><td>92500000-6</td><td>Serviços de bibliotecas, arquivos e museus e outros serviços culturais.</td></tr>
+								<tr><td>92600000-7</td><td>Serviços de desporto.</td></tr>
+								<tr><td>98133000-4</td><td>Serviços prestados por organizações associativas de caráter social.</td></tr>
+								<tr><td>98133110-8</td><td>Serviços prestados por organizações de juventude.</td></tr>
+							</tbody>
+						</table>
 					</section>
 					<section>
 						<h3 class="annex" id="a11">Lista de atividades de construção civil</h3>
 						<p class="font-weight-light">[a que se refere a <a href="#275">subalínea i) da alínea a) do n.º&nbsp;1 do artigo 275.º</a>]</p>
 						<p>Em caso de divergências de interpretação entre a CPV e a NACE, é aplicável a nomenclatura CPV.</p>
+						<table class="table table-bordered">
+							<thead class="thead-light">
+								<tr><th scope="col" class="text-center" colspan="5">NACE Rev. 1 (1)</th><th class="text-center" scope="col" rowspan="3">Código CPV</th></tr>
+								<tr><th scope="col" class="text-center" colspan="3">Secção F</th><th class="text-center" scope="col" colspan="2">Construção</th></tr>
+								<tr><th scope="col" class="text-center">Divisão</th><th class="text-center" scope="col">Grupo</th><th class="text-center" scope="col">Classe</th><th class="text-center" scope="col">Objeto</th><th class="text-center" scope="col">Notas</th></tr>
+							</thead>
+							<tbody>
+								<tr><td>45</td><td></td><td></td><td>Construção</td>
+									<td>
+										<ul class="list-unstyled">
+											<li>Esta divisão inclui:
+												<ul>
+													<li>Novas construções, restauração e reparação de rotina.</li>
+												</ul>
+											</li>
+										</ul>
+									</td>
+									<td>45000000</td></tr>
+								<tr><td></td><td>45.1</td><td></td><td>Preparação dos locais de construção</td><td></td><td></td></tr>
+								<tr>
+									<td></td><td></td><td>45.11</td><td>Demolição e destruição de edifícios; terraplenagens.</td>
+									<td>
+										<ul class="list-unstyled">
+											<li>Esta classe inclui:
+												<ul>
+													<li>Demolição de edifícios e outras estruturas,</li>
+													<li>Limpeza de estaleiros de construção,</li>
+													<li>Terraplanagens: desaterros, aterros, nivelamento de estaleiros de construção, escavação de valas, remoção de rochas, destruição por meio de explosivos, etc.</li>
+													<li>Preparação de estaleiros para mineração,</li>
+													<li>Remoção de obstáculos e outras atividades de desenvolvimento e de preparação de propriedades e de estaleiros associados a minas.</li>
+												</ul>
+											</li>
+											<li>Esta classe inclui ainda:
+												<ul>
+													<li>Drenagem de estaleiros de construção,</li>
+													<li>Drenagem de terras dedicadas à agricultura ou à silvicultura.</li>
+												</ul>
+											</li>
+										</ul>
+									</td>
+									<td>45110000</td>
+								</tr>
+								<tr>
+									<td></td><td></td><td>45.12</td><td>Perfurações e sondagens</td>
+									<td>
+										<ul class="list-unstyled">
+											<li>Esta classe inclui:
+												<ul>
+													<li>Perfurações, sondagens e recolha de amostras com fins geofísicos, geológicos, de construção ou semelhantes.</li>
+												</ul>
+											</li>
+											<li>Esta classe não inclui:
+												<ul>
+													<li>Perfuração de poços de petróleo ou de gás, ver 11.20,</li>
+													<li>Perfuração de poços de água, ver 45.25,</li>
+													<li>Abertura de poços, ver 45.25,</li>
+													<li>Exploração de campos de petróleo e de gás, prospeção geofísica, geológica e sísmica, ver 74.20.</li>
+												</ul>
+											</li>
+										</ul>
+									</td>
+									<td>45110000</td>
+								</tr>
+								<tr><td></td><td>45.2</td><td></td><td>Construção de edifícios (no todo ou em parte); engenharia civil.</td><td></td><td>45200000</td></tr>
+								<tr>
+									<td></td><td></td><td>45.21</td><td>Construção geral de edifícios e engenharia civil.</td>
+									<td>
+										<ul class="list-unstyled">
+											<li>Esta classe inclui:
+												<ul>
+													<li>Construção de todo o tipo de edifícios construção de obras de engenharia civil,</li>
+													<li>Pontes, incluindo as que se destinam a estradas em passagens superiores, viadutos, túneis e passagens inferiores,</li>
+													<li>Condutas de longa distância, linhas de comunicações e de transporte de energia,</li>
+													<li>Condutas urbanas, linhas urbanas de comunicações e de transporte de energia,</li>
+													<li>Obras urbanas associadas,</li>
+													<li>Montagem e edificação, no local, de construções pré-fabricadas.</li>
+												</ul>
+											</li>
+											<li>Esta classe não inclui:
+												<ul>
+													<li>Atividades dos serviços relacionados com a extração de petróleo e de gás, ver 11.20,</li>
+													<li>Edificação de construções totalmente pré -fabricadas a partir de partes fabricadas automaticamente, não de betão, ver divisões 20, 26 e 28,</li>
+													<li>Obras de construção, exceto de edifícios, em estádios, piscinas, ginásios, campos de ténis e de golfe e em outras instalações
+						desportivas, ver 45.23,</li>
+													<li>Instalações especiais, ver 45.3,</li>
+													<li>Acabamento de edifícios, ver 45.4,</li>
+													<li>Atividades de arquitetura e de engenharia, ver 74.20,</li>
+													<li>Gestão de projetos para a construção, ver 74.20.</li>
+												</ul>
+											</li>
+										</ul>
+									</td>
+									<td>45210000<br/>Exceto:<br/>45213316<br/>45220000<br/>45231000<br/>45232000</td>
+								</tr>
+								<tr>
+									<td></td><td></td><td>45.22</td><td>Construção de coberturas e estruturas</td>
+									<td>
+										<ulclass="list-unstyled">
+											<li>Esta classe inclui:
+												<ul>
+													<li>Construção de telhados,</li>
+													<li>Cobertura de telhados,</li>
+													<li>Impermeabilização.</li>
+												</ul>
+											</li>
+										</ul>
+									</td>
+									<td>45261000</td>
+								</tr>
+								<tr>
+									<td></td><td></td><td>45.23</td><td>Construção de estradas, vias férreas, aeroportos e de instalações desportivas.</td>
+									<td>
+										<ul class="list-unstyled">
+											<li>Esta classe inclui:
+												<ul>
+													<li>Construção de estradas, ruas e outras vias para veículos e peões,</li>
+													<li>Construção de vias férreas,</li>
+													<li>Construção de pistas de aeroportos,</li>
+													<li>Obras de construção, exceto de edifícios, em estádios, piscinas, ginásios, campos de ténis, campos de golfe, e outras instalações desportivas,</li>
+													<li>Pintura de sinalização horizontal em estradas e parques de estacionamento.</li>
+												</ul>
+											</li>
+											<li>Esta classe não inclui:
+												<ul>
+													<li>Terraplanagens prévias, ver 45.11.</li>
+												</ul>
+											</li>
+										</ul>
+									</td>
+									<td>45212212 e DA03<br/>45230000<br/>Exceto:<br/>45231000<br/>45232000<br/>45234115</td>
+								</tr>
+								<tr>
+									<td></td><td></td><td>45.24</td><td>Engenharia hidráulica</td>
+									<td>
+										<ul class="list-unstyled">
+											<li>Esta classe inclui:
+												<ul>
+													<li>Construção de:</li>
+													<li>Vias aquáticas, portos e obras fluviais, portos de recreio (marinas), eclusas, etc.,</li>
+													<li>Barragens e diques,</li>
+													<li>Dragagens,</li>
+													<li>Obras abaixo da superfície.</li>
+												</ul>
+											</li>
+										</ul>
+									</td>
+									<td>45240000</td>
+								</tr>
+								<tr>
+									<td></td><td></td><td>45.25</td><td>Outras obras especializadas de construção</td>
+									<td>
+										<ul class="list-unstyled">
+											<li>Esta classe inclui:
+												<ul>
+													<li>Atividades de construção especializadas num aspeto comum a diferentes tipos de estruturas e que requeiram aptidões ou equipamento especializados,</li>
+													<li>Construção de fundações, incluindo cravação de estacas,</li>
+													<li>Perfuração e construção de poços de água, abertura de poços,</li>
+													<li>Edificação de elementos de aço não fabricados automaticamente,</li>
+													<li>Moldagem de aço,</li>
+													<li>Assentamento de tijolos e de pedras,</li>
+													<li>Montagem e desmontagem de andaimes e plataformas de construção, incluindo o aluguer dos mesmos,</li>
+													<li>Edificação de chaminés e de fornos industriais.</li>
+												</ul>
+											</li>
+											<li>Esta classe não inclui:
+												<ul>
+													<li>Aluguer de andaimes que não implique montagem nem desmontagem, ver 71.32</li>
+												</ul>
+											</li>
+										</ul>
+									</td>
+									<td>45250000<br/>45262000</td>
+								</tr>
+								<tr><td></td><td>45.3</td><td></td><td>Instalações especiais</td><td></td><td>45300000</td></tr>
+								<tr>
+									<td></td><td></td><td>45.31</td><td>Instalação elétrica</td>
+									<td>
+										<ul class="list-unstyled">
+											<li>Esta classe inclui:
+												<p>Instalação, em edifícios ou em outros projetos de construção, de:</p>
+												<ul>
+													<li>Instalação elétrica,</li>
+													<li>Sistemas de telecomunicações,</li>
+													<li>Sistemas elétricos de aquecimento,</li>
+													<li>Antenas residenciais,</li>
+													<li>Alarmes contra incêndio,</li>
+													<li>Alarmes contra roubo,</li>
+													<li>Elevadores e escadas rolantes,</li>
+													<li>Condutores de para-raios, etc.</li>
+												</ul>
+											</li>
+										</ul>
+									</td>
+									<td>45213316<br/>45310000<br/>Exceto:<br/>45316000</td>
+								</tr>
+								<tr>
+									<td></td><td></td><td>45.32</td><td>Obras de isolamento</td>
+									<td>
+										<ul class="list-unstyled">
+											<li>Esta classe inclui:
+												<ul>
+													<li>Instalação, em edifícios ou em outros projetos de construção, de isolamento térmico, sonoro ou contra vibrações.</li>
+												</ul>
+											</li>
+											<li>Esta classe não inclui:
+												<ul>
+													<li>Impermeabilização, ver 45.22.</li>
+												</ul>
+											</li>
+										</ul>
+									</td>
+									<td>45320000</td>
+								</tr>
+								<tr>
+									<td></td><td></td><td>45.33</td><td>Instalação de canalizações e de climatização.</td>
+									<td>
+										<ul class="list-unstyled">
+											<li>Esta classe inclui:
+												<ul>
+													<li>Instalação, em edifícios ou em outros projetos de construção, de:</li>
+													<li>Canalizações e equipamento sanitário,</li>
+													<li>Artefactos para instalações de distribuição de gás,</li>
+													<li>Equipamento e condutas para aquecimento, ventilação, refrigeração ou climatização,</li>
+													<li>Sistemas de aspersão.</li>
+												</ul>
+											</li>
+											<li>Esta classe não inclui:
+												<ul>
+													<li>Realização de instalações de aquecimento elétrico, ver 45.31.</li>
+												</ul>
+											</li>
+										</ul>
+									</td>
+									<td>45330000</td>
+								</tr>
+								<tr>
+									<td></td><td></td><td>45.34</td><td>Instalações, n.e.</td>
+									<td>
+										<ul class="list-unstyled">
+											<li>Esta classe inclui:
+												<ul>
+													<li>Instalação de sistemas de iluminação e de sinalização para estradas, caminho -de -ferro, aeroportos e portos,</li>
+													<li>Instalação, em edifícios ou em outros projetos de construção, de equipamento</li>
+												</ul>
+											</li>
+										</ul>
+									</td>
+									<td>45234115<br/>45316000<br/>45340000</td>
+								</tr>
+								<tr><td></td><td>45.4</td><td></td><td>Atividades de acabamento</td><td></td><td>45400000</td></tr>
+								<tr>
+									<td></td><td></td><td>45.41</td><td>Estucagem</td>
+									<td>
+										<ul class="list-unstyled">
+											<li>Esta classe inclui:
+												<ul>
+													<li>Aplicação, em edifícios ou em outros projetos de construção, de estuque interior e exterior, incluindo materiais de revestimento associados.</li>
+												</ul>
+											</li>
+										</ul>
+									</td>
+									<td>45410000</td>
+								</tr>
+								<tr>
+									<td></td><td></td><td>45.42</td><td>Montagem de trabalhos de carpintaria e de caixilharia.</td>
+									<td>
+										<ul class="list-unstyled">
+											<li>Esta classe inclui:
+												<ul>
+													<li>Instalação de portas, janelas, caixilhos de portas e janelas, cozinhas equipadas, escadas, equipamento para estabelecimentos comerciais e semelhantes não fabricados automaticamente, de madeira ou de outros materiais,</li>
+													<li>Acabamentos de interior, tais como tetos, revestimentos de madeira para paredes, divisórias móveis, etc.</li>
+												</ul>
+											</li>
+											<li>Esta classe não inclui:
+												<ul>
+													<li>Colocação de parquet e outros revestimentos de madeira para pavimentos, ver 45.43.</li>
+												</ul>
+											</li>
+										</ul>
+									</td>
+									<td>45420000</td>
+								</tr>
+								<tr>
+									<td></td><td></td><td>45.43</td><td>Revestimento de pavimentos e de paredes</td>
+									<td>
+										<ul class="list-unstyled">
+											<li>Esta classe inclui:
+												<ul>
+													<li>Colocação, aplicação, suspensão ou assentamento, em edifícios ou em outros projetos de construção, de:</li>
+													<li>Paredes de cerâmica, de betão ou de cantaria, ou ladrilhos para pavimentos,</li>
+													<li>Parquet e outros revestimentos de madeira para pavimentos, alcatifas e revestimentos em linóleo para pavimentos,</li>
+													<li>Incluindo de borracha ou plástico,</li>
+													<li>Revestimentos de granito artificial, mármore, granito ou ardósia para pavimentos e paredes,</li>
+													<li>Papel de parede.</li>
+												</ul>
+											</li>
+										</ul>
+									</td>
+									<td>45430000</td>
+								</tr>
+								<tr>
+									<td></td><td></td><td>45.44</td><td>Pintura e colocação de vidros</td>
+									<td>
+										<ul class="list-unstyled">
+											<li>Esta classe inclui:
+												<ul>
+													<li>Pintura interior e exterior de edifícios,</li>
+													<li>Pintura de estruturas de engenharia civil,</li>
+													<li>Colocação de vidros, espelhos, etc.</li>
+												</ul>
+											</li>
+											<li>Esta classe não inclui:
+												<ul>
+													<li>Instalação de janelas, ver 45.42.</li>
+												</ul>
+											</li>
+										</ul>
+									</td>
+									<td>45440000</td>
+								</tr>
+								<tr>
+									<td></td><td></td><td>45.45</td><td>Atividades de acabamento, n.e.</td><td></td><td>45500000</td>
+								</tr>
+								<tr><td></td><td>45.5</td><td></td><td>Aluguer de equipamento de construção e de demolição com operador.</td><td></td><td>45500000</td></tr>
+								<tr>
+									<td></td><td></td><td>45.50</td><td>Aluguer de equipamento de construção e de demolição com operador.</td>
+									<td>
+										<ul class="list-unstyled">
+											<li>Esta classe não inclui:
+												<ul>
+													<li>Aluguer de maquinaria e equipamento de construção ou demolição sem operador, ver 71.32.</li>
+												</ul>
+											</li>
+										</ul>
+									</td>
+									<td>45500000</td>
+								</tr>
+							</tbody>
+						</table>
 					</section>
 					<section>
 						<h3 class="annex" id="a12">Modelos para a aceitação da jurisdição de centro de arbitragem institucionalizado</h3>
