@@ -19,6 +19,8 @@
 	<link href='http://fonts.googleapis.com/css?family=Lato:300,300italic' rel='stylesheet' type='text/css'>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/json2html/1.0.0/json2html.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.json2html/1.0.0/jquery.json2html.min.js"></script>
 	<noscript><p>O seu Web browser não suporta JavaScript. A experiência de utilização deste site melhora consideravelmente com a utilização de JavaScript.</p></noscript>
 	<style type="text/css">
 		.body {position: relative; }
@@ -66,7 +68,7 @@
 		function docSetup() {
 			for (arg of arguments) {
 				switch (arg) {
-					case 'topMenu': topMenu('menuSeed'); break;
+					case 'topMenu': topMenu('#menuSeed'); break;
 					case 'TOC': ccpTOC('ccp', 'tocSeed'); break;
 					case 'autoATitles': autoATitles(); break;
 					case 'fulfillEpigraphs': fulfillEpigraphs(); break;
@@ -93,49 +95,61 @@
 		function fulfill(sectionTypes, fulfillment, runner) {
 			sectionTypes.forEach(function(sectionType) {for (section of document.getElementsByClassName(sectionType)) runner(section, fulfillment); }); }
 		function topMenu(whereTo) {
-			liBuilder('');
-			var placeHolder = document.getElementById(whereTo);
-			if (placeHolder === null) { alert("Placeholder '" + whereTo + "' not found in page body. TopMenu not inserted."); return; }
-			placeHolder.innerHTML = '\
-				<div class="navbar navbar-inverse navbar-fixed-top">\
-					<div class="container-fluid"><div class="navbar-header">\
-						<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">\
-							<span class="icon-bar"></span>\
-							<span class="icon-bar"></span>\
-							<span class="icon-bar"></span>\
-						</button>\
-						<a class="navbar-brand brand-name" href="http://ggl.pt" target="_blank">Ggl Consulting</a>\
-					</div>\
-					<div class="collapse navbar-collapse">\
-						<ul class="nav navbar-nav">\
-							<li class="active"><a href="#">Início</a></li>\
-							<li><a href="http://www.ggl.pt/ferramentas/legislação">Legislação</a></li>\
-							<li><a href="mailto://geral@ggl.pt">Notificações</a></li>\
-							<li><a href="http://ggl.pt" target="_blank">GGL</a></li>\
-						</ul>\
-					</div>\
-				</div>';
+			var transforms = {
+				'iconbar': {'<>': 'span', 'class': 'icon-bar', 'html': ''},
+				'item': {'<>':'li', 'html': [{'<>': 'a', 'title': '${descr}', 'href': '${link}', 'html': '${data}' }]},
+				'list': {
+					'<>': 'div',
+					'id': '${id}',
+					'class': 'navbar navbar-inverse navbar-fixed-top',
+					'html': [	{
+							'<>': 'div', 'class': 'container-fluid',
+							'html': [	{
+									'<>': 'div',
+									'class': 'navbar-header',
+									'html': [	{
+											'<>': 'button',
+											'type': 'button',
+											'class': 'navbar-toggle',
+											'data-toggle': 'collapse',
+											'data-target': '.navbar-collapse',
+											'html': [function() {return( $.json2html([1, 2, 3], transforms.iconbar) ); } ]
+										},	{
+											"<>": "a",
+											"class": "navbar-brand brand-name",
+											"href": "http://ggl.pt",
+											"target": "_blank",
+											"title": "Ggl Consulting",
+											"html": "Ggl Consulting"
+								}	]	},	{
+									'<>': 'div',
+									'class': 'collapse navbar-collapse',
+									'html': [	{
+											'<>': 'ul',
+											'class': 'nav navbar-nav',
+											'html': [	{
+													'<>': 'li',
+													'html': function() {return( $.json2html(data, {'<>':'li', 'html': [{'<>': 'a', 'title': '${descr}', 'href': '${link}', 'html': '${data}' }]}) ); }
+			}	]	}	]	}	]	}	]	}	};
+			var data = [
+				{'data': 'Início', 'descr': 'Topo da página', 'link': '#'},
+				{'data': 'Legislação', 'descr': 'Biblioteca de Legislação', 'link': 'http://www.ggl.pt/ferramentas/legislação'},
+				{'data': 'Notificações', 'descr': 'Pedido de notificação de atualizações e novos documentos', 'link': 'mailto://geral@ggl.pt'},
+				{'data': 'GGL', 'descr': 'Site da Ggl Consulting', 'link': 'http://ggl.pt'}
+			];
+			$(whereTo).json2html({}, transforms.list);
 		}
-		function liBuilder(lis) {
-			const source = {
-				'Início': {
-					class: "active",
-					href: "#"
-				},
-				'Legislação': {href: "http://www.ggl.pt/ferramentas/legislação"},
-				'Notificações': {href: "mailto://geral@ggl.pt"},
-				'GGL': {
-					href: "http://ggl.pt",
-					target: "_blank"
-				}
-			};
-			var res = '';
-			[].forEach.call(source, function(pair) {
-				console.log('-' + res);
-				res += '<' + pair[0] + '>';
-			});
-			console.log('.' + res);
-		}
+		const source = {
+			"Início": {
+				"class": "active",
+				"href": "#"
+			},
+			"Legislação": {"href": "http://www.ggl.pt/ferramentas/legislação"},
+			"Notificações": {"href": "mailto://geral@ggl.pt"},
+			"GGL": {
+				"href": "http://ggl.pt",
+				"target": "_blank"
+		}	};
 		function ccpTOC(what, whereTo) {
 			const SCROLL_SPY_TAG = '.bs-docs-sidebar', SCROLL_SPY_MONITOR = 60, AFFIX_TAG = '#nav', AFFIX_OFFSET_TOP = 200;
 				SMOOTH_SCROLL_PARENT_TAG = '#tocSeed', SMOOTH_SCROLL_TIMER = 800,
@@ -217,7 +231,7 @@
 			</header>
 		</nav>
 		<div class="col-xs-12 col-sm-9 col-md-9 col-lg-10">
-<h1>CCP - Código da Contratação Pública</h1>
+			<h1>CCP - Código da Contratação Pública</h1>
 			<div id="ccp">
 				<section class="part1">
 					<h2 class="part" id="p1">Âmbito de aplicação</h2>
