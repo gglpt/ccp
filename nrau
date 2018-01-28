@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt-PT" xml:lang="pt-PT" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-21044167-4"></script>
+	<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','UA-21044167-4');</script>
+	<title>Cód. Expropriações</title>
+	<meta charset="UTF-8" />
+	<meta name="NRAU" content="Novo Regime do Arrendamento Urbano - Decreto-Lei n.º 6/2006, de 27 de fevereiro" />
+	<meta name="keywords" content="DL NRAU" />
+	<meta name="author" content="GGLabs" />
+	<meta name="language" content="pt" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="manifest" href="/manifest.json">
+	<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+	<meta name="theme-color" content="#ffffff">
+	<link rel="apple-touch-icon" href="https://lh4.googleusercontent.com/ZE-FVukn0qq3jZeA8uE768e0PgfVgQLKUkLCVde3yhlIGyWUy78btAJ3Ijfa2lQlTiiyo8Q-=w16383" />
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lato:300,300italic" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"></script>
+	<noscript><p>O Web browser que está a usar não suporta JavaScript. A experiência de utilização deste site melhora consideravelmente com a utilização de JavaScript.</p></noscript>
+	<style type="text/css">
+		.body {position: relative; }
+		.affix-top {position: fixed; }
+		.affix {position: fixed; }
+		.affix-top, .affix {width: 129px; top: 66px; }
+		.bs-docs-sidebar.affix {z-index: 9999 !important; }
+		.bs-docs-sidebar .nav li { display: none; }
+		.bs-docs-sidebar .affix > li, .bs-docs-sidebar .nav > .active, .bs-docs-sidebar .nav > .active ~ li { display: block; }
+		.bs-docs-sidebar .nav li a { font-weight: bold; }
+		.bs-docs-sidebar .nav li a:only-child { font-weight: normal; }
+		.bs-docs-sidebar .nav > li > a, 
+		.bs-docs-sidebar .nav .nav > li > a,
+		.bs-docs-sidebar .nav .nav .nav > li > a,
+		.bs-docs-sidebar .nav .nav .nav .nav > li > a,
+		.bs-docs-sidebar .nav .nav .nav .nav .nav > li > a,
+		.bs-docs-sidebar .nav .nav .nav .nav .nav .nav > li > a { padding-left: 10px; }
+		.nav-pills li { margin-top: 2px; margin-bottom: 2px; font-size: 15px !important; }
+		.nav-pills.active { margin-top: 2px; margin-bottom: 2px; padding-left: 10px; }
+		.navbar-brand {background: url(http://gglpt.github.io/ccp/GGLlogo.png) 28px 8px / 40px no-repeat; }
+		.brand-name {font-family: 'Lato', sans-serif !important; font-size: 20px; font-weight: 300 !important; padding-left: 84px; padding-top: 18px; color: #ffffff !important; }
+		.navbar-nav > li > a {padding-top:5px !important; } 
+		.navbar {min-height:32px !important }
+	</style>
+	<style type="text/css">
+		html { font-family: sans-serif; }
+		h1, h2, h3, h4, h5, h55, h6 { font-family: Lato, sans-serif; font-weight: bold; }
+		h2, h3, h4, h5, h6 { padding-top: 1em; }
+		h3.annex, h6 { margin-left: 1em; }
+		h55, h6 { display: block; font-size: 1.2em; -webkit-margin-before: 1.67em; -webkit-margin-after: 1.67em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; }
+		li { margin-top: 1em; font-family: Lato, sans-serif; font-size: 20px !important; /*text-indent: -1.7%;*/ }
+		ol, li.nostyle { list-style-type: none; }
+		h2:before, h3:before, h4:before, h5:before, h55:before, h6:before {
+			display: block;
+			content: " ";
+			margin-top: 50px;
+			visibility:visible;
+		}
+		h2, h3, h4, h5, h55, h6 {margin-top: -40px; }
+		h1 { margin-top: 70px; }
+		ol > li:not(.nostyle):before {content: attr(seq) " - "; }
+		ol > li > ol > li:not(.nostyle):before {content: attr(seq) ") "; }
+		highligth { background-color: yellow; }
+	</style>
+	<script type="application/javascript">
+		const DOC_SECTIONS_TYPES = ['part', 'title', 'chapter', 'section', 'subsection', 'article', 'articleA', 'annex']		
+		const DOC_SECTIONS_MAP = {part:'PARTE', title:'TÍTULO', titleA:'TÍTULO', chapter:'CAPÍTULO', section:'SECÇÃO', subsection:'SUBSECÇÃO', article:'Artigo', articleA:'Artigo', annex:'ANEXO'};
+		function docSetup() {
+			for (arg of arguments) {
+				switch (arg) {
+					case 'bodyFill': bodyFill('#bodySeed'); break;
+					case 'topMenu': topMenu('#menuSeed'); break;
+					case 'TOC': ccpTOC('bodySeed', 'tocSeed'); break;
+					case 'autoATitles': autoATitles(); break;
+					case 'fulfillLinks': fulfillLinks(); break;
+					case 'fulfillTopAlign': fulfillTopAlign(); break;
+					case 'prettyfy': prettyfy(); break;
+		}	}	}
+		// Prototype extensions
+		String.prototype.getTag = function() {
+			var aux = this.indexOf('#') + 1
+			var res = this.slice(aux)
+			return this.slice(this.indexOf('#') + 1)
+		}
+		function getValueOfQueryField(field) {
+			var queryString = self.location.search.substring(1)
+			for (fieldValue of queryString.split('&')) {
+				var pair = fieldValue.split('=')
+				if (decodeURIComponent(pair[0]) === field) return decodeURIComponent(pair[1])
+			}
+		}
+		function processSearch() {
+			var search = getValueOfQueryField('search')
+			var searchInput = document.getElementById('searchTarget')
+			if (!search) return
+			var count = eval(getValueOfQueryField('count'))
+			if (window.find) {
+				var i;
+				for (i = 0; i < count; i++) {
+					if (self.find(search, 0, 0, 1, 1, 0))
+						document.getElementById('searchCounter').value = count + 1
+				}
+			} else alert('can\'t do')
+			searchInput.value = search
+		}
+		/*
+		document.addEventListener('keypress', function(event) {
+			if (event.keyCode == 13) {
+				processSearch()
+			}
+		});
+		*/
+		Document.prototype.getElementsByClassNameAsArray = function(arguments) {
+			var res = [], arg, aux;
+			for (arg of arguments) {
+				aux = Array.from(this.getElementsByClassName(arg))
+				res = res.concat(aux)
+			}
+			return res;
+		}
+		// Ops
+		function autoATitles() {
+			var aTitlesMap = {}, item,
+			epigraphs = document.getElementsByClassNameAsArray(DOC_SECTIONS_TYPES),
+			anchors = document.getElementsByTagName("a")
+			for (item of epigraphs) if (item.firstChild) aTitlesMap[item.firstChild.id] = composeSectionTitle(item, ': ')
+			for (item of anchors) {
+				var aux = aTitlesMap[item.href.getTag()]
+				if (aux) item.title = aux
+			}
+		}
+		function prettyfy() {
+			document.body.innerHTML = document.body.innerHTML
+				.replace(/\sn\.os\s/g, ' n.<sup>os</sup>&nbsp;')
+				.replace(/(\d+)\s%/g, '$1&nbsp;%')
+				.replace(/(\d+)\s(\d{3})/g, '$1&nbsp;$2')
+				.replace(/\.º\s(\d+)/g, '.º&nbsp;$1')
+		}
+		function fulfillLinks() {
+			document.body.innerHTML = document.body.innerHTML
+				.replace(/_(artigo(?:s?))\s(\d+\.º-?[A-Z]*)\((#\d+\S*)\)_/g, '<a href="$3">$1&nbsp;$2</a>')
+				.replace(/_parte\s([ivxlcdm]+)\((#p\d+)\)_/gi, '<a href="$2">parte&nbsp;$1</a>')
+		}
+		function fulfillTopAlign() {fulfill(['article', 'articleA', 'annex'], 'glyphicon glyphicon-chevron-up', setTopAlign); }
+		function composeSectionTitle(item, tag) {return item.firstChild.textContent.trim(); }
+		function setTopAlign(item, iconSpec) {item.firstChild.innerHTML = '<a href="#' + item.firstChild.id + '"><span class="' + iconSpec + '"></span></a>&nbsp;' + item.firstChild.textContent.trim(); }
+		function fulfill(sectionTypes, fulfillment, runner) {
+			sectionTypes.forEach(function(sectionType) {
+				for (section of document.getElementsByClassName(sectionType))
+					runner(section, fulfillment);
+			});
+		}
+		function topMenu(whereTo) {
+			var template = '<div class="navbar navbar-inverse navbar-fixed-top"><div class="container-fluid"><div class="navbar-header"><button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand brand-name" href="http://ggl.pt" target="_blank" title="Ggl Consulting">Ggl Consulting</a></div><div class="collapse navbar-collapse"><ul class="nav navbar-nav">{{#menu}}<li><a title="{{description}}" href="{{link}}">{{data}}</a></li>{{/menu}}</ul><div class="pull-right">\
+			<form id="searchForm" class="navbar-form" role="search" onsubmit="processSearch()">\
+				<div class="input-group">\
+					<input type="text" class="form-control" id="searchTarget" placeholder="wip..." name="search">\
+					<input type="hidden" id="searchCounter" name="count" value = 1>\
+					<div class="input-group-btn">\
+						<button id="searchButton" type="submit" class="btn btn-default" onclick="processSearch()">\
+							<i class="glyphicon glyphicon-search"></i>\
+						</button>\
+					</div>\
+				</div>\
+			</form>\
+			</div></div></div></div>'
+			var data = { 'menu': [
+				{'data': 'Início', 'description': 'Topo da página', 'link': '#'},
+				{'data': 'Legislação', 'description': 'Biblioteca de Legislação', 'link': 'http://www.ggl.pt/ferramentas/legislação'},
+				{'data': 'Notificações', 'description': 'Pedido de notificação de atualizações e novos documentos', 'link': 'mailto:geral@ggl.pt?subject=Legislação GGL: Pedido de notificação'},
+				{'data': 'GGL', 'description': 'Site da Ggl Consulting', 'link': 'http://ggl.pt'}
+			]}
+			$('#searchForm').submit(function(event) {
+				 alert('Ok Fa'); event.preventDefault(); event.stopPropagation(); return false;
+			})
+			$(whereTo).html(Handlebars.compile(template)(data))
+		}
+		function searchInPage() {
+			/*
+			var str = document.getElementById ("searchTerms").value
+			if (str == "") return;
+			var isFirst = true, jumpTo
+			//var wholeWordOnly = new RegExp("\\g"+searchTerm+"\\g","ig"); //matches whole word only
+			//var anyCharacter = new RegExp("\\g["+searchTerm+"]\\g","ig"); //matches any word with any of search chars chara
+			for (tag of ['h2', 'h3', 'h4', 'h5', 'h55', 'h6', 'li']) {
+				var els = document.getElementsByTagName(tag)
+				for (el of els) {
+					if (el.textContent.includes(str)) {
+						if (isFirst) {
+							jumpTo = el
+							isFirst = false;
+						}
+						var found = el
+						searchAndHighlight(str, el, 'highligth', true)
+			}	}	}
+			console.log(el.parentElement.parentElement)
+			jumpTo.scrollIntoView({alignToTop: true, behaviour: "smooth"})
+			*/
+		}
+		function searchAndHighlight(term, selector, highlightClass, isRemovePreviousHighlights) {
+			if (term) {
+				//var wholeWordOnly = new RegExp("\\g" + term + "\\g","ig"); //matches whole word only
+				//var anyCharacter = new RegExp("\\g[" + term + "]\\g","ig"); //matches any word with any of search chars characters
+				var selector = selector || "body",
+				searchTermRegEx = new RegExp('('+ term +')', 'gi'),
+				matches = 0,
+				helper = {}
+				helper.doHighlight = function(node, term){
+					if (node.nodeType === 3) {
+						if (node.nodeValue.match(searchTermRegEx)){
+							matches++
+							var tempNode = document.createElement('span')
+							tempNode.innerHTML = node.nodeValue.replace(searchTermRegEx, '<span class="' + highlightClass + '">$1</span>')
+							node.parentNode.insertBefore(tempNode, node )
+							node.parentNode.removeChild(node)
+					}	}
+					else if (node.nodeType === 1 && node.childNodes && !/(style|script)/i.test(node.tagName)) {
+						$.each(node.childNodes, function(i, v) {
+							helper.doHighlight(node.childNodes[i], term)
+				})	}	}
+				if (isRemovePreviousHighlights) {
+					$('.' + highlightClass).each(function(i, v){
+						var $parent = $(this).parent()
+						$(this).contents().unwrap()
+						$parent.get(0).normalize()
+				})	}
+				$.each($(selector).children(), function(index, val){
+					helper.doHighlight(this, term)
+				})
+				return matches
+			}
+			return false
+		}
+		function bodyFill(whereTo) {
+			Handlebars.registerPartial('injectArticle','<article class=article><h6 id={{id}}>{{nr}}: {{epigraph}}</h6><ol type="1">{{#content}}{{#if id}}<li seq="{{li}}">{{data}}{{else}}<li seq="{{li}}">{{data}}{{/if}}{{#if content}}<ol type="a">{{#content}}<li seq="{{li}}">{{data}}</li>{{#if content}}<ol type="i">{{#content}}<li seq="{{li}}">{{data}}</li>{{/content}}</ol>{{/if}}{{/content}}</ol>{{/if}}</li>{{/content}}</ol></article>');
+			var template = '<h1>{{subject}}</h1><div id = "content">{{#body}}<section class={{section}}>{{#if article}}{{> injectArticle}}{{else}}<h2 id={{id}}>{{nr}} - {{epigraph}}</h2>{{#content}}<section class={{section}}>{{#if article}}{{> injectArticle}}{{else}}<h3 id={{id}}>{{nr}} - {{epigraph}}</h3>{{#content}}<section class={{section}}>{{#if article}}{{> injectArticle}}{{else}}<h4 id={{id}}>{{nr}} - {{epigraph}}</h4>{{#content}}<section class={{section}}>{{#if article}}{{> injectArticle}}{{else}}<h5 id={{id}}>{{nr}} - {{epigraph}}</h5>{{#content}}<section class={{section}}>{{#if article}}{{> injectArticle}}{{else}}<h55 id={{id}}>{{nr}} - {{epigraph}}</h55>{{#content}}{{> injectArticle}}{{/content}}{{/if}}</section>{{/content}}{{/if}}</section>{{/content}}{{/if}}</section>{{/content}}{{/if}}</section>{{/content}}{{/if}}</section>{{/body}}</div>';
+			var data = {
+				"subject": "Novo Regime do Arrendamento Urbano - Decreto-Lei n.º 6/2006, de 27 de fevereiro",
+				"body": 
+[{"type":"li","data":"Republicação do Decreto-Lei n.º 157/2006, de 8 de agosto, que aprova o regime jurídico das obras em prédios arrendados"},{"type":"SECÇÃO","section":"section","id":"s1","nr":"SECÇÃO I","epigraph":"Disposições comuns","content":[{"article":"Artigo","id":"1","nr":"Artigo 1.º","epigraph":"Âmbito","content":[{"type":"li","li":"1","data":"O presente decreto-lei aprova o regime jurídico aplicável:","content":[{"type":"li","li":"a","data":"À denúncia do contrato para demolição ou para realização de obra de remodelação ou restauro profundos, nos termos do n.º 11 do _artigo 1103.º(#1103)_ do Código Civil;"},{"type":"li","li":"b","data":"À realização de obras coercivas;"},{"type":"li","li":"c","data":"À edificação em prédio rústico arrendado e não sujeito a regime especial;"},{"type":"li","li":"d","data":"(Revogada.)"},{"type":"li","li":"e","data":"À desocupação do locado para realização de obras de conservação."}]},{"type":"li","li":"2","data":"O presente decreto-lei estabelece ainda o regime aplicável nos contratos de arrendamento para fim habitacional celebrados antes da vigência do Regime do Arrendamento Urbano (RAU), aprovado pelo Decreto-Lei n.º 321-B/90, de 15 de outubro:","content":[{"type":"li","li":"a","data":"À denúncia ou suspensão do contrato de arrendamento para demolição ou realização de obras de remodelação ou restauro profundos, quando o arrendatário tiver idade igual ou superior a 65 anos ou deficiência com grau comprovado de incapacidade igual ou superior a 60 %;"},{"type":"li","li":"b","data":"À realização de obras pelo arrendatário."}]}]},{"article":"Artigo","id":"2","nr":"Artigo 2.º","epigraph":"Regra geral","content":[{"type":"li","li":"1","data":"Cabe ao senhorio efetuar as obras necessárias à manutenção do estado de conservação do prédio arrendado, nos termos dos _artigos 1074.º(#1074)_ e 1111.º do Código Civil, bem como da legislação urbanística aplicável, nomeadamente do regime jurídico da urbanização e da edificação e do regime jurídico da reabilitação urbana."},{"type":"li","li":"2","data":"No caso de o senhorio não efetuar as obras a que está obrigado, o município ou a entidade gestora da operação de reabilitação urbana podem intimá-lo à sua realização, bem como proceder à sua realização coerciva."}]},{"article":"Artigo","id":"3","nr":"Artigo 3.º","epigraph":"Obras de conservação","content":[{"type":"li","li":"1","data":"Quando seja indispensável para realização das obras referidas no n.º 1 do artigo anterior, o senhorio tem o direito a solicitar ao arrendatário, com uma antecedência mínima de três meses, que desocupe o locado pelo prazo necessário à execução das obras, o qual não pode ser superior a 60 dias."},{"type":"li","li":"2","data":"Na situação prevista no número anterior, o senhorio está obrigado ao realojamento do arrendatário, em condições análogas às que este detinha no locado, nos termos previstos nos n.os 3 a 5 do _artigo 6.º(#6)_ e a suportar as despesas inerentes a essa desocupação."},{"type":"li","li":"3","data":"Para efeitos do exercício da faculdade prevista no n.º 1, o senhorio envia uma comunicação ao arrendatário, informando-o do prazo necessário à realização das obras, das condições do realojamento fornecido, assim como da data para a entrega das respetivas chaves e da data para desocupação do locado."},{"type":"li","li":"4","data":"O arrendatário tem direito a ser indemnizado pelos danos que possam advir do não cumprimento do prazo máximo da desocupação."},{"type":"li","li":"5","data":"O senhorio só pode comunicar a necessidade de desocupação do locado para realização de obras de conservação, nos termos do n.º 3, se não tiver usado da mesma faculdade nos oito anos anteriores e se o contrato já tiver, pelo menos, dois anos de duração efetiva."}]}]},{"type":"SECÇÃO","section":"section","id":"s2","nr":"SECÇÃO II","epigraph":"Regime geral","content":[{"type":"SUBSECÇÃO","section":"subsection","id":"s2s1","nr":"SUBSECÇÃO I","epigraph":"Iniciativa do senhorio","content":[{"article":"Artigo","id":"4","nr":"Artigo 4.º","epigraph":"Remodelação ou restauro profundos","content":[{"type":"li","li":"1","data":"Para efeitos do presente decreto-lei, são obras de remodelação ou restauro profundos:","content":[{"type":"li","li":"a","data":"As obras de reconstrução, definidas na alínea c) do _artigo 2.º(#2)_ do regime jurídico da urbanização e da edificação, aprovado pelo Decreto-Lei n.º 555/99, de 16 de dezembro; ou"},{"type":"li","li":"b","data":"As obras de alteração ou ampliação, definidas respetivamente nas alíneas d) e e) do _artigo 2.º(#2)_ do regime jurídico da urbanização e da edificação, aprovado pelo Decreto-Lei n.º 555/99, de 16 de dezembro, em que:"},{"type":"li","li":"i","data":"Destas resulte um nível bom ou superior no estado de conservação do locado, de acordo com a tabela referida no n.º 3 do artigo 6.º da Portaria n.º 1192-B/2006, de 3 de novembro; e"},{"type":"li","li":"ii","data":"O custo da obra a realizar no locado, incluindo imposto sobre valor acrescentado, corresponda, pelo menos, a 25 % do seu valor patrimonial tributário constante da matriz do locado ou proporcionalmente calculado, se este valor não disser exclusivamente respeito ao locado."}]},{"type":"li","li":"2","data":"(Revogado.)"},{"type":"li","li":"3","data":"(Revogado.)"},{"type":"li","li":"4","data":"As obras referidas no n.º 1 podem decorrer de intervenções urbanísticas realizadas em área de reabilitação urbana."},{"type":"li","li":"5","data":"Além dos demais elementos previstos na lei, o requerimento de controlo prévio urbanístico respeitante às operações referidas no n.º 1 deve ser acompanhado dos seguintes elementos:","content":[{"type":"li","li":"a","data":"Indicação da situação de arrendamento existente, se aplicável; e"},{"type":"li","li":"b","data":"Nos casos da alínea b) do n.º 1:"},{"type":"li","li":"i","data":"Orçamento total da operação a realizar, incluindo estimativa do custo total da operação urbanística;"},{"type":"li","li":"ii","data":"Caderneta predial, que inclui o valor patrimonial do locado."}]},{"type":"li","li":"6","data":"Ao arrendatário não pode, em qualquer caso, ser negada a consulta ou a emissão de reprodução ou certidão do processo respeitante ao controlo prévio urbanístico relativo ao locado, dispondo os órgãos competentes do prazo improrrogável de 10 dias para assegurar a garantia de acesso, sem prejuízo dos demais direitos previstos na Lei n.º 26/2016, de 22 de agosto, que aprova o regime de acesso à informação administrativa e ambiental e de reutilização dos documentos administrativos."}]},{"article":"Artigo","id":"5","nr":"Artigo 5.º","epigraph":"Vicissitudes contratuais em caso de remodelação, restauro ou demolição do locado","content":[{"type":"li","data":"(Revogado.)"}]},{"article":"Artigo","id":"6","nr":"Artigo 6.º","epigraph":"Denúncia para remodelação ou restauro","content":[{"type":"li","li":"1","data":"A denúncia do contrato de duração indeterminada para realização de obra de remodelação ou restauro profundos, nos termos da alínea b) do _artigo 1101.º(#1101)_ do Código Civil, obriga o senhorio, mediante acordo e em alternativa:","content":[{"type":"li","li":"a","data":"Ao pagamento de uma indemnização correspondente a dois anos de renda, de valor não inferior a duas vezes o montante de 1/15 do valor patrimonial tributário do locado;"},{"type":"li","li":"b","data":"A garantir o realojamento do arrendatário por período não inferior a três anos."}]},{"type":"li","li":"2","data":"Caso as partes não cheguem a acordo no prazo de 60 dias a contar da receção da comunicação prevista no n.º 1 do _artigo 1103.º(#1103)_ do Código Civil, aplica-se o disposto na alínea a) do número anterior."},{"type":"li","li":"3","data":"O realojamento do arrendatário previsto na alínea b) do n.º 1 é feito em condições análogas às que aquele já detinha, quer quanto ao local, quer quanto ao valor da renda e encargos."},{"type":"li","li":"4","data":"Para efeitos do disposto no número anterior, considera-se realojamento em condição análogas quanto ao local o realojamento do arrendatário na área da mesma freguesia ou de freguesia limítrofe, em fogo em estado de conservação igual ou superior ao do locado primitivo e adequado às necessidades do agregado familiar do arrendatário."},{"type":"li","li":"5","data":"Para efeitos do disposto nos n.os 3 e 4, presume-se adequado às necessidades do agregado familiar do arrendatário o fogo cujo tipo se situe entre o mínimo e o máximo previstos no quadro seguinte, de modo que não se verifique sobreocupação:","content":[{"type":"li","data":"(ver documento original)"}]},{"type":"li","li":"6","data":"Tratando-se de obra realizada no âmbito do regime da reabilitação urbana aplica-se o disposto no artigo 73.º daquele regime."},{"type":"li","li":"7","data":"O regime previsto no presente artigo não é aplicável nos casos em que um estabelecimento ou uma entidade situados no locado tenham sido reconhecidos pelo município como de interesse histórico e cultural ou social local, nos termos do respetivo regime jurídico, casos em que o estabelecimento ou entidade se mantém no locado."},{"type":"li","li":"8","data":"Em caso de remodelação ou restauro profundos de imóvel em que esteja situado estabelecimento ou entidade reconhecidos como de interesse histórico e cultural ou social local, cabe aos municípios salvaguardar a manutenção da atividade e património material existentes no locado, designadamente impondo para o efeito as condicionantes necessárias, no âmbito da respetiva competência de controlo prévio urbanístico e demais competências em matéria urbanística."}]},{"article":"Artigo","id":"7","nr":"Artigo 7.º","epigraph":"Denúncia para demolição","content":[{"type":"li","li":"1","data":"A denúncia do contrato pelo senhorio, nos termos da alínea b) do _artigo 1101.º(#1101)_ do Código Civil, pode ocorrer quando a demolição:","content":[{"type":"li","li":"a","data":"Seja ordenada nos termos do n.º 3 do _artigo 89.º(#89)_ do regime jurídico da urbanização e da edificação ou do _artigo 57.º(#57)_ do regime jurídico da reabilitação urbana;"},{"type":"li","li":"b","data":"Seja necessária por força da degradação do prédio, a atestar pelo município;"},{"type":"li","li":"c","data":"Resulte de plano de ordenamento do território aplicável, nomeadamente de plano de pormenor de reabilitação urbana."}]},{"type":"li","li":"2","data":"Nas situações previstas no número anterior, o senhorio está obrigado ao pagamento da indemnização prevista na alínea a) do n.º 1 do artigo anterior, sem prejuízo do disposto no número seguinte."},{"type":"li","li":"3","data":"Nas situações previstas nas alíneas a) e b) do n.º 1, o senhorio não está obrigado ao pagamento da indemnização prevista no número anterior, quando a ordem ou a necessidade de demolição não resulte de ação ou omissão culposa da sua parte."},{"type":"li","li":"4","data":"À denúncia para demolição de imóveis onde se encontrem instalados estabelecimentos ou entidades de interesse histórico e cultural ou social local é aplicável o disposto nos números anteriores e no artigo seguinte."}]},{"article":"Artigo","id":"7a","nr":"Artigo 7.º-A","epigraph":"Denúncia para demolição em caso de estabelecimento ou entidade de interesse histórico e cultural ou social local","content":[{"type":"li","li":"1","data":"Caso um estabelecimento ou uma entidade situados no locado tenham sido reconhecidos pelo município como de interesse histórico e cultural ou social local, estando verificado um dos pressupostos previstos no n.º 1 do artigo anterior, a demolição do imóvel em causa só pode ser permitida pelos órgãos municipais competentes:","content":[{"type":"li","li":"a","data":"Nos casos de situação de ruína ou de verificação em concreto da primazia de um bem jurídico superior ao que está presente na tutela dos bens em causa, desde que, em qualquer dos casos, se não mostre viável nem razoável, por qualquer outra forma, a salvaguarda ou o deslocamento do estabelecimento; e"},{"type":"li","li":"b","data":"Quando a situação de ruína não seja causada pelo incumprimento do dever de conservação exigível ao proprietário."}]},{"type":"li","li":"2","data":"O disposto no número anterior não prejudica a possibilidade de decretamento das medidas adequadas à manutenção de todos os elementos que se possam salvaguardar, autorizando-se apenas as demolições estritamente necessárias."},{"type":"li","li":"3","data":"Quando a situação de ruína seja causada pelo incumprimento do dever de conservação, consagrado no _artigo 89.º(#89)_ do regime jurídico da urbanização e da edificação, aprovado pelo Decreto-Lei n.º 555/99, de 16 de dezembro, ou do dever de reabilitação de edifícios, consagrado no _artigo 6.º(#6)_ do regime jurídico da reabilitação urbana, aprovado pelo Decreto-Lei n.º 307/2009, de 23 de outubro, o valor da indemnização previsto na alínea a) do n.º 1 do _artigo 6.º(#6)_ é duplicado."},{"type":"li","li":"4","data":"Caso a situação de ruína resulte de ação ou omissão culposa por parte do proprietário, o valor da indemnização é de dez anos de renda, determinada de acordo com os critérios previstos nas alíneas a) e b) do n.º 2 do artigo 35.º da Lei n.º 6/2006, de 27 de fevereiro, que aprova o Novo Regime do Arrendamento Urbano (NRAU)."}]},{"article":"Artigo","id":"8","nr":"Artigo 8.º","epigraph":"Efetivação da denúncia","content":[{"type":"li","li":"1","data":"A denúncia do contrato é feita mediante comunicação ao arrendatário com antecedência não inferior a seis meses sobre a data pretendida para a desocupação e da qual conste, de forma expressa e sob pena de ineficácia, o fundamento da denúncia."},{"type":"li","li":"2","data":"A comunicação referida no número anterior é acompanhada, sob pena de ineficácia da denúncia:","content":[{"type":"li","li":"a","data":"De comprovativo de que foi iniciado, junto da entidade competente, procedimento de controlo prévio da operação urbanística a efetuar no locado;"},{"type":"li","li":"b","data":"De termo de responsabilidade do técnico autor do projeto legalmente habilitado que ateste que a operação urbanística a realizar constitui uma obra de remodelação ou restauro profundos ou uma obra de demolição, nos termos previstos no n.º 1 do _artigo 4.º(#4)_ ou no n.º 1 do artigo anterior, bem como as razões pelas quais a execução da obra obriga à desocupação do locado; e"},{"type":"li","li":"c","data":"Nos casos em que estejam em causa obras de alteração ou ampliação, nos termos da alínea b) do n.º 1 do _artigo 4.º(#4)_, de cópia dos elementos entregues juntamente com o requerimento de controlo prévio, referidos na alínea b) do n.º 5 do mesmo _artigo 4.º(#4)_, bem como de documento emitido pelo município que ateste a entrega pelo senhorio destes elementos, no pedido de controlo prévio da operação urbanística."}]},{"type":"li","li":"3","data":"A denúncia a que se referem os números anteriores é confirmada, sob pena de ineficácia, mediante comunicação ao arrendatário, acompanhada de:","content":[{"type":"li","li":"a","data":"Comprovativo de deferimento do correspondente pedido, no caso de operação urbanística sujeita a licença administrativa, ou"},{"type":"li","li":"b","data":"Comprovativo de que a pretensão não foi rejeitada, no caso de operação urbanística sujeita a comunicação prévia."}]},{"type":"li","li":"4","data":"No caso previsto no número anterior, a desocupação tem lugar no prazo de 60 dias contados da receção da confirmação, salvo se não se encontrar decorrido o prazo previsto no n.º 1, caso em que a desocupação tem lugar até ao termo do último prazo."},{"type":"li","li":"5","data":"Metade da indemnização deve ser paga após a confirmação da denúncia e o restante no ato da entrega do locado, sob pena de ineficácia."},{"type":"li","li":"6","data":"(Revogado.)"},{"type":"li","li":"7","data":"(Revogado.)"}]},{"article":"Artigo","id":"9","nr":"Artigo 9.º","epigraph":"Suspensão","content":[{"type":"li","data":"(Revogado.)"}]},{"article":"Artigo","id":"9a","nr":"Artigo 9.º-A","epigraph":"Direito de preferência em caso de novo arrendamento","content":[{"type":"li","li":"1","data":"O arrendatário no contrato objeto de denúncia nos termos dos artigos anteriores tem direito a exercer direito de preferência no âmbito de novo arrendamento celebrado pelo senhorio."},{"type":"li","li":"2","data":"O direito previsto no presente artigo é oponível ao senhorio que promoveu a denúncia do contrato durante o prazo de dois anos contados a partir da data de cessação do mesmo."},{"type":"li","li":"3","data":"É aplicável, com as devidas adaptações, o regime constante dos _artigos 414.º(#414)_ e seguintes do Código Civil, sendo, porém, o prazo para o exercício do direito de preferência de 15 dias."}]},{"article":"Artigo","id":"10","nr":"Artigo 10.º","epigraph":"Efetivação da suspensão","content":[{"type":"li","data":"(Revogado.)"}]},{"article":"Artigo","id":"11","nr":"Artigo 11.º","epigraph":"Edificação em prédio rústico","content":[{"type":"li","data":"O disposto na presente subsecção é aplicável, com as necessárias adaptações, à denúncia de arrendamento de prédio rústico quando o senhorio pretenda aí construir um edifício."}]}]},{"type":"SUBSECÇÃO","section":"subsection","id":"s2s2","nr":"SUBSECÇÃO II","epigraph":"Iniciativa do município ou da entidade gestora da operação de reabilitação urbana","content":[{"article":"Artigo","id":"12","nr":"Artigo 12.º","epigraph":"Âmbito","content":[{"type":"li","data":"O disposto na presente subsecção aplica-se às obras coercivas executadas em prédios total ou parcialmente arrendados:","content":[{"type":"li","li":"a","data":"Pelo município, nos termos do regime jurídico da urbanização e da edificação;"},{"type":"li","li":"b","data":"Pelo município ou pela entidade gestora da operação de reabilitação urbana, nos termos do regime jurídico da reabilitação urbana."}]}]},{"article":"Artigo","id":"13","nr":"Artigo 13.º","epigraph":"Poderes do município e da entidade gestora da operação de reabilitação urbana","content":[{"type":"li","data":"Para os efeitos previstos no artigo anterior, a entidade promotora das obras coercivas pode proceder ao despejo administrativo e ocupar o prédio ou fogos, total ou parcialmente, até ao período de um ano após a data da conclusão das obras, após o qual tal ocupação cessa automaticamente."}]},{"article":"Artigo","id":"14","nr":"Artigo 14.º","epigraph":"Orçamento","content":[{"type":"li","li":"1","data":"O início das obras é precedido da elaboração de um orçamento do respetivo custo, a comunicar ao senhorio, por escrito."},{"type":"li","li":"2","data":"O valor a suportar é acrescido do custo dos trabalhos a mais, decorrentes de circunstâncias imprevisíveis à data da elaboração do orçamento, que se mostrem indispensáveis para a conclusão da obra, com o limite estabelecido no n.º 3 do _artigo 370.º(#370)_ do Código dos Contratos Públicos, aprovado pelo Decreto-Lei n.º 18/2008, de 29 de janeiro, na redação que lhe foi dada pelo Decreto-Lei n.º 278/2009, de 2 de outubro."}]},{"article":"Artigo","id":"15","nr":"Artigo 15.º","epigraph":"Realojamento ou indemnização","content":[{"type":"li","li":"1","data":"A entidade promotora das obras coercivas não pode proceder ao despejo administrativo sem assegurar simultaneamente o realojamento temporário dos arrendatários existentes, sendo aplicável o disposto nos n.os 3 a 5 do _artigo 6.º(#6)_"},{"type":"li","li":"2","data":"Durante o realojamento mantém-se a obrigação de pagamento da renda, havendo lugar ao seu depósito, nos termos do _artigo 19.º(#19)_"},{"type":"li","li":"3","data":"No caso de arrendamento não habitacional, não sendo possível o realojamento ou não concordando o arrendatário com as condições oferecidas, a entidade promotora das obras coercivas indemniza o arrendatário nos termos da alínea a) do n.º 1 do _artigo 6.º(#6)_, tendo o direito de arrendar o local após as obras, nos termos do _artigo 20.º(#20)_, para se ressarcir do valor da indemnização paga."}]},{"article":"Artigo","id":"16","nr":"Artigo 16.º","epigraph":"Comunicação ao arrendatário","content":[{"type":"li","data":"Com antecedência não inferior a 30 dias, o arrendatário é notificado, por carta registada ou por afixação de edital na porta da respetiva casa e na sede da junta de freguesia:","content":[{"type":"li","li":"a","data":"Da data do despejo administrativo;"},{"type":"li","li":"b","data":"Do local de realojamento que lhe foi destinado;"},{"type":"li","li":"c","data":"Da obrigação de retirar todos os bens do local despejando;"},{"type":"li","li":"d","data":"Da duração previsível das obras;"},{"type":"li","li":"e","data":"Da obrigação de depositar as rendas, nos termos do _artigo 19.º(#19)_"}]}]},{"article":"Artigo","id":"17","nr":"Artigo 17.º","epigraph":"Reocupação pelo arrendatário","content":[{"type":"li","data":"A entidade promotora das obras coercivas comunica ao arrendatário o fim das obras, devendo o arrendatário reocupar o locado no prazo de três meses, salvo justo impedimento, sob pena de caducidade do contrato de arrendamento."}]},{"article":"Artigo","id":"18","nr":"Artigo 18.º","epigraph":"Compensação","content":[{"type":"li","li":"1","data":"O ressarcimento do custo das obras coercivas, nos termos do _artigo 14.º(#14)_, e, sendo caso disso, do realojamento temporário dos arrendatários existentes, é feito através do recebimento das rendas."},{"type":"li","li":"2","data":"Quando o senhorio o requeira, demonstrando que as rendas são indispensáveis para o sustento do seu agregado familiar ou para a sustentabilidade económica da pessoa coletiva, a entidade promotora das obras coercivas pode autorizar o levantamento de 50 % do valor dos depósitos da renda vigente aquando do início das obras, acrescida das atualizações ordinárias anuais, revertendo o restante para a entidade promotora das obras coercivas."},{"type":"li","li":"3","data":"A autorização referida no número anterior é emitida no prazo de 10 dias após a apresentação do requerimento, acompanhado dos elementos de prova necessários."}]},{"article":"Artigo","id":"19","nr":"Artigo 19.º","epigraph":"Depósito das rendas","content":[{"type":"li","li":"1","data":"O arrendatário deposita a renda, nos termos dos _artigos 17.º(#17)_ e seguintes do NRAU, enquanto a entidade promotora das obras coercivas não se encontrar totalmente ressarcida."},{"type":"li","li":"2","data":"No prazo de 10 dias após o ressarcimento integral, a entidade promotora das obras coercivas notifica os arrendatários da cessação do dever de depositar a renda."}]},{"article":"Artigo","id":"20","nr":"Artigo 20.º","epigraph":"Arrendamento pela entidade promotora das obras coercivas","content":[{"type":"li","li":"1","data":"Sem prejuízo do disposto no n.º 4, existindo fogos devolutos no prédio reabilitado, pode a entidade promotora das obras coercivas arrendá-los, mediante concurso público, pelo prazo de dois anos, renovável nos termos do _artigo 1096.º(#1096)_ do Código Civil."},{"type":"li","li":"2","data":"Existindo arrendamento nos termos do número anterior, o proprietário só tem o direito de se opor à renovação do contrato quando o fim do respetivo prazo se verifique após o ressarcimento integral da entidade promotora das obras coercivas."},{"type":"li","li":"3","data":"A renda a praticar nos contratos referidos nos números anteriores é determinada de acordo com os critérios previstos nas alíneas a) e b) do n.º 2 do _artigo 35.º(#35)_ do NRAU."},{"type":"li","li":"4","data":"O disposto no n.º 1 não é aplicável se o proprietário arrendar os fogos devolutos, por valor não inferior ao previsto no número anterior, no prazo de quatro meses após a ocupação do prédio pela entidade promotora das obras coercivas ou após a conclusão das obras."},{"type":"li","li":"5","data":"Aos titulares dos contratos de arrendamento previstos neste artigo é aplicável o disposto no artigo anterior, cabendo ao senhorio o direito previsto no n.º 2 do _artigo 18.º(#18)_"}]},{"article":"Artigo","id":"21","nr":"Artigo 21.º","epigraph":"Arrolamento de bens","content":[{"type":"li","li":"1","data":"Se, no momento da ocupação, forem encontrados bens no local a ocupar, proceder-se-á ao seu arrolamento."},{"type":"li","li":"2","data":"Para efeitos do arrolamento referido no número anterior, procede-se da seguinte forma:","content":[{"type":"li","li":"a","data":"É lavrado auto em que se descrevem os bens, em verbas numeradas, e se mencionam quaisquer ocorrências relevantes;"},{"type":"li","li":"b","data":"O auto é assinado pelo funcionário que o lavrar e pelo possuidor dos bens, se existir, devendo intervir duas testemunhas quando não for assinado por este último;"},{"type":"li","li":"c","data":"Ao ato de arrolamento assiste o possuidor ou detentor dos bens, sempre que queira e esteja no local ou seja possível chamá-lo, podendo fazer-se representar por mandatário judicial;"},{"type":"li","li":"d","data":"Os bens arrolados ficam depositados à guarda da entidade promotora das obras coercivas e são entregues ao respetivo dono, a requerimento deste, sem prejuízo de só poderem ser repostos no fogo despejando após a conclusão das respetivas obras;"},{"type":"li","li":"e","data":"São aplicáveis ao arrolamento as disposições relativas à penhora, com as devidas adaptações, em tudo que não contrarie o estabelecido neste artigo."}]},{"type":"li","li":"3","data":"O arrendatário é responsável pelas despesas resultantes do despejo."},{"type":"li","li":"4","data":"O dono dos bens é responsável pelas despesas resultantes do depósito e arrolamento daqueles."}]},{"article":"Artigo","id":"22","nr":"Artigo 22.º","epigraph":"Obras por iniciativa de outras entidades","content":[{"type":"li","data":"O disposto na presente subsecção é aplicável, com as devidas adaptações, à realização de obras em prédios arrendados por entidade à qual a lei confira esse direito, nomeadamente sociedades de reabilitação urbana, fundos de investimento imobiliário e fundos de pensões."}]}]}]},{"type":"SECÇÃO","section":"section","id":"s3","nr":"SECÇÃO III","epigraph":"Regime especial transitório","content":[{"type":"SUBSECÇÃO","section":"subsection","id":"s3s1","nr":"SUBSECÇÃO I","epigraph":"Disposições gerais","content":[{"article":"Artigo","id":"23","nr":"Artigo 23.º","epigraph":"Âmbito de aplicação","content":[{"type":"li","li":"1","data":"O disposto na presente secção aplica-se apenas aos contratos de arrendamento para habitação celebrados antes da entrada em vigor do RAU, aprovado pelo Decreto-Lei n.º 321-B/90, de 15 de outubro."},{"type":"li","li":"2","data":"Em tudo o não previsto na presente secção aplica-se o disposto na secção anterior."}]}]},{"type":"SUBSECÇÃO","section":"subsection","id":"s3s2","nr":"SUBSECÇÃO II","epigraph":"Iniciativa do senhorio","content":[{"article":"Artigo","id":"24","nr":"Artigo 24.º","epigraph":"Denúncia para demolição","content":[{"type":"li","li":"1","data":"A faculdade de denúncia para demolição rege-se pelo disposto no _artigo 7.º(#7)_, sem prejuízo do disposto no artigo seguinte."},{"type":"li","li":"2","data":"(Revogado.)"}]},{"article":"Artigo","id":"25","nr":"Artigo 25.º","epigraph":"Denúncia do contrato com arrendatário com idade igual ou superior a 65 anos ou com deficiência com grau de incapacidade igual ou superior a 60 %","content":[{"type":"li","li":"1","data":"A denúncia do contrato de duração indeterminada para demolição ou realização de obra de remodelação ou restauro profundos, nos termos da alínea b) do _artigo 1101.º(#1101)_ do Código Civil, quando o arrendatário tiver idade igual ou superior a 65 anos ou deficiência com grau comprovado de incapacidade igual ou superior a 60 %, obriga o senhorio, na falta de acordo entre as partes, a garantir o realojamento do arrendatário em condições análogas às que este já detinha, nos termos previstos nos n.os 3 a 5 do _artigo 6.º(#6)_, devendo o local a tal destinado encontrar-se em estado de conservação médio ou superior."},{"type":"li","li":"2","data":"Para efeitos do disposto no número anterior, na comunicação a que se refere o n.º 1 do _artigo 8.º(#8)_, o senhorio indica o local destinado ao realojamento e a respetiva renda propostos, bem como o prazo legalmente previsto para a resposta e a consequência prevista no n.º 7 para a falta de resposta."},{"type":"li","li":"3","data":"No prazo de 30 dias a contar da receção da comunicação prevista no n.º 1 do _artigo 8.º(#8)_, o arrendatário pode optar pelo realojamento, nos termos do presente artigo, ou pelo recebimento de indemnização nos termos da alínea a) do n.º 1 do _artigo 6.º(#6)_ e do n.º 5 do _artigo 8.º(#8)_"},{"type":"li","li":"4","data":"Se o arrendatário optar pelo realojamento, deve ainda na sua resposta, sendo caso disso, invocar que o rendimento anual bruto corrigido (RABC) do seu agregado familiar é inferior a cinco retribuições mínimas nacionais anuais (RMNA), sendo aplicável o disposto no _artigo 32.º(#32)_ do NRAU."},{"type":"li","li":"5","data":"Caso o arrendatário invoque e comprove que o RABC do seu agregado familiar é inferior a cinco RMNA, o senhorio pode ainda, no prazo de 10 dias a contar da receção da resposta a que se refere o número anterior, comunicar ao arrendatário que, em alternativa à denúncia do contrato, quando esta tenha por fundamento a realização de obra de remodelação ou restauro profundos, opta por suspender a execução desse contrato pelo período necessário à execução das obras, ficando obrigado a garantir o realojamento do arrendatário durante esse período, nos termos previstos no artigo seguinte."},{"type":"li","li":"6","data":"Na comunicação a que se refere o número anterior, o senhorio informa o arrendatário:","content":[{"type":"li","li":"a","data":"Do local e das condições do realojamento fornecido;"},{"type":"li","li":"b","data":"Da data de início e duração previsível das obras;"},{"type":"li","li":"c","data":"Da data para a entrega da chave do local de realojamento temporário e para a desocupação do locado."}]},{"type":"li","li":"7","data":"A falta de resposta do arrendatário no prazo previsto no n.º 3 vale como opção pelo realojamento e aceitação do local a tal destinado e renda propostos pelo senhorio."},{"type":"li","li":"8","data":"No caso de haver lugar ao realojamento nos termos do n.º 1, deve ser celebrado novo contrato de arrendamento no prazo de 30 dias, a contar da receção pelo senhorio da resposta do arrendatário a que se refere o n.º 3 ou, verificando-se o disposto no n.º 7, do termo do prazo a que se refere o n.º 3, sob pena de ineficácia da denúncia do contrato primitivo."},{"type":"li","li":"9","data":"O novo contrato de arrendamento é celebrado por duração indeterminada, nos termos e condições previstos no n.º 1, não sendo aplicável o disposto na alínea c) do _artigo 1101.º(#1101)_ do Código Civil."},{"type":"li","li":"10","data":"À renda a pagar pelo novo contrato de arrendamento é aplicável, com as necessárias adaptações, o disposto nas alíneas a) e b) do n.º 2 do _artigo 35.º(#35)_ do NRAU ou, tratando-se de arrendatário cujo agregado familiar tenha RABC inferior a cinco RMNA, nos n.os 7, 9 e 10 do _artigo 36.º(#36)_ do NRAU."},{"type":"li","li":"11","data":"O contrato de arrendamento mantém-se em caso de morte do arrendatário realojado, passando a quem tenha direito nos termos gerais da lei."},{"type":"li","li":"12","data":"A obrigação de realojamento prevista nos números anteriores existe somente quando o arrendatário tenha no locado a sua residência permanente ou quando a falta de residência permanente for devida a caso de força maior ou doença."}]},{"article":"Artigo","id":"26","nr":"Artigo 26.º","epigraph":"Suspensão do contrato para remodelação ou restauro","content":[{"type":"li","li":"1","data":"Se optar pela suspensão da execução do contrato nos termos do n.º 5 do artigo anterior, o senhorio fica obrigado a garantir o realojamento do arrendatário durante esse período, aplicando-se o disposto no n.º 1 do artigo anterior quanto às condições do realojamento ou, se for caso disso, no _artigo 73.º(#73)_ do regime jurídico da reabilitação urbana."},{"type":"li","li":"2","data":"Sem prejuízo da manutenção da obrigação de pagamento da renda, o contrato de arrendamento suspende-se no momento da desocupação do locado pelo arrendatário."},{"type":"li","li":"3","data":"O senhorio comunica ao arrendatário a conclusão das obras, devendo o arrendatário reocupar o locado no prazo de três meses, salvo justo impedimento, sob pena de caducidade do contrato de arrendamento."},{"type":"li","li":"4","data":"À desocupação do locado em consequência da suspensão da execução do contrato nos termos dos números anteriores é aplicável, com as necessárias adaptações, o disposto nos _artigos 15.º-A(#15a)_ a 15.º-S do NRAU."},{"type":"li","li":"5","data":"Para efeitos do disposto no número anterior, o requerimento de despejo a que se refere o _artigo 15.º-B(#15b)_ do NRAU deve ser acompanhado da comunicação prevista nos n.os 5 e 6 do artigo anterior."}]},{"article":"Artigo","id":"27","nr":"Artigo 27.º","epigraph":"Atualização da renda","content":[{"type":"li","data":"(Revogado.)"}]}]},{"type":"SUBSECÇÃO","section":"subsection","id":"s3s3","nr":"SUBSECÇÃO III","epigraph":"Iniciativa do município","content":[{"article":"Artigo","id":"28","nr":"Artigo 28.º","epigraph":"Atualização da renda","content":[{"type":"li","data":"(Revogado.)"}]}]},{"type":"SUBSECÇÃO","section":"subsection","id":"s3s4","nr":"SUBSECÇÃO IV","epigraph":"Iniciativa do arrendatário","content":[{"type":"li","data":"DIVISÃO I","content":[{"type":"li","data":"Âmbito de aplicação"}]},{"article":"Artigo","id":"29","nr":"Artigo 29.º","epigraph":"Responsabilidade pelas obras ou pelos danos","content":[{"type":"li","data":"O disposto na presente subsecção aplica-se apenas quando:","content":[{"type":"li","li":"a","data":"As obras de conservação do locado não estejam a cargo do arrendatário, salvo quando estejam em causa obras a realizar em outras partes do prédio, nomeadamente partes comuns;"},{"type":"li","li":"b","data":"A degradação do prédio não se deva a atuação ilícita do arrendatário."},{"type":"li","data":"DIVISÃO II"},{"type":"li","data":"Manutenção do arrendamento"}]}]},{"article":"Artigo","id":"30","nr":"Artigo 30.º","epigraph":"Atuação do arrendatário","content":[{"type":"li","li":"1","data":"Quando ao locado tenha sido atribuído nível de conservação mau ou péssimo, nos termos definidos em diploma próprio, o arrendatário pode intimar o senhorio à realização das obras necessárias à obtenção de um nível médio ou superior."},{"type":"li","li":"2","data":"Se o senhorio, sendo a tal intimado, não iniciar as obras dentro do prazo de seis meses ou declarar não o pretende fazer dentro desse prazo, o arrendat��rio pode solicitar ao município competente a realização de obras coercivas ou tomar a iniciativa da sua realização, nos termos dos artigos seguintes."},{"type":"li","li":"3","data":"Cessa o disposto no número anterior quando o senhorio não der início à obra por motivo imputável à Administração Pública, nomeadamente por demora no licenciamento da obra ou na decisão sobre a atribuição de apoio à reabilitação do prédio."},{"type":"li","li":"4","data":"A intimação para obras e a declaração de não pretender realizá-las só são eficazes quando efetuadas por escrito."}]},{"article":"Artigo","id":"31","nr":"Artigo 31.º","epigraph":"Legitimidade","content":[{"type":"li","li":"1","data":"Além do caso previsto no n.º 2 do artigo anterior, o arrendatário pode realizar obras de conservação quando o senhorio, a tal instado pelo município, a elas não proceda dentro do prazo estabelecido."},{"type":"li","li":"2","data":"O arrendatário pode ainda realizar obras no caso de o senhorio ter suspendido a execução de obras anteriormente iniciadas e não as ter retomado no prazo de 90 dias a contar da suspensão, desde que o arrendatário tenha posteriormente intimado o senhorio a retomá-las em prazo não superior a 30 dias, sendo também aqui aplicável o disposto no n.º 3 do artigo anterior."},{"type":"li","li":"3","data":"Havendo pluralidade de arrendatários em prédio não sujeito a propriedade horizontal, a realização de obras, relativamente às partes comuns, depende do assentimento de, pelo menos, metade deles, ficando os restantes vinculados a tal decisão e aos correspondentes encargos."},{"type":"li","li":"4","data":"O arrendatário só pode realizar as obras necessárias para se atingir o nível médio de conservação, nos termos definidos em diploma próprio."},{"type":"li","li":"5","data":"Encontrando-se o edifício constituído em propriedade horizontal, o arrendatário pode substituir-se ao senhorio na execução de obras nas partes comuns, determinadas pela assembleia de condóminos ou impostas nos termos previstos no _artigo 89.º(#89)_ do regime jurídico da urbanização e da edificação, aprovado pelo Decreto-Lei n.º 555/99, de 16 de dezembro, e no _artigo 55.º(#55)_ do regime jurídico da reabilitação urbana, aprovado pelo Decreto-Lei n.º 307/2009, de 23 de outubro."}]},{"article":"Artigo","id":"32","nr":"Artigo 32.º","epigraph":"Procedimento","content":[{"type":"li","li":"1","data":"O início das obras pelo arrendatário depende de prévia comunicação dessa intenção ao senhorio."},{"type":"li","li":"2","data":"A comunicação referida no número anterior é feita com o mínimo de um mês de antecedência face ao início das obras e contém o respetivo orçamento e a exposição dos factos que conferem o direito de as efetuar."}]},{"article":"Artigo","id":"33","nr":"Artigo 33.º","epigraph":"Compensação","content":[{"type":"li","li":"1","data":"O arrendatário que efetue obras no locado compensa o valor despendido com as obras com o valor da renda, a partir do início daquelas."},{"type":"li","li":"2","data":"O valor das obras a ter em conta para efeitos de compensação é o correspondente às despesas efetuadas e orçamentadas e respetivos juros, acrescidos de 5 % destinados a despesas de administração."},{"type":"li","li":"3","data":"Cessando, por qualquer causa, o contrato de arrendamento antes do ressarcimento completo do arrendatário, este tem o direito de receber o valor em falta."},{"type":"li","li":"4","data":"Durante o período de duração da compensação, o senhorio tem o direito de receber o valor correspondente a 50 % da renda vigente aquando do início das obras, acrescida das atualizações ordinárias anuais."}]},{"article":"Artigo","id":"34","nr":"Artigo 34.º","epigraph":"Compensação e valor da renda","content":[{"type":"li","data":"(Revogado.)","content":[{"type":"li","data":"DIVISÃO III"},{"type":"li","data":"Aquisição do locado pelo arrendatário"}]}]},{"article":"Artigo","id":"35","nr":"Artigo 35.º","epigraph":"Legitimidade","content":[{"type":"li","data":"(Revogado.)"}]},{"article":"Artigo","id":"36","nr":"Artigo 36.º","epigraph":"Ação de aquisição","content":[{"type":"li","data":"(Revogado.)"}]},{"article":"Artigo","id":"37","nr":"Artigo 37.º","epigraph":"Legitimidade passiva","content":[{"type":"li","data":"(Revogado.)"}]},{"article":"Artigo","id":"38","nr":"Artigo 38.º","epigraph":"Valor da aquisição","content":[{"type":"li","data":"(Revogado.)"}]},{"article":"Artigo","id":"39","nr":"Artigo 39.º","epigraph":"Obrigação de reabilitação e manutenção","content":[{"type":"li","data":"(Revogado.)"}]},{"article":"Artigo","id":"40","nr":"Artigo 40.º","epigraph":"Reversão","content":[{"type":"li","data":"(Revogado.)"}]},{"article":"Artigo","id":"41","nr":"Artigo 41.º","epigraph":"Registo predial","content":[{"type":"li","data":"(Revogado.)"}]},{"article":"Artigo","id":"42","nr":"Artigo 42.º","epigraph":"Prédios constituídos em propriedade horizontal","content":[{"type":"li","data":"(Revogado.)"}]},{"article":"Artigo","id":"43","nr":"Artigo 43.º","epigraph":"Prédios não constituídos em propriedade horizontal","content":[{"type":"li","data":"(Revogado.)"}]},{"article":"Artigo","id":"44","nr":"Artigo 44.º","epigraph":"Aquisição de outras frações","content":[{"type":"li","data":"(Revogado.)"}]}]}]},{"type":"SECÇÃO","section":"section","id":"s4","nr":"SECÇÃO IV","epigraph":"Disposições sancionatórias","content":[{"article":"Artigo","id":"45","nr":"Artigo 45.º","epigraph":"Responsabilidade contraordenacional","content":[{"type":"li","li":"1","data":"Sem prejuízo da responsabilidade civil, criminal ou disciplinar, são puníveis como contraordenação as falsas declarações dos técnicos autores de projetos no termo de responsabilidade previsto na alínea b) do n.º 2 do _artigo 8.º(#8)_"},{"type":"li","li":"2","data":"A contraordenação prevista no número anterior é punível com coima de (euro) 3000 a (euro) 200 000."},{"type":"li","li":"3","data":"A negligência é punível, sendo os limites mínimos e máximos das coimas reduzidos para metade."},{"type":"li","li":"4","data":"A tentativa é punível com a coima aplicável à contraordenação consumada, especialmente atenuada."},{"type":"li","li":"5","data":"Consoante a gravidade da contraordenação e a culpa do agente, pode ser aplicada, simultaneamente com a coima, a sanção acessória de interdição do exercício, até ao máximo de quatro anos, da profissão ou atividade conexas com a infração praticada."},{"type":"li","li":"6","data":"As sanções previstas nos números anteriores são comunicadas à ordem ou associação profissional respetiva, quando exista."},{"type":"li","li":"7","data":"Sem prejuízo das competências atribuídas por lei a outras autoridades policiais e fiscalizadoras, a competência para determinar a instauração dos processos de contraordenação, para designar o instrutor e para aplicar as coimas e as sanções acessórias pertence ao presidente da câmara municipal ou, se houver delegação de competências, aos vereadores."},{"type":"li","li":"8","data":"O produto da aplicação das coimas reverte a favor do município, inclusive quando as mesmas sejam cobradas em juízo."}]},{"article":"Artigo","id":"46","nr":"Artigo 46.º","epigraph":"Responsabilidade criminal","content":[{"type":"li","li":"1","data":"As falsas declarações ou informações prestadas no termo de responsabilidade previsto na alínea b) do n.º 2 do _artigo 8.º(#8)_ pelos técnicos autores de projetos são puníveis nos termos do _artigo 256.º(#256)_ do Código Penal."},{"type":"li","li":"2","data":"O disposto no número anterior não prejudica a aplicação do _artigo 277.º(#277)_ do Código Penal."}]}]},{"type":"SECÇÃO","section":"section","id":"s5","nr":"SECÇÃO V","epigraph":"Disposições finais e transitórias","content":[{"article":"Artigo","id":"47","nr":"Artigo 47.º","epigraph":"Comunicações","content":[{"type":"li","data":"Às comunicações entre senhorio e arrendatário previstas no presente decreto-lei aplica-se o disposto nos _artigos 9.º(#9)_ a 12.º do NRAU."}]},{"article":"Artigo","id":"48","nr":"Artigo 48.º","epigraph":"Alteração ao Decreto-Lei n.º 555/99, de 16 de dezembro","content":[{"type":"li","li":"1","data":"O _artigo 92.º(#92)_ do Decreto-Lei n.º 555/99, de 16 de dezembro, passa a ter a seguinte redação:","content":[{"type":"li","data":"«Artigo 92.º"},{"type":"li","data":"Despejo administrativo"}]},{"type":"li","li":"1","data":"..."},{"type":"li","li":"2","data":"..."},{"type":"li","li":"3","data":"..."},{"type":"li","li":"4","data":"..."},{"type":"li","li":"5","data":"Ao despejo de ocupante titular de contrato de arrendamento aplica-se o disposto no Decreto-Lei n.º 157/2006, de 8 de agosto.»"},{"type":"li","li":"2","data":"O prazo previsto no n.º 2 do _artigo 71.º(#71)_ do Decreto-Lei n.º 555/99, de 16 de dezembro, para requerer a emissão do alvará não corre na pendência das ações de aquisição ou denúncia previstas neste decreto-lei."}]},{"article":"Artigo","id":"49","nr":"Artigo 49.º","epigraph":"Norma revogatória","content":[{"type":"li","data":"É revogada a Lei n.º 2088, de 3 de junho de 1957."}]},{"article":"Artigo","id":"50","nr":"Artigo 50.º","epigraph":"Entrada em vigor","content":[{"type":"li","data":"O presente decreto-lei entra em vigor no 30.º dia seguinte ao da sua publicação."}]}]}]
+
+			};
+			$(whereTo).html(Handlebars.compile(template)(data));
+		}
+		function ccpTOC(what, whereTo) {
+			const SCROLL_SPY_TAG = '.bs-docs-sidebar', SCROLL_SPY_MONITOR = 80, AFFIX_TAG = '#nav', AFFIX_OFFSET_TOP = 200;
+				SMOOTH_SCROLL_PARENT_TAG = '#tocSeed', SMOOTH_SCROLL_TIMER = 800,
+				HEADINGS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h55', 'h6'],
+				HEADING_LEVEL_MAP = {H1:0, H2:1, H3:2, H4:3, H5:4, H55:5, H6:6 }
+			var placeHolder = document.getElementById(whereTo);
+			if (placeHolder === null) { alert("Placeholder '" + whereTo + "' not found in page body. TOC not inserted."); return; }
+			var docToC = document.getElementById(what).querySelectorAll(HEADINGS);
+			var levels = [0], res = '', item, isFirst = true;
+			[].forEach.call(docToC, function(item) {
+				if (item.nodeType !== 1) return;
+				var currentLevel = HEADING_LEVEL_MAP[item.nodeName];
+				if (currentLevel > levels[levels.length - 1]) {
+					res +=  '<ul' + ' class="nav nav-pills nav-stacked"' + (isFirst?' id="nav" data-spy="affix"':'') +
+							'><li><a href="#' + item.id + '"' + '>' + composeReference2(item.innerText) + '</a>';
+					isFirst = false;
+					levels.push(currentLevel);
+				} else if (currentLevel < levels[levels.length - 1]) {
+					while (currentLevel < levels[levels.length - 1]) {
+						res += '</li></ul>';
+						levels.pop(currentLevel);
+					}
+					res += '<li><a href="#' + item.id + '">' + composeReference2(item.innerText) + '</a>';
+				} else res += '</li><li><a href="#' + item.id + '">' + composeReference2(item.innerText) + '</a>';
+			}	);
+			res += '</li></ul>'
+			placeHolder.innerHTML = res;
+			assignAffix(AFFIX_TAG);
+			enableScrollSpy(SCROLL_SPY_TAG, SCROLL_SPY_MONITOR);
+			refreshScrollSpy();
+			$(SMOOTH_SCROLL_PARENT_TAG + ' a').on('click', new SmoothScroll(SMOOTH_SCROLL_TIMER).runner(event));
+		}
+		// Tools: check, convert & compose
+		function toRoman(v) {return isNumber(v) ?
+			[ 'I',  'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX'][v-1] : ''; }
+		function isNumber(v) {return isUndefined(v) ? false : !("" + v).match(/[a-z]/i); }
+		function isUndefined(v) {return (typeof v === "undefined"); }
+		function composeReference2(str) {
+			if (!str) return ''
+			var sp = str.split(' ')
+			return sp[0] + ' ' + sp[1]
+		}
+		function composeReference(clazz, id, tag) {
+			var _id;
+			switch (clazz) {
+				case 'article': case 'articleA': _id = id + '.º'; break;
+				case 'chapter': _id = id ? toRoman(id.split('c')[1]) : ''; break;
+				case 'title': case 'titleA':
+					var _nr = id ? id.split('t')[1] : '';
+					if (isUndefined(_nr)) _id = '';
+					else _id = isNumber(_nr) ? toRoman(_nr) : toRoman(_nr.substring(0, _nr.length-1)) + '-' + _nr.substr(_nr.length-1, 1);
+					break;
+				case 'section': _id = id ? toRoman(id.split('s')[1]) : ''; break;
+				case 'annex': _id = id ? toRoman(id.split('a')[1]) : ''; break;
+				case 'part': _id = id ? toRoman(id.split('p')[1]) : ''; break;
+				case 'subsection': _id = id ? toRoman(id.split('s')[2]) : ''; break;
+			}
+			return _id === '' ? '' : DOC_SECTIONS_MAP[clazz] + ' ' + _id + tag;
+		}
+		// Scroll stuff
+
+		function assignAffix(tag) {$(tag).affix(); }
+		//function assignAffix(tag) {$(tag).affix({offset: {top: 200}}); }
+		function enableScrollSpy(targetValue, monitorOffsetValue) {$('body').scrollspy({ target: targetValue, offset: monitorOffsetValue }) }
+		function refreshScrollSpy() {$('body').scrollspy("refresh"); }
+		function SmoothScroll(scrollTimer) {
+			this.scrollTimer = scrollTimer;
+			this.runner = function() {
+				return function(event) {
+					var hash = this.hash;
+					if (hash) {
+						event.preventDefault();
+						$('html, body').animate({ scrollTop: $(hash).offset().top }, scrollTimer, function() {window.location.hash = hash; });
+		}	};	};	}
+
+	</script>
+</head>
+<body onload="docSetup('bodyFill', 'topMenu', 'fulfillLinks', 'autoATitles', 'TOC', 'fulfillTopAlign', 'prettyfy'); processSearch(); ">
+<div id="menuSeed"></div>
+<div class="container-fluid">
+	<div class="row">
+		<nav class="hidden-xs col-sm-3 col-md-3 col-lg-2 bs-docs-sidebar" id="sidebar">
+			<header>
+				<div id="tocSeed"></div>
+			</header>
+		</nav>
+		<div class="col-xs-12 col-sm-9 col-md-9 col-lg-10">
+			<div id="bodySeed"></div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<footer>
+				<details>
+					<summary>Conteúdos do Estado Português. Disponibilizado sem garantia de atualidade ou correção. Original em <a href="https:&#x2F;&#x2F;dre.pt&#x2F;web&#x2F;guest&#x2F;pesquisa-avancada&#x2F;-&#x2F;asearch&#x2F;107514240&#x2F;details&#x2F;maximized?types&#x3D;SERIEII&amp;types&#x3D;SERIEI&amp;search&#x3D;Pesquisar&amp;sortOrder&#x3D;ASC&amp;numero&#x3D;43%2F2017" target="_blank">https:&#x2F;&#x2F;dre.pt&#x2F;web&#x2F;guest&#x2F;pesquisa-avancada&#x2F;-&#x2F;asearch&#x2F;107514240&#x2F;details&#x2F;maximized?types&#x3D;SERIEII&amp;types&#x3D;SERIEI&amp;search&#x3D;Pesquisar&amp;sortOrder&#x3D;ASC&amp;numero&#x3D;43%2F2017</a>.</summary>
+					<p>O presente site é disponibilizado pela GGL de forma graciosa para utilização por todos os seus visitantes, no entanto, não é dada qualquer garantia da actualidade ou correcção do seu conteúdo, pelo que toda a informação recolhida deve ser verificada na documentação oficial. De qualquer modo agradecemos a todos os visitantes a indicação de erros encontrados ou de necessidade de actualização, bem como da sugestão de melhorias ou novas funcionalidades.</p>
+					<p>A GGL deseja-Vos um bom uso.</p>
+				</details>
+			</footer>
+		</div>
+	</div>
+</div>
+</body>
+</html>
