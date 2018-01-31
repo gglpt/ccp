@@ -64,9 +64,69 @@
 		h1 { margin-top: 70px; }
 		ol > li:not(.nostyle):before {content: attr(seq) " - "; }
 		ol > li > ol > li:not(.nostyle):before {content: attr(seq) ") "; }
-		highligth { background-color: yellow; }
+		mark { background-color: orange; }
+		.highligth { background-color: yellow; }
+		.spotlight {background-color: red!important;}
 	</style>
 	<script type="application/javascript">
+		var lastSearch = ''
+		var count = 0
+		function search() {
+			var searchString = document.getElementById('searchText').value
+			if (!searchString) {
+				lastSearch = ''
+				$('body').removeHighlight()
+				return
+			} else if (searchString === lastSearch) {
+				count++
+			} else {
+				lastSearch = searchString
+				$('body').highlight(searchString)
+			}
+			var tags = document.getElementsByTagName('mark')
+			if (count > tags.length - 1) count = 0
+			tags[count].scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"})
+			// behaviour: ["auto"], "instant", or "smooth"
+			// block: "start", ["center"], "end", or "nearest"
+			// inline: "start", "center", "end", or ["nearest"]
+		}
+		// credits: <https://stackoverflow.com/questions/119441/highlight-a-word-with-jquery>
+		jQuery.fn.highlight = function(pat) {
+			function innerHighlight(node, pat) {
+				var skip = 0
+				if (node.nodeType == 3) {
+					var pos = node.data.toUpperCase().indexOf(pat)
+					if (pos >= 0) {
+						var middlebit = node.splitText(pos)
+							, endbit = middlebit.splitText(pat.length)
+							, middleclone = middlebit.cloneNode(true)
+							, spannode = document.createElement('mark')
+						//spannode.className = 'highlight'
+						spannode.appendChild(middleclone)
+						middlebit.parentNode.replaceChild(spannode, middlebit)
+						skip = 1
+				}	}
+				else if (node.nodeType == 1 && node.childNodes && !/(script|style)/i.test(node.tagName))
+					for (var i = 0; i < node.childNodes.length; ++i) i += innerHighlight(node.childNodes[i], pat)
+				return skip
+			}
+			return this.length && pat && pat.length ? this.each(function() { innerHighlight(this, pat.toUpperCase()) }) : this
+		}
+		jQuery.fn.removeHighlight = function() {
+			return this.find("mark").each(function() {
+				this.parentNode.firstChild.nodeName
+				with (this.parentNode) {
+					replaceChild(this.firstChild, this)
+					normalize()
+				}
+			}).end()
+		}
+		// credits: <https://stormconsultancy.co.uk/blog/development/code-snippets/scroll-an-element-into-view-programmatically-with-javascript/>
+		jQuery.fn.scrollToTag = function(tag) {
+			$("#my-link-id").click(function() {
+				$('html:not(:animated), body:not(:animated)').animate( { scrollTop: $(tag).offset().top }, 2000)
+			})
+		}
 		const DOC_SECTIONS_TYPES = ['part', 'title', 'chapter', 'section', 'subsection', 'article', 'articleA', 'annex']		
 		const DOC_SECTIONS_MAP = {part:'PARTE', title:'TÍTULO', titleA:'TÍTULO', chapter:'CAPÍTULO', section:'SECÇÃO', subsection:'SUBSECÇÃO', article:'Artigo', articleA:'Artigo', annex:'ANEXO'};
 		function docSetup() {
@@ -156,17 +216,17 @@
 		}
 		function topMenu(whereTo) {
 			var template = '<div class="navbar navbar-inverse navbar-fixed-top"><div class="container-fluid"><div class="navbar-header"><button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand brand-name" href="http://ggl.pt" target="_blank" title="Ggl Consulting">Ggl Consulting</a></div><div class="collapse navbar-collapse"><ul class="nav navbar-nav">{{#menu}}<li><a title="{{description}}" href="{{link}}">{{data}}</a></li>{{/menu}}</ul><div class="pull-right">\
-			<form id="searchForm" class="navbar-form" role="search" onsubmit="processSearch()">\
+			<div id="searchForm" class="navbar-form" role="search">\
 				<div class="input-group">\
-					<input type="text" class="form-control" id="searchTarget" placeholder="wip..." name="search">\
+					<input type="text" class="form-control" id="searchText" placeholder="wip..." name="search">\
 					<input type="hidden" id="searchCounter" name="count" value = 1>\
 					<div class="input-group-btn">\
-						<button id="searchButton" type="submit" class="btn btn-default" onclick="processSearch()">\
+						<button id="searchButton" type="button" class="btn btn-default" onclick="search()">\
 							<i class="glyphicon glyphicon-search"></i>\
 						</button>\
 					</div>\
 				</div>\
-			</form>\
+			</div>\
 			</div></div></div></div>'
 			var data = { 'menu': [
 				{'data': 'Início', 'description': 'Topo da página', 'link': '#'},
@@ -174,9 +234,6 @@
 				{'data': 'Notificações', 'description': 'Pedido de notificação de atualizações e novos documentos', 'link': 'mailto:geral@ggl.pt?subject=Legislação GGL: Pedido de notificação'},
 				{'data': 'GGL', 'description': 'Site da Ggl Consulting', 'link': 'http://ggl.pt'}
 			]}
-			$('#searchForm').submit(function(event) {
-				 alert('Ok Fa'); event.preventDefault(); event.stopPropagation(); return false;
-			})
 			$(whereTo).html(Handlebars.compile(template)(data))
 		}
 		function searchInPage() {
@@ -1014,5 +1071,17 @@
 		</div>
 	</div>
 </div>
+<script type="text/javascript">
+	$(document).on('keyup', '#searchText', function (event) {
+		console.log(event.which)
+	    if (event.which === 13) document.getElementById("searchButton").click();
+	});
+	/*
+	document.getElementById("searchText").addEventListener("keyup", function(event) {
+		event.preventDefault()
+		if (event.keyCode === 13) document.getElementById("searchButton").click();
+	});
+	*/
+</script>
 </body>
 </html>
