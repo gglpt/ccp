@@ -44,8 +44,8 @@
 		.navbar-brand {background: url(http://gglpt.github.io/ccp/GGLlogo.png) 28px 8px / 40px no-repeat; }
 		.brand-name {font-family: 'Lato', sans-serif !important; font-size: 20px; font-weight: 300 !important; padding-left: 84px; padding-top: 18px; color: #ffffff !important; }
 		.input-group {padding-top:1px; }
-		.navbar-nav > li > a {margin-top:-17px; } 
-		.navbar {min-height:32px !important }
+		.navbar-nav > li > a {margin-top:-17px; }
+		.navbar {min-height:32px !important; }
 	</style>
 	<style type="text/css">
 		html { font-family: sans-serif; }
@@ -76,22 +76,40 @@
 			var searchString = document.getElementById('searchText').value
 			if (!searchString) {
 				lastSearch = ''
-				$('body').removeHighlight()
+				$('#searchScope').removeHighlight()
+				return
+			}
+			if (searchString.match(/#\d+/)) {
+				lastSearch = ''
+				$('#searchScope').removeHighlight()
+				count = 0
+				showOnTop(searchString.substr(1))
 				return
 			} else if (searchString === lastSearch) {
 				count++
 			} else {
 				lastSearch = searchString
-				$('body').highlight(searchString)
+				$('#searchScope').removeHighlight()
+				$('#searchScope').highlight(searchString)
 			}
 			var tags = document.getElementsByTagName('mark')
 			if (count > tags.length - 1) count = 0
-			tags[count].scrollIntoView({behavior: "auto", block: "start", inline: "center"})
+			showOnTop(tags[count], true)
+		}
+		function showOnTop(idOrElement, adjust) {
+			if (typeof idOrElement === 'string') idOrElement = document.getElementById(idOrElement)
+			idOrElement.scrollIntoView({behavior: "auto", block: "start", inline: "center"})
 			// behaviour: ["auto"], "instant", or "smooth"
 			// block: "start", ["center"], "end", or "nearest"
 			// inline: "start", "center", "end", or ["nearest"]
-			//document.getElementById("tocSeed").scrollTop = 100
-			window.scrollBy(0, -62)
+			if (adjust) window.scrollBy(0, -62);
+			//document.getElementById(id).scrollTop = 100;
+			// credits: <https://stormconsultancy.co.uk/blog/development/code-snippets/scroll-an-element-into-view-programmatically-with-javascript/>
+			/*
+			$("#my-link-id").click(function() {
+				$('html:not(:animated), body:not(:animated)').animate( { scrollTop: $(tag).offset().top }, 2000)
+			})
+			*/
 		}
 		// credits: <https://stackoverflow.com/questions/119441/highlight-a-word-with-jquery>
 		jQuery.fn.highlight = function(pat) {
@@ -123,12 +141,6 @@
 					normalize()
 				}
 			}).end()
-		}
-		// credits: <https://stormconsultancy.co.uk/blog/development/code-snippets/scroll-an-element-into-view-programmatically-with-javascript/>
-		jQuery.fn.scrollToTag = function(tag) {
-			$("#my-link-id").click(function() {
-				$('html:not(:animated), body:not(:animated)').animate( { scrollTop: $(tag).offset().top }, 2000)
-			})
 		}
 		const DOC_SECTIONS_TYPES = ['part', 'title', 'chapter', 'section', 'subsection', 'article', 'articleA', 'annex']		
 		const DOC_SECTIONS_MAP = {part:'PARTE', title:'TÍTULO', titleA:'TÍTULO', chapter:'CAPÍTULO', section:'SECÇÃO', subsection:'SUBSECÇÃO', article:'Artigo', articleA:'Artigo', annex:'ANEXO'};
@@ -452,7 +464,7 @@
 				<div id="tocSeed"></div>
 			</header>
 		</nav>
-		<div class="col-xs-12 col-sm-9 col-md-9 col-lg-10">
+		<div id="searchScope" class="col-xs-12 col-sm-9 col-md-9 col-lg-10">
 			<div id="bodySeed"></div>
 			<div id="ccp">
 				<section class="annexes">
