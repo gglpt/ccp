@@ -100,8 +100,8 @@
 
         Document.prototype.getElementsByClassNameAsArray = function(arguments) {
             var res = [], arg, aux;
-            for (arg of arguments) {
-                aux = Array.from(this.getElementsByClassName(arg))
+            for (var i = 0; i < arguments.length; i++) {
+                aux = Array.from(this.getElementsByClassName(arguments[i]))
                 res = res.concat(aux)
             }
             return res;
@@ -117,8 +117,9 @@
 
         function getValueOfQueryField(field) {
             var queryString = self.location.search.substring(1)
-            for (fieldValue of queryString.split('&')) {
-                var pair = fieldValue.split('=')
+            var queryStringSplit = queryString.split('&')
+            for (var i = 0; i < queryStringSplit.length; i++) {
+                var pair = queryStringSplit[i].split('=')
                 if (decodeURIComponent(pair[0]) === field) return decodeURIComponent(pair[1])
             }
         }
@@ -287,8 +288,8 @@
         const DOC_SECTIONS_MAP = {part:'PARTE', title:'TÍTULO', titleA:'TÍTULO', chapter:'CAPÍTULO', section:'SECÇÃO', subsection:'SUBSECÇÃO', article:'Artigo', articleA:'Artigo', annex:'ANEXO'}
 
         function docSetup() {
-            for (arg of arguments) {
-                switch (arg) {
+            for (var i = 0; i < arguments.length; i++) {
+                switch (arguments[i]) {
                     case 'bodyFill': bodyFill('#bodySeed'); break;
                     case 'topMenu': topMenu('#menuSeed'); break;
                     case 'TOC': ccpTOC('bodySeed', 'tocSeed'); break;
@@ -323,13 +324,13 @@
 
         // Completes the "title" attribute of "a" elements
         function autoATitles() {
-            var aTitlesMap = {}, item,
+            var aTitlesMap = {},
             epigraphs = document.getElementsByClassNameAsArray(DOC_SECTIONS_TYPES),
             anchors = document.getElementsByTagName("a")
-            for (item of epigraphs) if (item.firstChild) aTitlesMap[item.firstChild.id] = composeSectionTitle(item, ': ')
-            for (item of anchors) {
-                var aux = aTitlesMap[item.href.getTag()]
-                if (aux) item.title = aux
+            for (var i = 0; i < epigraphs.length; i++) if (epigraphs[i].firstChild) aTitlesMap[epigraphs[i].firstChild.id] = composeSectionTitle(epigraphs[i], ': ')
+            for (var i = 0; i < anchors.length; i++) {
+                var aux = aTitlesMap[anchors[i].href.getTag()]
+                if (aux) anchors[i].title = aux
             }
         }
 
@@ -355,8 +356,9 @@
         function setTopAlign(item, iconSpec) {item.firstChild.innerHTML = '<a href="#' + item.firstChild.id + '"><span class="' + iconSpec + '"></span></a>&nbsp;' + item.firstChild.textContent.trim(); }
         function fulfill(sectionTypes, fulfillment, runner) {
             sectionTypes.forEach(function(sectionType) {
-                for (section of document.getElementsByClassName(sectionType))
-                    runner(section, fulfillment);
+                var sectionTypeElements = document.getElementsByClassName(sectionType)
+                for (var i = 0; i < sectionTypeElements.length; i++)
+                    runner(sectionTypeElements[i], fulfillment);
             });
         }
 
